@@ -48,7 +48,7 @@ storybook_deploy_production:
     - pnpm build-storybook
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
-    - vercel build --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+    - vercel build --prod --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
