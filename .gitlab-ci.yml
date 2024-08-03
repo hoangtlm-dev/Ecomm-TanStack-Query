@@ -1,10 +1,6 @@
 default:
   image: node:20.12.2
 
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-
 site_deploy_preview:
   stage: deploy
   only:
@@ -17,6 +13,8 @@ site_deploy_preview:
     - vercel pull --yes --environment=preview --token=$ECOMM_SITE_VERCEL_TOKEN
     - vercel build --token=$ECOMM_SITE_VERCEL_TOKEN
     - vercel deploy --prebuilt --token=$ECOMM_SITE_VERCEL_TOKEN
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 site_deploy_production:
   stage: deploy
@@ -30,6 +28,8 @@ site_deploy_production:
     - vercel pull --yes --environment=production --token=$ECOMM_SITE_VERCEL_TOKEN
     - vercel build --prod --token=$ECOMM_SITE_VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$ECOMM_SITE_VERCEL_TOKEN
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 storybook_deploy_preview:
   stage: deploy
@@ -43,6 +43,8 @@ storybook_deploy_preview:
     - vercel pull --yes --environment=preview --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
     - vercel build --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
     - vercel deploy --prebuilt --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 storybook_deploy_production:
   stage: deploy
@@ -56,3 +58,5 @@ storybook_deploy_production:
     - vercel pull --yes --environment=preview --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
     - vercel build --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
