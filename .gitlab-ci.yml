@@ -1,0 +1,58 @@
+default:
+  image: node:20.12.2
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+site_deploy_preview:
+  stage: deploy
+  only:
+    - develop
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$ECOMM_SITE_VERCEL_TOKEN
+    - vercel build --token=$ECOMM_SITE_VERCEL_TOKEN
+    - vercel deploy --prebuilt --token=$ECOMM_SITE_VERCEL_TOKEN
+
+site_deploy_production:
+  stage: deploy
+  only:
+    - main
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build-storybook
+    - npm install --global vercel
+    - vercel pull --yes --environment=production --token=$ECOMM_SITE_VERCEL_TOKEN
+    - vercel build --prod --token=$ECOMM_SITE_VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$ECOMM_SITE_VERCEL_TOKEN
+
+storybook_deploy_preview:
+  stage: deploy
+  only:
+    - develop
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build-storybook
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+    - vercel build --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+    - vercel deploy --prebuilt --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+
+storybook_deploy_production:
+  stage: deploy
+  only:
+    - merge_requests
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build-storybook
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+    - vercel build --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$ECOMM_STORYBOOK_VERCEL_TOKEN
