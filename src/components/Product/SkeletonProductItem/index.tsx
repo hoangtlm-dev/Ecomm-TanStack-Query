@@ -6,7 +6,7 @@ interface ISkeletonProductItemProps {
 
 const SkeletonProductItem = ({ listType }: ISkeletonProductItemProps) => {
   return listType === 'grid' ? (
-    <VStack w="300px" h="390px" pb={4} gap={4} borderWidth="3px" borderColor="backgroundBlurGray">
+    <VStack h="390px" pb={4} gap={4} borderWidth="3px" borderColor="backgroundBlurGray">
       <Skeleton w="full" h="full" />
       <VStack px={4} gap={4}>
         <SkeletonText w="220px" noOfLines={1} skeletonHeight={4} />
