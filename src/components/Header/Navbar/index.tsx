@@ -1,18 +1,4 @@
-import { useRef } from 'react'
-import {
-  HStack,
-  Link,
-  IconButton,
-  Drawer,
-  DrawerBody,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  VStack,
-  Container,
-  DrawerHeader
-} from '@chakra-ui/react'
+import { HStack, Link, IconButton, Container, Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom'
 
 // Constants
@@ -47,41 +33,27 @@ const NavMenuLinks = ({ onClose }: INavMenuLinksProps) => {
 }
 
 const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const btnRef = useRef<HTMLButtonElement>(null)
-
   return (
     <Container>
-      <HStack justifyContent="space-between">
+      <HStack justifyContent="space-between" pt={4}>
         <BrandingLogo />
-        <HStack spacing={10} display={{ base: 'none', lg: 'flex' }}>
+        <HStack as="nav" spacing={10} display={{ base: 'none', lg: 'flex' }}>
           <NavMenuLinks />
         </HStack>
 
-        <IconButton
-          ref={btnRef}
-          variant="unstyled"
-          aria-label="Open Menu"
-          icon={<HamburgerIcon boxSize={5} color="black" />}
-          display={{ base: 'flex', lg: 'none' }}
-          justifyContent="flex-end"
-          onClick={onOpen}
-        />
-
-        <Drawer isOpen={isOpen} placement="top" onClose={onClose} finalFocusRef={btnRef}>
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton mt={3} />
-            <DrawerHeader>
-              <BrandingLogo />
-            </DrawerHeader>
-            <DrawerBody>
-              <VStack spacing={4} align="flex-start">
-                <NavMenuLinks />
-              </VStack>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Open Menu"
+            icon={<HamburgerIcon boxSize={5} color="black" />}
+            variant="unstyled"
+            textAlign="right"
+            display={{ base: 'block', lg: 'none' }}
+          />
+          <MenuList as="nav" display={{ base: 'flex', lg: 'none' }} flexDirection="column" w="full">
+            <NavMenuLinks />
+          </MenuList>
+        </Menu>
       </HStack>
     </Container>
   )
