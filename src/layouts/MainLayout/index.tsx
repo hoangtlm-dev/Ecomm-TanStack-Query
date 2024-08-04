@@ -1,11 +1,20 @@
 import { Outlet } from 'react-router-dom'
+import { Box } from '@chakra-ui/react'
+
+// Components
+import { ActionHeader, Navbar } from '@app/components'
 
 const MainLayout = () => {
   return (
-    <div>
-      <h1>This is main layout</h1>
-      <Outlet />
-    </div>
+    <>
+      <Box as="header">
+        <ActionHeader />
+        <Navbar />
+      </Box>
+      <Box as="main" py={8}>
+        <Outlet />
+      </Box>
+    </>
   )
 }
 
