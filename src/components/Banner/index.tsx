@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Box, Flex, Heading, Image, Link, Text, VStack } from '@chakra-ui/react'
 
 interface IBannerProps {
@@ -18,7 +19,7 @@ const Banner = ({ background, image, heading, description }: IBannerProps) => {
       px={{ base: 4, lg: 'unset' }}
       pb={{ base: 10, lg: 'unset' }}
     >
-      <VStack alignItems="flex-start" flexBasis="30%" gap={4}>
+      <VStack alignItems="flex-start" flexBasis="35%" gap={4}>
         <Heading
           as="h3"
           fontSize="textExtraLarge"
@@ -46,4 +47,6 @@ const Banner = ({ background, image, heading, description }: IBannerProps) => {
   )
 }
 
-export default Banner
+const MemoizedBanner = memo(Banner)
+
+export default MemoizedBanner
