@@ -8,11 +8,20 @@ interface IActionBarProps {
   sortOptions: string[]
   showOptions: number[]
   listType: 'grid' | 'list'
+  onListTypeChange: (type: 'grid' | 'list') => void
   onSortItems: (value: string) => void
   onShowItems: (value: number) => void
 }
 
-const ActionBar = ({ totalItems, sortOptions, showOptions, listType, onSortItems, onShowItems }: IActionBarProps) => {
+const ActionBar = ({
+  totalItems,
+  sortOptions,
+  showOptions,
+  listType,
+  onListTypeChange,
+  onSortItems,
+  onShowItems
+}: IActionBarProps) => {
   return (
     <HStack
       px={4}
@@ -63,6 +72,7 @@ const ActionBar = ({ totalItems, sortOptions, showOptions, listType, onSortItems
           px={5}
           py={{ base: 5, md: 'auto' }}
           icon={<GridIcon boxSize={5} color={listType === 'grid' ? 'iconActive' : 'iconGray'} />}
+          onClick={() => onListTypeChange('grid')}
         />
         <IconButton
           variant="ghost"
@@ -73,6 +83,7 @@ const ActionBar = ({ totalItems, sortOptions, showOptions, listType, onSortItems
           px={5}
           py={{ base: 5, md: 'auto' }}
           icon={<HamburgerIcon boxSize={5} color={listType === 'list' ? 'iconActive' : 'iconGray'} />}
+          onClick={() => onListTypeChange('list')}
         />
       </HStack>
     </HStack>
