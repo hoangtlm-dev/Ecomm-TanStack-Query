@@ -38,7 +38,6 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
 
   return listType === 'grid' ? (
     <LinkBox
-      w="300px"
       gap={4}
       borderWidth="3px"
       borderColor="backgroundBlurGray"
@@ -55,7 +54,9 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
         onMouseOver={onOpen}
         onMouseLeave={onClose}
       >
-        <Image src={image} alt={name} />
+        <Center>
+          <Image src={image} alt={name} />
+        </Center>
 
         {/* Add to cart */}
         <Fade in={isOpen}>

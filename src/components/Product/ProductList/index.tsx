@@ -42,7 +42,14 @@ const ProductList = ({ isFetching, products, listType, onAddToCart }: IProductLi
 
   return (
     <div>
-      <Grid templateColumns={listType === 'grid' ? 'repeat(3, 1fr)' : 'repeat(1, 1fr)'} gap={8}>
+      <Grid
+        templateColumns={
+          listType === 'grid'
+            ? { base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }
+            : 'repeat(1, 1fr)'
+        }
+        gap={4}
+      >
         {renderProducts()}
       </Grid>
     </div>
