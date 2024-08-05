@@ -1,5 +1,7 @@
 // Constants
 import { mockProductImage, PAGINATION } from '@app/constants'
+
+// Types
 import { Product } from '@app/types'
 
 export const MOCK_PRODUCT = {
@@ -21,7 +23,8 @@ export const MOCK_PRODUCT = {
   }
 }
 
-export const MOCK_PRODUCTS: Product[] = Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }, (_, index) => ({
-  ...MOCK_PRODUCT,
-  id: index + 1
-}))
+export const MOCK_PRODUCTS = (length?: number): Product[] =>
+  Array.from({ length: length ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE }, (_, index) => ({
+    ...MOCK_PRODUCT,
+    id: index + 1
+  }))

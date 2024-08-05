@@ -31,7 +31,7 @@ type Story = StoryObj<typeof ProductList>
 export const GridView: Story = {
   args: {
     isFetching: false,
-    products: MOCK_PRODUCTS,
+    products: MOCK_PRODUCTS(6),
     listType: 'grid'
   }
 }
@@ -39,7 +39,7 @@ export const GridView: Story = {
 export const ListView: Story = {
   args: {
     isFetching: false,
-    products: MOCK_PRODUCTS,
+    products: MOCK_PRODUCTS(6),
     listType: 'list'
   }
 }

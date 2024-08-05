@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Container, Flex, Stack } from '@chakra-ui/react'
+import { Container, Flex, Grid, Stack } from '@chakra-ui/react'
 
 // Constants
 import { banner } from '@app/constants'
@@ -46,8 +46,8 @@ const Home = () => {
     setActiveColor(color)
   }
 
-  const handleAddProductToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, product: Product) => {
-    event.preventDefault()
+  const handleAddProductToCart = (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event && event.preventDefault()
     // Todo: Handle logic for adding product to cart
     console.log(product)
   }
@@ -85,12 +85,21 @@ const Home = () => {
             onSortItems={(value: string) => console.log(`Sorted by: ${value}`)}
             onShowItems={(value: number) => console.log(`Show items: ${value}`)}
           />
-          <ProductList
-            isFetching={false}
-            products={MOCK_PRODUCTS}
-            listType={listType}
-            onAddToCart={handleAddProductToCart}
-          />
+          <Grid
+            templateColumns={
+              listType === 'grid'
+                ? { base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(3, 1fr)` }
+                : 'repeat(1, 1fr)'
+            }
+            gap={4}
+          >
+            <ProductList
+              isFetching={false}
+              products={MOCK_PRODUCTS()}
+              listType={listType}
+              onAddToCart={handleAddProductToCart}
+            />
+          </Grid>
           <Pagination totalItems={12} itemsPerPage={6} currentPage={1} onPageChange={handlePageChange} />
         </Stack>
       </Flex>
