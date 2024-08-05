@@ -24,12 +24,12 @@ const SkeletonProductInfo = () => {
             justifyContent={{ lg: 'space-between' }}
           >
             {Array.from({ length: 2 }).map((_, index) => (
-              <Skeleton key={index} w="160px" height={10} />
+              <Skeleton key={index} w={{ base: 'full', sm: '160px' }} height={10} />
             ))}
           </Flex>
           <Flex gap={4} direction={{ base: 'column', sm: 'row' }}>
             {Array.from({ length: 2 }).map((_, index) => (
-              <Skeleton key={index} w="240px" height={10} />
+              <Skeleton key={index} minW="240px" height={10} />
             ))}
           </Flex>
         </Stack>

@@ -29,6 +29,11 @@ const filterColors = {
   blurPink: '#efdfdf'
 }
 
+const socialColors = {
+  facebook: '#385c8e',
+  twitter: '#03a9f4'
+}
+
 export const colors = {
   brand: {
     primary: brandColors.primary,
@@ -36,6 +41,7 @@ export const colors = {
   },
   semiDarkBlue: generateShades(systemColors.semiDarkBlue),
   blurBlue: generateShades(systemColors.blurBlue),
+  lightBlue: systemColors.lightBlue,
 
   // Icons
   iconGray: systemColors.iconGray,
@@ -43,6 +49,10 @@ export const colors = {
 
   // Rating
   ratingYellow: systemColors.yellow,
+
+  // Social
+  facebook: socialColors.facebook,
+  twitter: socialColors.twitter,
 
   // Filters
   filterBlue: filterColors.blue,
