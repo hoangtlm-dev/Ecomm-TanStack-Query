@@ -17,12 +17,7 @@ const SkeletonProductInfo = () => {
               <SkeletonText noOfLines={index === 0 ? 1 : 3} spacing={index === 1 ? 4 : 0} skeletonHeight={6} w="80%" />
             </Stack>
           ))}
-          <Flex
-            gap={4}
-            maxW={{ md: '500px' }}
-            direction={{ base: 'column', sm: 'row' }}
-            justifyContent={{ lg: 'space-between' }}
-          >
+          <Flex gap={4} maxW={{ md: '500px' }} direction={{ base: 'column', sm: 'row' }} justifyContent="space-between">
             {Array.from({ length: 2 }).map((_, index) => (
               <Skeleton key={index} w={{ base: 'full', sm: '160px' }} height={10} />
             ))}
