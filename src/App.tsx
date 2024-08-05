@@ -10,7 +10,7 @@ import { theme } from '@app/themes'
 import { MainLayout } from '@app/layouts'
 
 // Pages
-import { Cart, Home, ProductInfo } from '@app/pages'
+import { Cart, Home, ProductDetails } from '@app/pages'
 
 const PlaceholderPage = ({ pageName = 'Placeholder' }: { pageName?: string }) => (
   <Container>
@@ -28,7 +28,7 @@ const App = () => {
         <Routes>
           <Route element={<MainLayout />}>
             <Route path={ROUTES.ROOT} element={<Home />} />
-            <Route path={`${ROUTES.PRODUCT}/:productId`} element={<ProductInfo />} />
+            <Route path={ROUTES.PRODUCT_DETAILS} element={<ProductDetails />} />
             <Route path={ROUTES.CART} element={<Cart />} />
             <Route path={ROUTES.NOT_FOUND} element={<PlaceholderPage pageName="Not found" />} />
 

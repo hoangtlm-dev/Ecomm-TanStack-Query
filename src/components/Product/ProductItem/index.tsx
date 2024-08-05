@@ -25,10 +25,13 @@ import { Product } from '@app/types'
 // Components
 import { CartButtonIcon, ProductRating } from '@app/components'
 
+// Utils
+import { generateSlugByNameAndId } from '@app/utils'
+
 interface IProductItemProps {
   product: Product
   listType: 'grid' | 'list'
-  onAddToCart: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, product: Product) => void
+  onAddToCart: (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
@@ -76,7 +79,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
                 isRound
                 aria-label="Cart icon"
                 icon={<CartButtonIcon />}
-                onClick={(event) => onAddToCart(event, product)}
+                onClick={(event) => onAddToCart(product, event)}
               />
             </Center>
           </Box>
@@ -86,7 +89,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
       {/* Product Info */}
       <VStack p={4} gap={4} w="full">
         <Text fontSize="textMedium" w="full" fontWeight="bold" color="textDarkBlue" noOfLines={1} textAlign="center">
-          <LinkOverlay as={ReactRouterLink} to={`${ROUTES.PRODUCT}/${id}`}>
+          <LinkOverlay as={ReactRouterLink} to={`${ROUTES.ROOT}${generateSlugByNameAndId({ name: name, id: id })}`}>
             {name}
           </LinkOverlay>
         </Text>
@@ -152,7 +155,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
         >
           <VStack gap={4}>
             <Text fontSize="textMedium" fontWeight="bold" color="textDarkBlue" noOfLines={1} alignSelf="flex-start">
-              <LinkOverlay as={ReactRouterLink} to={`${ROUTES.PRODUCT}/${id}`}>
+              <LinkOverlay as={ReactRouterLink} to={`${ROUTES.ROOT}${generateSlugByNameAndId({ name: name, id: id })}`}>
                 {name}
               </LinkOverlay>
             </Text>
@@ -192,7 +195,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
               gap={3}
               bg="brand.50"
               _hover={{ opacity: 0.6 }}
-              onClick={(event) => onAddToCart(event, product)}
+              onClick={(event) => onAddToCart(product, event)}
             >
               <CartButtonIcon color="textBlue" />
               <Text color="textBlue">Add to Cart</Text>

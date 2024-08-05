@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, Grid } from '@chakra-ui/react'
+import { Divider } from '@chakra-ui/react'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -14,7 +14,7 @@ interface IProductListProps {
   isFetching: boolean
   products: Product[]
   listType: 'grid' | 'list'
-  onAddToCart: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, product: Product) => void
+  onAddToCart: (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 const ProductList = ({ isFetching, products, listType, onAddToCart }: IProductListProps) => {
@@ -39,21 +39,7 @@ const ProductList = ({ isFetching, products, listType, onAddToCart }: IProductLi
       </React.Fragment>
     ))
   }
-
-  return (
-    <div>
-      <Grid
-        templateColumns={
-          listType === 'grid'
-            ? { base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }
-            : 'repeat(1, 1fr)'
-        }
-        gap={4}
-      >
-        {renderProducts()}
-      </Grid>
-    </div>
-  )
+  return <>{renderProducts()}</>
 }
 
 export default ProductList
