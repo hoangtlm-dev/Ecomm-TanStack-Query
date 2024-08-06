@@ -17,10 +17,8 @@ export const MOCK_PRODUCT = {
   ratingStar: 3.7,
   reviewNumber: 2,
   isHotDeal: true,
-  category: {
-    id: 1,
-    name: 'Nike'
-  }
+  categoryId: 1,
+  categoryName: 'Nike'
 }
 
 export const MOCK_PRODUCTS = (length?: number): Product[] =>
