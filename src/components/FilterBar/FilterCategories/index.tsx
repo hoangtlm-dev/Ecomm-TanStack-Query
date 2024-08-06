@@ -5,7 +5,7 @@ import { Category } from '@app/types'
 
 interface IFilterCategoriesProps {
   categories: Category[]
-  onFilterCategory: (category: Category) => void
+  onFilterCategory: (categoryId: number) => void
   totalProduct: (categoryId: number) => number
   currentSearchParamValue?: string
 }
@@ -41,7 +41,7 @@ const FilterCategories = ({
             <Button
               key={id}
               variant="ghost"
-              onClick={() => onFilterCategory(category)}
+              onClick={() => onFilterCategory(id)}
               justifyContent="space-between"
               px={0}
               h="unset"

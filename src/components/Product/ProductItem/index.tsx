@@ -57,8 +57,8 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
         onMouseOver={onOpen}
         onMouseLeave={onClose}
       >
-        <Center>
-          <Image src={image} alt={name} />
+        <Center boxSize="full">
+          <Image boxSize="full" objectFit="cover" src={image} alt={name} />
         </Center>
 
         {/* Add to cart */}
