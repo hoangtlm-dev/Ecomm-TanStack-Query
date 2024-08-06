@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Container, Grid, Heading, VStack } from '@chakra-ui/react'
+import { Container, Heading, VStack } from '@chakra-ui/react'
 
 // Components
 import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
@@ -51,14 +51,14 @@ const ProductDetails = () => {
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
           Related Products
         </Heading>
-        <Grid templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }} gap={4}>
-          <ProductList
-            isFetching={isFetching}
-            products={data.data}
-            listType="grid"
-            onAddToCart={handleAddProductToCart}
-          />
-        </Grid>
+
+        <ProductList
+          isFetching={isFetching}
+          products={data.data}
+          listType="grid"
+          onAddToCart={handleAddProductToCart}
+          gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }}
+        />
       </VStack>
     </Container>
   )

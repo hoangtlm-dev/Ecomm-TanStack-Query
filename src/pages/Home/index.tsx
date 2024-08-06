@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Container, Flex, Grid, Stack } from '@chakra-ui/react'
+import { Container, Flex, Stack } from '@chakra-ui/react'
 
 // Constants
 import { banner, PAGINATION } from '@app/constants'
@@ -105,21 +105,13 @@ const Home = () => {
             onSortItems={handleSortByField}
             onShowItems={(value: number) => console.log(`Show items: ${value}`)}
           />
-          <Grid
-            templateColumns={
-              listType === 'grid'
-                ? { base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(3, 1fr)` }
-                : 'repeat(1, 1fr)'
-            }
-            gap={4}
-          >
-            <ProductList
-              isFetching={isFetching}
-              products={data.data}
-              listType={listType}
-              onAddToCart={handleAddProductToCart}
-            />
-          </Grid>
+
+          <ProductList
+            isFetching={isFetching}
+            products={data.data}
+            listType={listType}
+            onAddToCart={handleAddProductToCart}
+          />
           {!isFetching && (
             <Pagination
               totalItems={data.totalItems}
