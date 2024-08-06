@@ -1,5 +1,3 @@
-import { Category } from './category'
-
 export type Product = {
   id: number
   name: string
@@ -12,5 +10,6 @@ export type Product = {
   ratingStar: number
   reviewNumber: number
   isHotDeal: boolean
-  category: Category
+  categoryId: number
+  categoryName: string
 }

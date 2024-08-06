@@ -23,8 +23,8 @@ interface IProductInfo {
 }
 
 const ProductInfo = ({ product, onAddToCart }: IProductInfo) => {
-  const { name, description, image, price, unitPrice, quantity, discount, reviewNumber, ratingStar, category } = product
-  const { name: categoryName } = category
+  const { name, description, image, price, unitPrice, quantity, discount, reviewNumber, ratingStar, categoryName } =
+    product
 
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
     step: 1,

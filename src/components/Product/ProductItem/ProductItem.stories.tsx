@@ -1,8 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-// Types
-import { Product } from '@app/types'
-
 // Components
 import { ProductItem } from '@app/components'
 
@@ -28,18 +25,16 @@ export default meta
 
 type Story = StoryObj<typeof ProductItem>
 
-const mockProduct: Product = MOCK_PRODUCT
-
 export const GridView: Story = {
   args: {
-    product: mockProduct,
+    product: MOCK_PRODUCT,
     listType: 'grid'
   }
 }
 
 export const ListView: Story = {
   args: {
-    product: mockProduct,
+    product: MOCK_PRODUCT,
     listType: 'list'
   }
 }
@@ -47,7 +42,7 @@ export const ListView: Story = {
 export const NoDiscountedProduct: Story = {
   args: {
     product: {
-      ...mockProduct,
+      ...MOCK_PRODUCT,
       discount: 0,
       isHotDeal: false,
       price: 500
@@ -59,7 +54,7 @@ export const NoDiscountedProduct: Story = {
 export const DiscountedProduct: Story = {
   args: {
     product: {
-      ...mockProduct,
+      ...MOCK_PRODUCT,
       discount: 20,
       price: 500
     },
@@ -70,7 +65,7 @@ export const DiscountedProduct: Story = {
 export const NoRatingProduct: Story = {
   args: {
     product: {
-      ...mockProduct,
+      ...MOCK_PRODUCT,
       ratingStar: 0,
       isHotDeal: false
     },
@@ -81,7 +76,7 @@ export const NoRatingProduct: Story = {
 export const HotDealProduct: Story = {
   args: {
     product: {
-      ...mockProduct,
+      ...MOCK_PRODUCT,
       isHotDeal: true
     },
     listType: 'grid'
