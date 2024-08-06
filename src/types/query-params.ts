@@ -5,6 +5,7 @@ export type QueryParams<T extends Record<string, string | number | boolean>> = {
   _order?: 'asc' | 'desc'
   _start?: number
   _end?: number
+  id_ne?: number
 } & T
 
 export type OmitPageAndLimit<T> = Omit<T, 'page' | 'limit'>

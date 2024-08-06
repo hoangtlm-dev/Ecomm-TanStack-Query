@@ -48,7 +48,7 @@ const ProductInfo = ({ product, onAddToCart }: IProductInfo) => {
           alignSelf={{ base: 'center', lg: 'flex-start' }}
         >
           <Center h="full">
-            <Image src={image} alt={name} />
+            <Image boxSize="full" objectFit="cover" src={image} alt={name} />
           </Center>
         </Box>
         <Stack flex={1} spacing={4} divider={<StackDivider w="full" borderColor="backgroundBlurGray" />}>

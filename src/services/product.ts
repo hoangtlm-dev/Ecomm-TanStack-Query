@@ -24,3 +24,6 @@ export const getProductsService = async (
 
   return await httpRequest<PaginationRequest, PaginationResponse<Product>>(paginationApiUrl, 'POST', requestData)
 }
+
+export const getCurrentProductServices = async (productId: number) =>
+  await httpRequest<null, Product>(`${productApiUrl}/${productId}`, 'GET')
