@@ -1,9 +1,5 @@
-import { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Meta, StoryObj } from '@storybook/react'
-
-// Types
-import { Category } from '@app/types'
 
 // Components
 import { FilterCategories } from '@app/components'
@@ -43,10 +39,8 @@ export default meta
 type Story = StoryObj<typeof FilterCategories>
 
 const FilterBrandsDecorator = () => {
-  const [activeCategory, setActiveCategory] = useState(MOCK_CATEGORIES[0])
-
-  const handleFilterCategory = (category: Category) => {
-    setActiveCategory(category)
+  const handleFilterCategory = (categoryId: number) => {
+    console.log(categoryId)
   }
 
   const handleCalculateTotalProduct = (categoryId: number) => categoryId
@@ -57,7 +51,6 @@ const FilterBrandsDecorator = () => {
         categories={MOCK_CATEGORIES}
         onFilterCategory={handleFilterCategory}
         totalProduct={handleCalculateTotalProduct}
-        currentSearchParamValue={activeCategory.name}
       />
     </Box>
   )
