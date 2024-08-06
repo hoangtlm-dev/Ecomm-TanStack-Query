@@ -1,15 +1,35 @@
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Container, Grid, Heading, VStack } from '@chakra-ui/react'
 
 // Components
-import { ProductInfo, ProductList } from '@app/components'
+import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
 
 // Mocks
-import { MOCK_PRODUCT, MOCK_PRODUCTS } from '@app/mocks'
+import { MOCK_PRODUCTS } from '@app/mocks'
 
 // Types
 import { Product } from '@app/types'
 
+// Hooks
+import { useProductContext } from '@app/hooks'
+
+// Utils
+import { getIdFromSlug } from '@app/utils'
+
 const ProductDetails = () => {
+  const { productSlug } = useParams()
+  const productId = productSlug && Number(getIdFromSlug(productSlug))
+
+  const { state, fetchCurrentProduct } = useProductContext()
+  const { currentProduct, isFetching } = state
+
+  useEffect(() => {
+    if (productId) {
+      fetchCurrentProduct(productId)
+    }
+  }, [productId, fetchCurrentProduct])
+
   const handleAddProductToCart = (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // Todo: Handle logic for adding product to cart
     event && event.preventDefault()
@@ -18,7 +38,12 @@ const ProductDetails = () => {
 
   return (
     <Container>
-      <ProductInfo product={MOCK_PRODUCT} onAddToCart={handleAddProductToCart} />
+      {isFetching ? (
+        <SkeletonProductInfo />
+      ) : (
+        currentProduct && <ProductInfo product={currentProduct} onAddToCart={handleAddProductToCart} />
+      )}
+
       <VStack mt={12} spacing={12}>
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
           Related Products
