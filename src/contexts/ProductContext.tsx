@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } from 'react'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -71,6 +71,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const defaultParams: QueryParams<Partial<Product>> = {
       _sort: params._sort ?? 'id',
       _order: params._order ?? 'desc',
+      _limit: params._limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE,
       id: params.id ?? 0,
       categoryId: params.categoryId ?? 1,
       ...params
@@ -93,10 +94,6 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: 'REQUEST_FAILURE', payload: 'Failed to fetch product details' })
     }
   }, [])
-
-  useEffect(() => {
-    fetchProducts({})
-  }, [fetchProducts])
 
   const productContextValue: IProductContextType = useMemo(
     () => ({

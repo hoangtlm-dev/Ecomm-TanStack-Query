@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Container, Flex, Grid, Stack } from '@chakra-ui/react'
 
 // Constants
@@ -29,6 +29,10 @@ const Home = () => {
   const [listType, setListType] = useState<'grid' | 'list'>('grid')
   const { state: productState, fetchProducts } = useProductContext()
   const { data, isFetching } = productState
+
+  useEffect(() => {
+    fetchProducts({})
+  }, [fetchProducts])
 
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)

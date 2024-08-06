@@ -5,9 +5,6 @@ import { Container, Grid, Heading, VStack } from '@chakra-ui/react'
 // Components
 import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
 
-// Mocks
-import { MOCK_PRODUCTS } from '@app/mocks'
-
 // Types
 import { Product } from '@app/types'
 
@@ -21,14 +18,20 @@ const ProductDetails = () => {
   const { productSlug } = useParams()
   const productId = productSlug && Number(getIdFromSlug(productSlug))
 
-  const { state, fetchCurrentProduct } = useProductContext()
-  const { currentProduct, isFetching } = state
+  const { state, fetchProducts, fetchCurrentProduct } = useProductContext()
+  const { data, currentProduct, isFetching } = state
 
   useEffect(() => {
     if (productId) {
       fetchCurrentProduct(productId)
     }
   }, [productId, fetchCurrentProduct])
+
+  useEffect(() => {
+    if (currentProduct && productId) {
+      fetchProducts({ id_ne: productId, _limit: 4, categoryId: currentProduct.categoryId })
+    }
+  }, [currentProduct, productId, fetchProducts])
 
   const handleAddProductToCart = (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // Todo: Handle logic for adding product to cart
@@ -50,8 +53,8 @@ const ProductDetails = () => {
         </Heading>
         <Grid templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }} gap={4}>
           <ProductList
-            isFetching={false}
-            products={MOCK_PRODUCTS(4)}
+            isFetching={isFetching}
+            products={data.data}
             listType="grid"
             onAddToCart={handleAddProductToCart}
           />
