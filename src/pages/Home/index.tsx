@@ -46,6 +46,13 @@ const Home = () => {
     console.log(priceRange)
   }
 
+  const handleSortByField = useCallback(
+    (fieldName: string) => {
+      fetchProducts({ _sort: fieldName })
+    },
+    [fetchProducts]
+  )
+
   const filteredColors = ['filterBlue', 'filterRed', 'filterBlack', 'filterYellow', 'filterPink', 'filterBlurPink']
 
   const handleFilterColors = (color: string) => {
@@ -91,7 +98,7 @@ const Home = () => {
             showOptions={[12, 14, 16, 18, 20]}
             listType={listType}
             onListTypeChange={handleListTypeChange}
-            onSortItems={(value: string) => console.log(`Sorted by: ${value}`)}
+            onSortItems={handleSortByField}
             onShowItems={(value: number) => console.log(`Show items: ${value}`)}
           />
           <Grid

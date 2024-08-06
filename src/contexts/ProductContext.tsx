@@ -63,22 +63,11 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
   const fetchProducts = useCallback(async (params: Partial<QueryParams<Product>> = {}) => {
     dispatch({ type: 'REQUEST_PENDING' })
 
-    const defaultParams: QueryParams<Product> = {
+    const defaultParams: QueryParams<Partial<Product>> = {
       _sort: params._sort ?? 'id',
       _order: params._order ?? 'desc',
       id: params.id ?? 0,
-      name: params.name ?? '',
-      description: params.description ?? '',
-      price: params.price ?? 0,
-      unitPrice: params.unitPrice ?? '',
-      quantity: params.quantity ?? 0,
-      discount: params.discount ?? 0,
-      image: params.image ?? '',
-      ratingStar: params.ratingStar ?? 0,
-      reviewNumber: params.reviewNumber ?? 0,
-      isHotDeal: params.isHotDeal ?? false,
       categoryId: params.categoryId ?? 1,
-      categoryName: params.categoryName ?? '',
       ...params
     }
 
