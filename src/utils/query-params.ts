@@ -12,7 +12,7 @@ export const updateQueryParams = <T extends Record<string, string | number | boo
   const queryString = Object.keys(rest as OmitPageAndLimit<typeof params>)
     .filter((key) => !!rest[key as keyof OmitPageAndLimit<typeof params>])
     .map(
-      (key) => `_${encodeURIComponent(key)}=${encodeURIComponent(rest[key as keyof OmitPageAndLimit<typeof params>])}`
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(rest[key as keyof OmitPageAndLimit<typeof params>])}`
     )
     .join('&')
 

@@ -2,10 +2,10 @@ import { useCallback, useState } from 'react'
 import { Container, Flex, Grid, Stack } from '@chakra-ui/react'
 
 // Constants
-import { banner } from '@app/constants'
+import { banner, PAGINATION } from '@app/constants'
 
 // Types
-import { Category, Product } from '@app/types'
+import { Product } from '@app/types'
 
 // Components
 import {
@@ -19,20 +19,27 @@ import {
 } from '@app/components'
 
 // Mocks
-import { MOCK_CATEGORIES, MOCK_PRODUCTS } from '@app/mocks'
+import { MOCK_CATEGORIES } from '@app/mocks'
+
+// Hooks
+import { useProductContext } from '@app/hooks'
 
 const Home = () => {
   const [activeColor, setActiveColor] = useState('')
   const [listType, setListType] = useState<'grid' | 'list'>('grid')
+  const { state: productState, fetchProducts } = useProductContext()
+  const { data, isFetching } = productState
 
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)
   }
 
-  const handleFilterCategory = (category: Category) => {
-    // Todo: Handle logic for filtering products by category
-    console.log(category)
-  }
+  const handleFilterCategory = useCallback(
+    (categoryId: number) => {
+      fetchProducts({ categoryId: categoryId })
+    },
+    [fetchProducts]
+  )
 
   const handleFilterPrices = (priceRange: number[]) => {
     // Todo: Handle logic for filtering products by price range
@@ -52,10 +59,12 @@ const Home = () => {
     console.log(product)
   }
 
-  const handlePageChange = useCallback((newPage: number) => {
-    // Todo: Handle logic for page change
-    console.log(newPage)
-  }, [])
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      fetchProducts({ _page: newPage })
+    },
+    [fetchProducts]
+  )
 
   return (
     <Container>
@@ -77,7 +86,7 @@ const Home = () => {
             description="Performance and design. Taken right to the edge."
           />
           <ActionBar
-            totalItems={13}
+            totalItems={data.totalItems}
             sortOptions={['name', 'price']}
             showOptions={[12, 14, 16, 18, 20]}
             listType={listType}
@@ -94,13 +103,20 @@ const Home = () => {
             gap={4}
           >
             <ProductList
-              isFetching={false}
-              products={MOCK_PRODUCTS()}
+              isFetching={isFetching}
+              products={data.data}
               listType={listType}
               onAddToCart={handleAddProductToCart}
             />
           </Grid>
-          <Pagination totalItems={12} itemsPerPage={6} currentPage={1} onPageChange={handlePageChange} />
+          {!isFetching && (
+            <Pagination
+              totalItems={data.totalItems}
+              itemsPerPage={PAGINATION.DEFAULT_ITEMS_PER_PAGE || data.limit}
+              currentPage={data.page}
+              onPageChange={handlePageChange}
+            />
+          )}
         </Stack>
       </Flex>
     </Container>
