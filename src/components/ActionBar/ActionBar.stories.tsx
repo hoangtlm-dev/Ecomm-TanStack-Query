@@ -26,9 +26,7 @@ const meta: Meta<typeof ActionBar> = {
     listType: {
       control: 'radio',
       options: ['grid', 'list']
-    },
-    onSortItems: { action: 'sorted', description: 'Callback when sort option is changed' },
-    onShowItems: { action: 'shown', description: 'Callback when show option is changed' }
+    }
   },
   decorators: [
     (Story) => (
@@ -48,8 +46,6 @@ export const Default: Story = {
     totalItems: 13,
     sortOptions: ['name', 'price'],
     showOptions: [12, 14, 16, 18, 20],
-    listType: 'grid',
-    onSortItems: (value: string) => console.log(`Sorted by: ${value}`),
-    onShowItems: (value: number) => console.log(`Show items: ${value}`)
+    listType: 'grid'
   }
 }

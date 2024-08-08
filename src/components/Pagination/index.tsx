@@ -1,27 +1,25 @@
-import { memo, useCallback } from 'react'
-import { Button, Center, HStack } from '@chakra-ui/react'
+import { memo } from 'react'
+import { Center, HStack, Link } from '@chakra-ui/react'
+import { createSearchParams, Link as ReactRouterLink } from 'react-router-dom'
+
+// Constants
+import { ROUTES } from '@app/constants'
+
+// Hooks
+import { useQueryParams } from '@app/hooks'
 
 interface IPaginationProps {
   totalItems: number
   itemsPerPage: number
   currentPage: number
-  onPageChange: (page: number) => void
+  currentPath?: string
 }
 
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: IPaginationProps) => {
+const Pagination = ({ totalItems, itemsPerPage, currentPage, currentPath = ROUTES.ROOT }: IPaginationProps) => {
+  const queryParams = useQueryParams()
+
   // Calculate total pages based on total items and items per page
   const totalPages = Math.ceil(totalItems / itemsPerPage)
-
-  // Handle page change
-  const handlePageChange = useCallback(
-    (newPage: number) => {
-      // Only call onPageChange if the new page is different from the current page and within valid range
-      if (newPage !== currentPage && newPage > 0 && newPage <= totalPages) {
-        onPageChange(newPage)
-      }
-    },
-    [currentPage, totalPages, onPageChange]
-  )
 
   // Render pagination buttons
   const renderPagination = () => {
@@ -36,16 +34,26 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: IPa
 
         // Render the page button
         return (
-          <Button
+          <Link
+            as={ReactRouterLink}
+            to={{
+              pathname: currentPath,
+              search: createSearchParams({
+                ...queryParams,
+                page: pageNumber.toString()
+              }).toString()
+            }}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
             key={index}
-            onClick={() => handlePageChange(pageNumber)}
             boxSize={12}
-            variant={isActive ? 'solid' : 'ghost'}
             color={isActive ? 'white' : 'black'}
             borderRadius={0}
+            backgroundColor={isActive ? 'backgroundPrimary' : 'transparent'}
           >
             {pageNumber}
-          </Button>
+          </Link>
         )
       })
 

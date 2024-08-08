@@ -13,10 +13,10 @@ interface IFilterPricesProps {
   minPrice: number
   maxPrice: number
   unitPrice?: string
-  onFilterPrices: (priceRange: number[]) => void
+  onFilterByPrices: (priceRange: number[]) => void
 }
 
-const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterPrices }: IFilterPricesProps) => {
+const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterByPrices }: IFilterPricesProps) => {
   return (
     <Stack p={4} bg="backgroundBlurGray">
       <Heading as="h3" fontSize="textMedium" fontWeight="medium" textTransform="uppercase">
@@ -34,7 +34,7 @@ const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterPrices }: I
         <RangeSlider
           aria-label={['min', 'max']}
           focusThumbOnChange={false}
-          onChangeEnd={(priceRange) => onFilterPrices(priceRange)}
+          onChangeEnd={(priceRange) => onFilterByPrices(priceRange)}
           defaultValue={[minPrice, maxPrice]}
         >
           <RangeSliderTrack>
