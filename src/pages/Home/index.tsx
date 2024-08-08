@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { Container, Flex, Stack } from '@chakra-ui/react'
+import { Container, Flex, Stack, useToast } from '@chakra-ui/react'
 
 // Constants
 import { banner, PAGINATION, ROUTES } from '@app/constants'
@@ -20,7 +20,7 @@ import {
 } from '@app/components'
 
 // Hooks
-import { useCategoryContext, useProductContext, useQueryParams } from '@app/hooks'
+import { useCartContext, useCategoryContext, useProductContext, useQueryParams } from '@app/hooks'
 
 // Utils
 import { getIdFromSlug } from '@app/utils'
@@ -32,9 +32,12 @@ const Home = () => {
 
   const { state: productState, fetchProducts } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
+  const { state: cartState, fetchCarts, addToCart } = useCartContext()
   const { data, isFetching } = productState
   const { data: categoryData } = categoryState
   const queryParams = useQueryParams()
+
+  const toast = useToast()
 
   // Get current params from query params
   const currentCategoryId = queryParams.brand ? Number(getIdFromSlug(queryParams.brand)) : 1
@@ -47,6 +50,12 @@ const Home = () => {
   useEffect(() => {
     fetchCategories({})
   }, [fetchCategories])
+
+  useEffect(() => {
+    fetchCarts()
+  }, [fetchCarts])
+
+  console.log(cartState.data.data)
 
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)
@@ -87,8 +96,30 @@ const Home = () => {
   }
 
   const handleAddProductToCart = (product: Product) => {
-    // Todo: Handle logic for adding product to cart
-    console.log(product)
+    const { id, name, price, unitPrice, quantity, discount, image } = product
+
+    const cartItemFound = cartState.data.data.find((cart) => cart.productId === id)
+
+    addToCart({
+      id: cartItemFound ? cartItemFound.id : 0,
+      productId: id,
+      productName: name,
+      productPrice: price,
+      productUnitPrice: unitPrice,
+      productQuantity: quantity,
+      productDiscount: discount,
+      productImage: image,
+      quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
+    })
+
+    toast({
+      position: 'bottom-right',
+      title: 'Success',
+      description: 'A product was added to your cart.',
+      status: 'success',
+      duration: 3000,
+      isClosable: true
+    })
   }
 
   return (
