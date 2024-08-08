@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 import { Container, Flex, Stack } from '@chakra-ui/react'
 
 // Constants
-import { banner, PAGINATION } from '@app/constants'
+import { banner, PAGINATION, ROUTES } from '@app/constants'
 
 // Types
 import { Product } from '@app/types'
@@ -27,6 +28,8 @@ import { getIdFromSlug } from '@app/utils'
 const Home = () => {
   const [activeColor, setActiveColor] = useState('')
   const [listType, setListType] = useState<'grid' | 'list'>('grid')
+  const navigate = useNavigate()
+
   const { state: productState, fetchProducts } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
   const { data, isFetching } = productState
@@ -62,13 +65,25 @@ const Home = () => {
   }
 
   const handleSortByField = (fieldName: string) => {
-    // Todo: Handle logic for sorting by field name
-    console.log(`Sorted by: ${fieldName}`)
+    fetchProducts({ categoryId: currentCategoryId, page: currentPage, _sort: fieldName.toLowerCase() })
+    navigate({
+      pathname: ROUTES.ROOT,
+      search: createSearchParams({
+        ...queryParams,
+        sort: fieldName.toLowerCase()
+      }).toString()
+    })
   }
 
   const handleShowListByItemsPerPage = (itemsPerPage: number) => {
-    // Todo: Handle logic for showing list by items per pages
-    console.log(`Show items: ${itemsPerPage}`)
+    fetchProducts({ categoryId: currentCategoryId, page: currentPage, limit: itemsPerPage })
+    navigate({
+      pathname: ROUTES.ROOT,
+      search: createSearchParams({
+        ...queryParams,
+        limit: itemsPerPage.toString()
+      }).toString()
+    })
   }
 
   const handleAddProductToCart = (product: Product) => {
@@ -93,8 +108,8 @@ const Home = () => {
           />
           <ActionBar
             totalItems={data.totalItems}
-            sortOptions={['name', 'price']}
-            showOptions={[4, 6, 8, 10, 12, 14, 16, 18, 20]}
+            sortOptions={['Id', 'Name', 'Price']}
+            showOptions={[6, 9, 12]}
             listType={listType}
             onListTypeChange={handleListTypeChange}
             onSortByField={handleSortByField}
@@ -109,7 +124,7 @@ const Home = () => {
           />
           <Pagination
             totalItems={data.totalItems}
-            itemsPerPage={PAGINATION.DEFAULT_ITEMS_PER_PAGE}
+            itemsPerPage={data.limit || PAGINATION.DEFAULT_ITEMS_PER_PAGE}
             currentPage={currentPage}
           />
         </Stack>
