@@ -9,8 +9,8 @@ interface IActionBarProps {
   showOptions: number[]
   listType: 'grid' | 'list'
   onListTypeChange: (type: 'grid' | 'list') => void
-  onSortItems: (value: string) => void
-  onShowItems: (value: number) => void
+  onSortByField: (fieldName: string) => void
+  onShowListByItemsPerPage: (itemsPerPage: number) => void
 }
 
 const ActionBar = ({
@@ -19,8 +19,8 @@ const ActionBar = ({
   showOptions,
   listType,
   onListTypeChange,
-  onSortItems,
-  onShowItems
+  onSortByField,
+  onShowListByItemsPerPage
 }: IActionBarProps) => {
   return (
     <HStack
@@ -38,7 +38,7 @@ const ActionBar = ({
           <Text fontSize="textSmall" whiteSpace="nowrap">
             Sort By
           </Text>
-          <Select icon={<ArrowDownIcon />} iconSize="8px" minW="120px" onChange={(e) => onSortItems(e.target.value)}>
+          <Select icon={<ArrowDownIcon />} iconSize="8px" minW="120px" onChange={(e) => onSortByField(e.target.value)}>
             {sortOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -52,7 +52,7 @@ const ActionBar = ({
             icon={<ArrowDownIcon />}
             iconSize="8px"
             minW="120px"
-            onChange={(e) => onShowItems(Number(e.target.value))}
+            onChange={(e) => onShowListByItemsPerPage(Number(e.target.value))}
           >
             {showOptions.map((option) => (
               <option key={option} value={option}>

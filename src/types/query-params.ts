@@ -1,6 +1,6 @@
 export type QueryParams<T extends Record<string, string | number | boolean>> = {
-  _page?: number
-  _limit?: number
+  page?: number
+  limit?: number
   _sort?: string
   _order?: 'asc' | 'desc'
   _start?: number

@@ -3,10 +3,10 @@ import { Box, Button, Heading, HStack, Stack } from '@chakra-ui/react'
 interface IFilterColorsProps {
   colors: string[]
   activeColor?: string | null
-  onFilterColors: (color: string) => void
+  onFilterByColors: (color: string) => void
 }
 
-const FilterColors = ({ colors, activeColor = 'null', onFilterColors }: IFilterColorsProps) => {
+const FilterColors = ({ colors, activeColor = 'null', onFilterByColors }: IFilterColorsProps) => {
   return (
     <Stack p={4} bg="backgroundBlurGray" gap={4}>
       <Heading as="h3" fontSize="textMedium" fontWeight="medium" textTransform="uppercase">
@@ -17,8 +17,7 @@ const FilterColors = ({ colors, activeColor = 'null', onFilterColors }: IFilterC
           <Box
             key={color}
             borderRadius="50%"
-            w={6}
-            h={6}
+            boxSize={6}
             borderWidth={1}
             borderColor={activeColor === color ? 'borderPrimary' : 'none'}
           >
@@ -26,15 +25,14 @@ const FilterColors = ({ colors, activeColor = 'null', onFilterColors }: IFilterC
               display="block"
               bg={color}
               minW="unset"
-              w="full"
-              h="full"
+              boxSize="100%"
               borderRadius="50%"
               p={2}
               _hover={{ opacity: 0.6 }}
               _active={{
                 border: '3px solid white'
               }}
-              onClick={() => onFilterColors(color)}
+              onClick={() => onFilterByColors(color)}
               isActive={activeColor === color}
             />
           </Box>

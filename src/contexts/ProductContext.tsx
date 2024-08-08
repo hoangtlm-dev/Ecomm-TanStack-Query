@@ -13,11 +13,17 @@ export interface IProductState {
   data: PaginationResponse<Product>
   currentProduct: Product | null
   isFetching: boolean
+  isCurrentProductFetching: boolean
   error: string | null
 }
 
 export interface IProductAction {
-  type: 'REQUEST_PENDING' | 'FETCH_PRODUCTS_SUCCESS' | 'FETCH_CURRENT_PRODUCT_SUCCESS' | 'REQUEST_FAILURE'
+  type:
+    | 'REQUEST_PENDING'
+    | 'REQUEST_PRODUCT_DETAILS_PENDING'
+    | 'FETCH_PRODUCTS_SUCCESS'
+    | 'FETCH_CURRENT_PRODUCT_SUCCESS'
+    | 'REQUEST_FAILURE'
   payload?: PaginationResponse<Product> | Product | string
 }
 
@@ -35,6 +41,7 @@ const initialState: IProductState = {
   },
   currentProduct: null,
   isFetching: false,
+  isCurrentProductFetching: false,
   error: null
 }
 
@@ -42,10 +49,12 @@ const productReducer = (state: IProductState, action: IProductAction): IProductS
   switch (action.type) {
     case 'REQUEST_PENDING':
       return { ...state, isFetching: true, error: null }
+    case 'REQUEST_PRODUCT_DETAILS_PENDING':
+      return { ...state, isCurrentProductFetching: true, error: null }
     case 'FETCH_PRODUCTS_SUCCESS':
       return { ...state, isFetching: false, data: action.payload as PaginationResponse<Product> }
     case 'FETCH_CURRENT_PRODUCT_SUCCESS':
-      return { ...state, isFetching: false, currentProduct: action.payload as Product }
+      return { ...state, isCurrentProductFetching: false, currentProduct: action.payload as Product }
     case 'REQUEST_FAILURE':
       return { ...state, isFetching: false, error: action.payload as string }
     default:
@@ -56,7 +65,7 @@ const productReducer = (state: IProductState, action: IProductAction): IProductS
 export interface IProductContextType {
   state: IProductState
   dispatch: Dispatch<IProductAction>
-  fetchProducts: (params: Partial<QueryParams<Product>>) => Promise<void>
+  fetchProducts: (params?: Partial<QueryParams<Product>>) => Promise<void>
   fetchCurrentProduct: (productId: number) => Promise<void>
 }
 
@@ -71,7 +80,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const defaultParams: QueryParams<Partial<Product>> = {
       _sort: params._sort ?? 'id',
       _order: params._order ?? 'desc',
-      _limit: params._limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE,
+      limit: params.limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE,
       id: params.id ?? 0,
       categoryId: params.categoryId ?? 1,
       ...params
@@ -86,7 +95,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   const fetchCurrentProduct = useCallback(async (productId: number) => {
-    dispatch({ type: 'REQUEST_PENDING' })
+    dispatch({ type: 'REQUEST_PRODUCT_DETAILS_PENDING' })
     try {
       const response = await getCurrentProductServices(productId)
       dispatch({ type: 'FETCH_CURRENT_PRODUCT_SUCCESS', payload: response })

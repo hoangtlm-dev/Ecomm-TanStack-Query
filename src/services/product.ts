@@ -18,8 +18,8 @@ export const getProductsService = async (
 
   const requestData: PaginationRequest = {
     publicDataUrl: `${productApiUrl}?${queryString}`,
-    page: queryParams._page ?? 1,
-    limit: queryParams._limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE
+    page: queryParams.page ?? 1,
+    limit: queryParams.limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
   return await httpRequest<PaginationRequest, PaginationResponse<Product>>(paginationApiUrl, 'POST', requestData)

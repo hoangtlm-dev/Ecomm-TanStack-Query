@@ -19,7 +19,7 @@ const ProductDetails = () => {
   const productId = productSlug && Number(getIdFromSlug(productSlug))
 
   const { state, fetchProducts, fetchCurrentProduct } = useProductContext()
-  const { data, currentProduct, isFetching } = state
+  const { data, currentProduct, isFetching, isCurrentProductFetching } = state
 
   useEffect(() => {
     if (productId) {
@@ -29,29 +29,31 @@ const ProductDetails = () => {
 
   useEffect(() => {
     if (currentProduct && productId) {
-      fetchProducts({ id_ne: productId, _limit: 4, categoryId: currentProduct.categoryId })
+      fetchProducts({ id_ne: productId, limit: 4, categoryId: currentProduct.categoryId })
     }
   }, [currentProduct, productId, fetchProducts])
 
-  const handleAddProductToCart = (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleAddProductToCart = (product: Product) => {
     // Todo: Handle logic for adding product to cart
-    event && event.preventDefault()
     console.log(product)
+  }
+
+  if (isCurrentProductFetching) {
+    return (
+      <Container>
+        <SkeletonProductInfo />
+      </Container>
+    )
   }
 
   return (
     <Container>
-      {isFetching ? (
-        <SkeletonProductInfo />
-      ) : (
-        currentProduct && <ProductInfo product={currentProduct} onAddToCart={handleAddProductToCart} />
-      )}
+      {currentProduct && <ProductInfo product={currentProduct} onAddToCart={handleAddProductToCart} />}
 
       <VStack mt={12} spacing={12}>
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
           Related Products
         </Heading>
-
         <ProductList
           isFetching={isFetching}
           products={data.data}

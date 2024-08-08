@@ -7,13 +7,6 @@ import { FilterPrices } from '@app/components'
 const meta: Meta<typeof FilterPrices> = {
   title: 'Components/FilterBar/FilterPrices',
   component: FilterPrices,
-  argTypes: {
-    onFilterPrices: {
-      table: {
-        disable: true
-      }
-    }
-  },
   decorators: [
     (Story) => (
       <Box w="270px">
@@ -30,7 +23,6 @@ type Story = StoryObj<typeof FilterPrices>
 export const Default: Story = {
   args: {
     minPrice: 13.99,
-    maxPrice: 93.33,
-    onFilterPrices: (priceRange) => console.log('Filtered prices: ', priceRange)
+    maxPrice: 93.33
   }
 }

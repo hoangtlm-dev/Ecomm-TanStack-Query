@@ -1,32 +1,25 @@
-import { Button, Heading, Stack, Text } from '@chakra-ui/react'
+import { Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { createSearchParams, NavLink } from 'react-router-dom'
+
+// Constants
+import { ROUTES } from '@app/constants'
 
 // Types
 import { Category } from '@app/types'
 
+// Utils
+import { generateSlugByNameAndId } from '@app/utils'
+
+// Hooks
+import { useQueryParams } from '@app/hooks'
+
 interface IFilterCategoriesProps {
   categories: Category[]
-  onFilterCategory: (categoryId: number) => void
-  totalProduct: (categoryId: number) => number
-  currentSearchParamValue?: string
+  currentPath?: string
 }
 
-const FilterCategories = ({
-  categories,
-  onFilterCategory,
-  totalProduct,
-  currentSearchParamValue
-}: IFilterCategoriesProps) => {
-  let activeCategory: Category = categories[0]
-
-  if (currentSearchParamValue) {
-    const foundCategory = categories.find(
-      (category) => category.name.trim().toLowerCase() === currentSearchParamValue.trim().toLowerCase()
-    )
-
-    if (foundCategory) {
-      activeCategory = foundCategory
-    }
-  }
+const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCategoriesProps) => {
+  const queryParams = useQueryParams()
 
   return (
     <Stack p={4} bg="backgroundBlurGray">
@@ -35,23 +28,30 @@ const FilterCategories = ({
       </Heading>
       <Stack>
         {categories.map((category) => {
-          const { id, name } = category
+          const { id, name, totalProducts } = category
+
+          const isActive = queryParams.brand ? queryParams.brand.includes(name) : id === 1
 
           return (
-            <Button
+            <Link
               key={id}
-              variant="ghost"
-              onClick={() => onFilterCategory(id)}
-              justifyContent="space-between"
-              px={0}
-              h="unset"
-              _hover={{
-                opacity: 0.6
+              as={NavLink}
+              to={{
+                pathname: currentPath,
+                search: createSearchParams({
+                  ...queryParams,
+                  brand: generateSlugByNameAndId({ name, id }),
+                  page: '1'
+                }).toString()
               }}
+              display="flex"
+              justifyContent="space-between"
             >
-              <Text color={activeCategory.id === id ? 'textBlue' : 'textGray'}>{name}</Text>
-              <Text color={activeCategory.id === id ? 'textBlue' : 'textGray'}>{totalProduct(id)}</Text>
-            </Button>
+              <Text color={isActive ? 'textBlue' : 'textDefault'}>{name}</Text>
+              <Text color={isActive ? 'textBlue' : 'textDefault'} as="span">
+                {totalProducts}
+              </Text>
+            </Link>
           )
         })}
       </Stack>
