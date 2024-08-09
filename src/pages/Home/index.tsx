@@ -55,8 +55,6 @@ const Home = () => {
     fetchCarts()
   }, [fetchCarts])
 
-  console.log(cartState.data.data)
-
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)
   }

@@ -5,37 +5,26 @@ import {
   Button,
   Center,
   Flex,
+  forwardRef,
   Heading,
   HStack,
   Image,
-  Input,
   Stack,
   StackDivider,
-  Text,
-  useNumberInput
+  Text
 } from '@chakra-ui/react'
 import ProductRating from '../ProductRating'
 import { CartButtonIcon, FacebookIcon, TwitterIcon } from '@app/components/icons'
+import QuantityInput from '@app/components/QuantityInput'
 
 interface IProductInfo {
   product: Product
   onAddToCart: (product: Product) => void
 }
 
-const ProductInfo = ({ product, onAddToCart }: IProductInfo) => {
+const ProductInfo = forwardRef<IProductInfo, 'div'>(({ product, onAddToCart }: IProductInfo, ref) => {
   const { name, description, image, price, unitPrice, quantity, discount, reviewNumber, ratingStar, categoryName } =
     product
-
-  const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
-    step: 1,
-    defaultValue: 1,
-    min: quantity === 0 ? 0 : 1,
-    max: quantity
-  })
-
-  const inc = getIncrementButtonProps()
-  const dec = getDecrementButtonProps()
-  const input = getInputProps()
 
   return (
     <Stack spacing={16}>
@@ -105,15 +94,7 @@ const ProductInfo = ({ product, onAddToCart }: IProductInfo) => {
             direction={{ base: 'column', sm: 'row' }}
             justifyContent="space-between"
           >
-            <HStack maxW={{ base: 'full', sm: '320px' }} spacing={0} bg="backgroundBlurGray" borderRadius="8px">
-              <Button variant="ghost" {...dec} size="lg" fontWeight="bold">
-                -
-              </Button>
-              <Input p={0} w={{ base: 'full', sm: 14 }} h={14} border="none" textAlign="center" {...input} />
-              <Button variant="ghost" {...inc} size="lg" fontWeight="bold">
-                +
-              </Button>
-            </HStack>
+            <QuantityInput ref={ref} />
             <Button h={14} gap={4} bg="brand.50" _hover={{ opacity: 0.6 }} onClick={() => onAddToCart(product)}>
               <CartButtonIcon color="textBlue" />
               <Text color="textBlue">Add to Cart</Text>
@@ -147,6 +128,6 @@ const ProductInfo = ({ product, onAddToCart }: IProductInfo) => {
       </Stack>
     </Stack>
   )
-}
+})
 
 export default ProductInfo
