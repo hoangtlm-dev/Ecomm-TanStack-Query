@@ -1,5 +1,3 @@
-// Types
-import { Product } from '@app/types'
 import {
   Box,
   Button,
@@ -13,9 +11,15 @@ import {
   StackDivider,
   Text
 } from '@chakra-ui/react'
-import ProductRating from '../ProductRating'
-import { CartButtonIcon, FacebookIcon, TwitterIcon } from '@app/components/icons'
-import QuantityInput from '@app/components/QuantityInput'
+
+// Types
+import { Product } from '@app/types'
+
+// Components
+import { CartButtonIcon, FacebookIcon, TwitterIcon, ProductRating, QuantityInput } from '@app/components'
+
+// Utils
+import { calculateProductPrice } from '@app/utils'
 
 interface IProductInfo {
   product: Product
@@ -57,7 +61,7 @@ const ProductInfo = forwardRef<IProductInfo, 'div'>(({ product, onAddToCart }: I
             <HStack spacing={4}>
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
                 {unitPrice}
-                {parseFloat((price - (price * discount) / 100).toFixed(2))}
+                {calculateProductPrice(price, discount)}
               </Text>
               {discount && (
                 <>
