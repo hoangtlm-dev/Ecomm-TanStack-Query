@@ -1,7 +1,7 @@
 import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } from 'react'
 
 // Constants
-import { PAGINATION } from '@app/constants'
+import { MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
 import { Cart, PaginationResponse, QueryParams } from '@app/types'
@@ -10,18 +10,53 @@ import { Cart, PaginationResponse, QueryParams } from '@app/types'
 import { addToCartService, getCartsService } from '@app/services'
 
 export interface ICartState {
-  data: PaginationResponse<Cart>
+  cartList: PaginationResponse<Cart>
   isFetching: boolean
   error: string | null
 }
 
-export interface ICartAction {
-  type: 'REQUEST_PENDING' | 'ADD_TO_CART_SUCCESS' | 'FETCH_CARTS_SUCCESS' | 'REQUEST_FAILURE'
-  payload?: PaginationResponse<Cart> | Cart | string
+enum ActionTypes {
+  // Add to cart
+  ADD_TO_CART_PENDING,
+  ADD_TO_CART_SUCCESS,
+  ADD_TO_CART_FAILED,
+
+  // Fetch carts
+  FETCH_CARTS_PENDING,
+  FETCH_CARTS_SUCCESS,
+  FETCH_CARTS_FAILED
 }
 
+// Pending actions
+export interface IRequestPendingAction {
+  type: ActionTypes.ADD_TO_CART_PENDING | ActionTypes.FETCH_CARTS_PENDING
+}
+
+// Success actions
+export interface IAddToCartsSuccessAction {
+  type: ActionTypes.ADD_TO_CART_SUCCESS
+  payload: Cart
+}
+
+export interface IFetchCartsSuccessAction {
+  type: ActionTypes.FETCH_CARTS_SUCCESS
+  payload: PaginationResponse<Cart>
+}
+
+// Failure actions
+export interface IRequestFailureAction {
+  type: ActionTypes.ADD_TO_CART_FAILED | ActionTypes.FETCH_CARTS_FAILED
+  payload: string
+}
+
+export type ICartAction =
+  | IRequestPendingAction
+  | IAddToCartsSuccessAction
+  | IFetchCartsSuccessAction
+  | IRequestFailureAction
+
 const initialState: ICartState = {
-  data: {
+  cartList: {
     data: [],
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE,
     page: 1,
@@ -38,51 +73,48 @@ const initialState: ICartState = {
 
 const cartReducer = (state: ICartState, action: ICartAction): ICartState => {
   switch (action.type) {
-    case 'REQUEST_PENDING':
+    case ActionTypes.ADD_TO_CART_PENDING:
+    case ActionTypes.FETCH_CARTS_PENDING:
       return { ...state, isFetching: true, error: null }
 
-    case 'ADD_TO_CART_SUCCESS': {
-      const newCartItem = action.payload as Cart
+    case ActionTypes.ADD_TO_CART_SUCCESS: {
+      const newCartItem = action.payload
 
-      // Check if the product is already in the cart
-      const existingCartItemIndex = state.data.data.findIndex((item) => item.productId === newCartItem.productId)
+      const existingCartItemIndex = state.cartList.data.findIndex((item) => item.productId === newCartItem.productId)
 
       if (existingCartItemIndex > -1) {
-        // Product exists, update the quantity
-        const updatedCartData = state.data.data.map((item, index) =>
-          index === existingCartItemIndex
-            ? { ...item, quantity: item.quantity + newCartItem.quantity } // Update quantity
-            : item
+        const updatedCartData = state.cartList.data.map((item, index) =>
+          index === existingCartItemIndex ? { ...item, quantity: item.quantity + newCartItem.quantity } : item
         )
 
         return {
           ...state,
-          data: {
-            ...state.data,
+          cartList: {
+            ...state.cartList,
             data: updatedCartData
           }
         }
       }
 
-      // Product does not exist, add to cart
       return {
         ...state,
-        data: {
-          ...state.data,
-          data: [newCartItem, ...state.data.data]
+        cartList: {
+          ...state.cartList,
+          data: [newCartItem, ...state.cartList.data]
         }
       }
     }
 
-    case 'FETCH_CARTS_SUCCESS':
+    case ActionTypes.FETCH_CARTS_SUCCESS:
       return {
         ...state,
         isFetching: false,
-        data: action.payload as PaginationResponse<Cart>
+        cartList: action.payload
       }
 
-    case 'REQUEST_FAILURE':
-      return { ...state, isFetching: false, error: action.payload as string }
+    case ActionTypes.ADD_TO_CART_FAILED:
+    case ActionTypes.FETCH_CARTS_FAILED:
+      return { ...state, isFetching: false, error: action.payload }
 
     default:
       return state
@@ -102,7 +134,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState)
 
   const fetchCarts = useCallback(async (params: Partial<QueryParams<Cart>> = {}) => {
-    dispatch({ type: 'REQUEST_PENDING' })
+    dispatch({ type: ActionTypes.FETCH_CARTS_PENDING })
 
     const defaultParams: QueryParams<Partial<Cart>> = {
       _sort: params._sort ?? 'id',
@@ -114,23 +146,26 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const response: PaginationResponse<Cart> = await getCartsService(defaultParams)
-      dispatch({ type: 'FETCH_CARTS_SUCCESS', payload: response })
+      dispatch({ type: ActionTypes.FETCH_CARTS_SUCCESS, payload: response })
     } catch (error) {
-      dispatch({ type: 'REQUEST_FAILURE', payload: 'Failed to fetch Cart' })
+      dispatch({ type: ActionTypes.FETCH_CARTS_FAILED, payload: MESSAGES.FETCH_CARTS_FAILED })
     }
   }, [])
 
-  const addToCart = useCallback(async (cart: Cart) => {
-    try {
-      const newCart = await addToCartService(cart)
+  const addToCart = useCallback(
+    async (cart: Cart) => {
+      try {
+        const newCart = await addToCartService(cart)
 
-      dispatch({ type: 'ADD_TO_CART_SUCCESS', payload: newCart })
+        dispatch({ type: ActionTypes.ADD_TO_CART_SUCCESS, payload: newCart })
 
-      fetchCarts()
-    } catch (error) {
-      dispatch({ type: 'REQUEST_FAILURE', payload: 'Failed to add to cart' })
-    }
-  }, [])
+        fetchCarts()
+      } catch (error) {
+        dispatch({ type: ActionTypes.FETCH_CARTS_FAILED, payload: MESSAGES.ADD_TO_CART_FAILED })
+      }
+    },
+    [fetchCarts]
+  )
 
   const cartContextValue: ICartContextType = useMemo(
     () => ({

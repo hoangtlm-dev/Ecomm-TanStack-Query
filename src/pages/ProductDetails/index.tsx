@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Container, Heading, VStack } from '@chakra-ui/react'
+import { Container, Heading, useToast, VStack } from '@chakra-ui/react'
+
+// Constants
+import { MESSAGES } from '@app/constants'
 
 // Components
 import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
@@ -20,9 +23,12 @@ const ProductDetails = () => {
 
   const { state, fetchProducts, fetchCurrentProduct } = useProductContext()
   const { state: cartState, addToCart } = useCartContext()
-  const { data, currentProduct, isFetching, isCurrentProductFetching } = state
+  const { productList, currentProduct, isProductListFetching, isCurrentProductFetching } = state
+  const { cartList } = cartState
 
-  const productQuantityRef = useRef<HTMLInputElement>(null)
+  const currentProductQuantityRef = useRef<HTMLInputElement>(null)
+
+  const toast = useToast()
 
   useEffect(() => {
     if (productId) {
@@ -39,9 +45,11 @@ const ProductDetails = () => {
   const handleAddProductToCart = (product: Product) => {
     const { id, name, price, unitPrice, quantity, discount, image } = product
 
-    const cartItemFound = cartState.data.data.find((cart) => cart.productId === id)
+    const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
     const cartQuantity =
-      product.id === currentProduct?.id && productQuantityRef.current ? Number(productQuantityRef.current.value) : 1
+      product.id === currentProduct?.id && currentProductQuantityRef.current
+        ? Number(currentProductQuantityRef.current.value)
+        : 1
 
     addToCart({
       id: cartItemFound ? cartItemFound.id : 0,
@@ -53,6 +61,15 @@ const ProductDetails = () => {
       productDiscount: discount,
       productImage: image,
       quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
+    })
+
+    toast({
+      position: 'bottom-right',
+      title: 'Success',
+      description: MESSAGES.ADD_PRODUCT_SUCCESS,
+      status: 'success',
+      duration: 3000,
+      isClosable: true
     })
   }
 
@@ -67,15 +84,16 @@ const ProductDetails = () => {
   return (
     <Container>
       {currentProduct && (
-        <ProductInfo product={currentProduct} onAddToCart={handleAddProductToCart} ref={productQuantityRef} />
+        <ProductInfo product={currentProduct} onAddToCart={handleAddProductToCart} ref={currentProductQuantityRef} />
       )}
+
       <VStack mt={12} spacing={12}>
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
           Related Products
         </Heading>
         <ProductList
-          isFetching={isFetching}
-          products={data.data}
+          isFetching={isProductListFetching}
+          products={productList.data}
           listType="grid"
           onAddToCart={handleAddProductToCart}
           gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }}

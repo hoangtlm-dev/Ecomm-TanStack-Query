@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, Grid, Box } from '@chakra-ui/react'
+import { Center, Divider, Grid } from '@chakra-ui/react'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -14,16 +14,19 @@ interface IProductListProps {
   isFetching: boolean
   products: Product[]
   listType: 'grid' | 'list'
-  onAddToCart: (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onAddToCart: (product: Product) => void
   gridTemplateColumns?: { [key: string]: string }
 }
 
 const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplateColumns }: IProductListProps) => {
-  const defaultGridTemplateColumns = {
-    base: 'repeat(1, 1fr)',
-    sm: 'repeat(2, 1fr)',
-    xl: 'repeat(3, 1fr)'
-  }
+  const defaultGridTemplateColumns =
+    listType === 'grid'
+      ? {
+          base: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          xl: 'repeat(3, 1fr)'
+        }
+      : 'repeat(1, 1fr)'
 
   const renderProducts = () => {
     if (isFetching) {
@@ -36,7 +39,7 @@ const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplate
     }
 
     if (!products.length) {
-      return null // No products, return null here
+      return null
     }
 
     return products.map((product, index) => (
@@ -50,11 +53,11 @@ const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplate
   return (
     <>
       {!isFetching && !products.length ? (
-        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+        <Center>
           <ProductListEmpty />
-        </Box>
+        </Center>
       ) : (
-        <Grid templateColumns={gridTemplateColumns || defaultGridTemplateColumns} gap={4}>
+        <Grid w="full" templateColumns={gridTemplateColumns || defaultGridTemplateColumns} gap={4}>
           {renderProducts()}
         </Grid>
       )}

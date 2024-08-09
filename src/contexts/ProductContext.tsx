@@ -1,7 +1,7 @@
 import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } from 'react'
 
 // Constants
-import { PAGINATION } from '@app/constants'
+import { MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
 import { PaginationResponse, Product, QueryParams } from '@app/types'
@@ -10,25 +10,43 @@ import { PaginationResponse, Product, QueryParams } from '@app/types'
 import { getCurrentProductServices, getProductsService } from '@app/services'
 
 export interface IProductState {
-  data: PaginationResponse<Product>
+  productList: PaginationResponse<Product>
   currentProduct: Product | null
-  isFetching: boolean
+  isProductListFetching: boolean
   isCurrentProductFetching: boolean
   error: string | null
 }
 
-export interface IProductAction {
-  type:
-    | 'REQUEST_PENDING'
-    | 'REQUEST_PRODUCT_DETAILS_PENDING'
-    | 'FETCH_PRODUCTS_SUCCESS'
-    | 'FETCH_CURRENT_PRODUCT_SUCCESS'
-    | 'REQUEST_FAILURE'
-  payload?: PaginationResponse<Product> | Product | string
+// Pending actions
+export interface IRequestPendingAction {
+  type: 'FETCH_PRODUCTS_PENDING' | 'FETCH_PRODUCT_DETAILS_PENDING'
 }
 
+// Success actions
+export interface IFetchProductsSuccessAction {
+  type: 'FETCH_PRODUCTS_SUCCESS'
+  payload: PaginationResponse<Product>
+}
+
+export interface IFetchCurrentProductSuccessAction {
+  type: 'FETCH_PRODUCT_DETAILS_SUCCESS'
+  payload: Product
+}
+
+// Failure actions
+export interface IRequestFailureAction {
+  type: 'FETCH_PRODUCTS_FAILURE' | 'FETCH_PRODUCT_DETAILS_FAILURE'
+  payload: string
+}
+
+export type IProductAction =
+  | IRequestPendingAction
+  | IFetchProductsSuccessAction
+  | IFetchCurrentProductSuccessAction
+  | IRequestFailureAction
+
 const initialState: IProductState = {
-  data: {
+  productList: {
     data: [],
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE,
     page: 1,
@@ -40,23 +58,25 @@ const initialState: IProductState = {
     totalPages: 0
   },
   currentProduct: null,
-  isFetching: false,
+  isProductListFetching: false,
   isCurrentProductFetching: false,
   error: null
 }
 
 const productReducer = (state: IProductState, action: IProductAction): IProductState => {
   switch (action.type) {
-    case 'REQUEST_PENDING':
-      return { ...state, isFetching: true, error: null }
-    case 'REQUEST_PRODUCT_DETAILS_PENDING':
+    case 'FETCH_PRODUCTS_PENDING':
+      return { ...state, isProductListFetching: true, error: null }
+    case 'FETCH_PRODUCT_DETAILS_PENDING':
       return { ...state, isCurrentProductFetching: true, error: null }
     case 'FETCH_PRODUCTS_SUCCESS':
-      return { ...state, isFetching: false, data: action.payload as PaginationResponse<Product> }
-    case 'FETCH_CURRENT_PRODUCT_SUCCESS':
-      return { ...state, isCurrentProductFetching: false, currentProduct: action.payload as Product }
-    case 'REQUEST_FAILURE':
-      return { ...state, isFetching: false, error: action.payload as string }
+      return { ...state, isProductListFetching: false, productList: action.payload }
+    case 'FETCH_PRODUCT_DETAILS_SUCCESS':
+      return { ...state, isCurrentProductFetching: false, currentProduct: action.payload }
+    case 'FETCH_PRODUCTS_FAILURE':
+      return { ...state, isProductListFetching: false, error: action.payload }
+    case 'FETCH_PRODUCT_DETAILS_FAILURE':
+      return { ...state, isCurrentProductFetching: false, error: action.payload }
     default:
       return state
   }
@@ -75,7 +95,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(productReducer, initialState)
 
   const fetchProducts = useCallback(async (params: Partial<QueryParams<Product>> = {}) => {
-    dispatch({ type: 'REQUEST_PENDING' })
+    dispatch({ type: 'FETCH_PRODUCTS_PENDING' })
 
     const defaultParams: QueryParams<Partial<Product>> = {
       _sort: params._sort ?? 'id',
@@ -90,17 +110,17 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
       const response: PaginationResponse<Product> = await getProductsService(defaultParams)
       dispatch({ type: 'FETCH_PRODUCTS_SUCCESS', payload: response })
     } catch (error) {
-      dispatch({ type: 'REQUEST_FAILURE', payload: 'Failed to fetch product' })
+      dispatch({ type: 'FETCH_PRODUCTS_FAILURE', payload: MESSAGES.FETCH_PRODUCTS_FAILED })
     }
   }, [])
 
   const fetchCurrentProduct = useCallback(async (productId: number) => {
-    dispatch({ type: 'REQUEST_PRODUCT_DETAILS_PENDING' })
+    dispatch({ type: 'FETCH_PRODUCT_DETAILS_PENDING' })
     try {
       const response = await getCurrentProductServices(productId)
-      dispatch({ type: 'FETCH_CURRENT_PRODUCT_SUCCESS', payload: response })
+      dispatch({ type: 'FETCH_PRODUCT_DETAILS_SUCCESS', payload: response })
     } catch (error) {
-      dispatch({ type: 'REQUEST_FAILURE', payload: 'Failed to fetch product details' })
+      dispatch({ type: 'FETCH_PRODUCT_DETAILS_FAILURE', payload: MESSAGES.FETCH_PRODUCT_DETAILS_FAILED })
     }
   }, [])
 
