@@ -43,7 +43,7 @@ const ActionHeader = () => {
                 borderColor="white"
                 borderWidth={2}
               >
-                {cartState.data.totalItems}
+                {cartState.cartList.totalItems}
               </Circle>
             </Box>
           </Link>

@@ -26,12 +26,12 @@ import { Product } from '@app/types'
 import { CartButtonIcon, ProductRating } from '@app/components'
 
 // Utils
-import { generateSlugByNameAndId } from '@app/utils'
+import { calculateProductPrice, generateSlugByNameAndId } from '@app/utils'
 
 interface IProductItemProps {
   product: Product
   listType: 'grid' | 'list'
-  onAddToCart: (product: Product, event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onAddToCart: (product: Product) => void
 }
 
 const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
@@ -79,7 +79,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
                 isRound
                 aria-label="Cart icon"
                 icon={<CartButtonIcon />}
-                onClick={(event) => onAddToCart(product, event)}
+                onClick={() => onAddToCart(product)}
               />
             </Center>
           </Box>
@@ -140,10 +140,10 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
       borderRadius={4}
       _hover={{ transform: 'translateY(-8px)', transition: 'all .2s linear' }}
     >
-      <Flex gap={4}>
+      <Flex gap={4} h="full">
         {/* Product Image */}
         <Box w="300px" h="full" bg="backgroundBlurGray">
-          <Image src={image} alt={name} />
+          <Image boxSize="full" objectFit="cover" src={image} alt={name} />
         </Box>
 
         {/* Product Info */}
@@ -173,7 +173,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
             <HStack alignSelf="flex-start">
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
                 {unitPrice}
-                {parseFloat((price - (price * discount) / 100).toFixed(2))}
+                {calculateProductPrice(price, discount)}
               </Text>
               {discount && (
                 <>
@@ -195,7 +195,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
               gap={3}
               bg="brand.50"
               _hover={{ opacity: 0.6 }}
-              onClick={(event) => onAddToCart(product, event)}
+              onClick={() => onAddToCart(product)}
             >
               <CartButtonIcon color="textBlue" />
               <Text color="textBlue">Add to Cart</Text>

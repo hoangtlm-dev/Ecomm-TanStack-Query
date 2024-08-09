@@ -3,7 +3,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 import { Container, Flex, Stack, useToast } from '@chakra-ui/react'
 
 // Constants
-import { banner, PAGINATION, ROUTES } from '@app/constants'
+import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
 
 // Types
 import { Product } from '@app/types'
@@ -33,8 +33,9 @@ const Home = () => {
   const { state: productState, fetchProducts } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
   const { state: cartState, fetchCarts, addToCart } = useCartContext()
-  const { data, isFetching } = productState
-  const { data: categoryData } = categoryState
+  const { productList, isProductListFetching } = productState
+  const { categoryList } = categoryState
+  const { cartList } = cartState
   const queryParams = useQueryParams()
 
   const toast = useToast()
@@ -48,7 +49,7 @@ const Home = () => {
   }, [fetchProducts, currentCategoryId, currentPage])
 
   useEffect(() => {
-    fetchCategories({})
+    fetchCategories()
   }, [fetchCategories])
 
   useEffect(() => {
@@ -96,7 +97,7 @@ const Home = () => {
   const handleAddProductToCart = (product: Product) => {
     const { id, name, price, unitPrice, quantity, discount, image } = product
 
-    const cartItemFound = cartState.data.data.find((cart) => cart.productId === id)
+    const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
 
     addToCart({
       id: cartItemFound ? cartItemFound.id : 0,
@@ -113,7 +114,7 @@ const Home = () => {
     toast({
       position: 'bottom-right',
       title: 'Success',
-      description: 'A product was added to your cart.',
+      description: MESSAGES.ADD_PRODUCT_SUCCESS,
       status: 'success',
       duration: 3000,
       isClosable: true
@@ -124,7 +125,7 @@ const Home = () => {
     <Container>
       <Flex gap={8} direction={{ base: 'column', lg: 'row' }}>
         <Stack gap={8}>
-          <FilterCategories categories={categoryData.data} />
+          <FilterCategories categories={categoryList.data} />
           <FilterPrices minPrice={13.99} maxPrice={25.33} onFilterByPrices={handleFilterByPrices} />
           <FilterColors colors={filteredColors} activeColor={activeColor} onFilterByColors={handleFilterByColors} />
         </Stack>
@@ -136,7 +137,7 @@ const Home = () => {
             description="Performance and design. Taken right to the edge."
           />
           <ActionBar
-            totalItems={data.totalItems}
+            totalItems={productList.totalItems}
             sortOptions={['Id', 'Name', 'Price']}
             showOptions={[6, 9, 12]}
             listType={listType}
@@ -146,15 +147,15 @@ const Home = () => {
           />
 
           <ProductList
-            isFetching={isFetching}
-            products={data.data}
+            isFetching={isProductListFetching}
+            products={productList.data}
             listType={listType}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination
-            totalItems={data.totalItems}
-            itemsPerPage={data.limit || PAGINATION.DEFAULT_ITEMS_PER_PAGE}
-            currentPage={currentPage}
+            totalItems={productList.totalItems}
+            itemsPerPage={productList.limit || PAGINATION.DEFAULT_ITEMS_PER_PAGE}
+            currentPage={productList.page}
           />
         </Stack>
       </Flex>
