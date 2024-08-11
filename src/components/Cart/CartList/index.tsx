@@ -1,35 +1,127 @@
-import { Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import { Fragment } from 'react'
+import {
+  Box,
+  Divider,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr
+} from '@chakra-ui/react'
 
-const CartList = () => {
+// Constants
+import { PAGINATION } from '@app/constants'
+
+// Types
+import { Cart } from '@app/types'
+
+// Components
+import { CloseIcon, ProductListEmpty, QuantityInput, SkeletonCartItem, CartItem } from '@app/components'
+
+interface ICartListProps {
+  isFetching: boolean
+  carts: Cart[]
+  onRemoveItemFromCart: (cartId: number) => void
+}
+
+const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) => {
+  const renderCartContent = () => {
+    if (isFetching) {
+      return Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
+        <Fragment key={index}>
+          <SkeletonCartItem />
+          {index < PAGINATION.DEFAULT_ITEMS_PER_PAGE - 1 && <Divider orientation="horizontal" />}
+        </Fragment>
+      ))
+    }
+
+    if (!carts.length) {
+      return <ProductListEmpty />
+    }
+
+    return carts.map((cart, index) => (
+      <Fragment key={cart.id}>
+        <CartItem cart={cart} onRemoveItemFromCart={onRemoveItemFromCart} />
+        {index < carts.length - 1 && <Divider orientation="horizontal" />}
+      </Fragment>
+    ))
+  }
   return (
-    <TableContainer>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>To convert</Th>
-            <Th>into</Th>
-            <Th isNumeric>multiply by</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td>inches</Td>
-            <Td>millimetres (mm)</Td>
-            <Td isNumeric>25.4</Td>
-          </Tr>
-          <Tr>
-            <Td>feet</Td>
-            <Td>centimetres (cm)</Td>
-            <Td isNumeric>30.48</Td>
-          </Tr>
-          <Tr>
-            <Td>yards</Td>
-            <Td>metres (m)</Td>
-            <Td isNumeric>0.91444</Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <>
+      {/* Cart for Mobile & Tablet screen */}
+      <Stack display={{ base: 'flex', lg: 'none' }} gap={8}>
+        {renderCartContent()}
+      </Stack>
+      {/* Table for Desktop screen */}
+      <TableContainer display={{ base: 'none', lg: 'block' }}>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th></Th>
+              <Th>Product</Th>
+              <Th>Unit Price</Th>
+              <Th>Qty</Th>
+              <Th>Price</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {carts.map((cart) => {
+              const { id, productName, productImage, productPrice, productUnitPrice } = cart
+
+              return (
+                <Tr key={id}>
+                  <Td>
+                    <IconButton
+                      boxSize={4}
+                      minW="unset"
+                      aria-label="close"
+                      backgroundColor="backgroundBlurGray"
+                      icon={<CloseIcon boxSize={2} color="textLightRed" />}
+                      _hover={{ opacity: 0.6 }}
+                      onClick={() => onRemoveItemFromCart(id)}
+                    />
+                  </Td>
+                  <Td>
+                    <HStack>
+                      <Box boxSize="80px">
+                        <Image src={productImage} boxSize="full" objectFit="cover" />
+                      </Box>
+
+                      <Heading as="h3" fontSize="textSmall" noOfLines={1}>
+                        {productName}
+                      </Heading>
+                    </HStack>
+                  </Td>
+                  <Td>
+                    <Text>
+                      {productUnitPrice}
+                      {productPrice}
+                    </Text>
+                  </Td>
+                  <Td>
+                    <QuantityInput />
+                  </Td>
+                  <Td>
+                    <Text>
+                      {productPrice}
+                      {productPrice}
+                    </Text>
+                  </Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </>
   )
 }
 
