@@ -29,7 +29,10 @@ enum ActionTypes {
   // Delete from cart
   REMOVE_FROM_CART_PENDING,
   REMOVE_FROM_CART_SUCCESS,
-  REMOVE_FROM_CART_FAILED
+  REMOVE_FROM_CART_FAILED,
+
+  INCREASE_QUANTITY,
+  DECREASE_QUANTITY
 }
 
 // Pending actions
@@ -53,6 +56,16 @@ export interface IDeleteFromCartSuccessAction {
   payload: number
 }
 
+export interface IIncreaseQuantityAction {
+  type: ActionTypes.INCREASE_QUANTITY
+  payload: number // cartId
+}
+
+export interface IDecreaseQuantityAction {
+  type: ActionTypes.DECREASE_QUANTITY
+  payload: number // cartId
+}
+
 // Failure actions
 export interface IRequestFailureAction {
   type: ActionTypes.ADD_TO_CART_FAILED | ActionTypes.FETCH_CARTS_FAILED | ActionTypes.REMOVE_FROM_CART_FAILED
@@ -64,6 +77,8 @@ export type ICartAction =
   | IAddToCartsSuccessAction
   | IFetchCartsSuccessAction
   | IDeleteFromCartSuccessAction
+  | IIncreaseQuantityAction
+  | IDecreaseQuantityAction
   | IRequestFailureAction
 
 const initialState: ICartState = {
@@ -137,6 +152,31 @@ const cartReducer = (state: ICartState, action: ICartAction): ICartState => {
       }
     }
 
+    case ActionTypes.INCREASE_QUANTITY: {
+      const updatedCartData = state.cartList.data.map((item) =>
+        item.id === action.payload ? { ...item, quantity: item.quantity + 1 } : item
+      )
+      return {
+        ...state,
+        cartList: {
+          ...state.cartList,
+          data: updatedCartData
+        }
+      }
+    }
+    case ActionTypes.DECREASE_QUANTITY: {
+      const updatedCartData = state.cartList.data.map((item) =>
+        item.id === action.payload && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+      )
+      return {
+        ...state,
+        cartList: {
+          ...state.cartList,
+          data: updatedCartData
+        }
+      }
+    }
+
     case ActionTypes.ADD_TO_CART_FAILED:
     case ActionTypes.FETCH_CARTS_FAILED:
     case ActionTypes.REMOVE_FROM_CART_FAILED:
@@ -153,6 +193,8 @@ export interface ICartContextType {
   addToCart: (cart: Cart) => Promise<void>
   fetchCarts: (params?: Partial<QueryParams<Cart>>) => Promise<void>
   removeFromCart: (cartId: number) => Promise<void>
+  increaseQuantity: (cartId: number) => void
+  decreaseQuantity: (cartId: number) => void
 }
 
 export const CartContext = createContext<ICartContextType | null>(null)
@@ -210,13 +252,23 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     [fetchCarts]
   )
 
+  const increaseQuantity = useCallback((cartId: number) => {
+    dispatch({ type: ActionTypes.INCREASE_QUANTITY, payload: cartId })
+  }, [])
+
+  const decreaseQuantity = useCallback((cartId: number) => {
+    dispatch({ type: ActionTypes.DECREASE_QUANTITY, payload: cartId })
+  }, [])
+
   const cartContextValue: ICartContextType = useMemo(
     () => ({
       state,
       dispatch,
       fetchCarts,
       addToCart,
-      removeFromCart
+      removeFromCart,
+      increaseQuantity,
+      decreaseQuantity
     }),
     [state, fetchCarts, addToCart, removeFromCart]
   )

@@ -18,7 +18,7 @@ import { CartList } from '@app/components'
 import { useCartContext } from '@app/hooks'
 
 const Cart = () => {
-  const { state: cartState, fetchCarts, removeFromCart } = useCartContext()
+  const { state: cartState, fetchCarts, removeFromCart, increaseQuantity, decreaseQuantity } = useCartContext()
   const { isFetching, cartList } = cartState
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -36,15 +36,27 @@ const Cart = () => {
   }
 
   const handleConfirmRemoveItemFromCart = () => {
-    if (selectedCartId !== null) {
+    if (selectedCartId) {
       removeFromCart(selectedCartId)
       onClose()
     }
   }
 
+  const handleChangeQuantity = (cartId: number, value: number) => {
+    setSelectedCartId(cartId)
+    console.log(value)
+  }
+
   return (
     <Container>
-      <CartList isFetching={isFetching} carts={cartList.data} onRemoveItemFromCart={handleRemoveItemFromCart} />
+      <CartList
+        isFetching={isFetching}
+        carts={cartList.data}
+        onRemoveItemFromCart={handleRemoveItemFromCart}
+        onIncreaseQuantity={increaseQuantity}
+        onDecreaseQuantity={decreaseQuantity}
+        onChangeQuantity={handleChangeQuantity}
+      />
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>
         <AlertDialogOverlay>
           <AlertDialogContent>

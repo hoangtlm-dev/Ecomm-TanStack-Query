@@ -24,7 +24,7 @@ import { PAGINATION } from '@app/constants'
 import { Cart } from '@app/types'
 
 // Components
-import { CloseIcon, ProductListEmpty, QuantityInput, SkeletonCartItem, CartItem } from '@app/components'
+import { CloseIcon, ProductListEmpty, SkeletonCartItem, CartItem, QuantityController } from '@app/components'
 
 // Utils
 import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
@@ -33,9 +33,19 @@ interface ICartListProps {
   isFetching: boolean
   carts: Cart[]
   onRemoveItemFromCart: (cartId: number) => void
+  onIncreaseQuantity: (cartId: number) => void
+  onDecreaseQuantity: (cartId: number) => void
+  onChangeQuantity: (cartId: number, value: number) => void
 }
 
-const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) => {
+const CartList = ({
+  isFetching,
+  carts,
+  onRemoveItemFromCart,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
+  onChangeQuantity
+}: ICartListProps) => {
   const renderCartContent = () => {
     if (isFetching) {
       return Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
@@ -52,11 +62,18 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
 
     return carts.map((cart, index) => (
       <Fragment key={cart.id}>
-        <CartItem cart={cart} onRemoveItemFromCart={onRemoveItemFromCart} />
+        <CartItem
+          cart={cart}
+          onRemoveItemFromCart={onRemoveItemFromCart}
+          onIncreaseQuantity={() => onIncreaseQuantity(cart.id)}
+          onChangeQuantity={(value) => onChangeQuantity(cart.id, Number(value))}
+          onDecreaseQuantity={() => onDecreaseQuantity(cart.id)}
+        />
         {index < carts.length - 1 && <Divider orientation="horizontal" />}
       </Fragment>
     ))
   }
+
   return (
     <>
       {/* Cart for Mobile & Tablet screen */}
@@ -77,7 +94,16 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
           </Thead>
           <Tbody>
             {carts.map((cart) => {
-              const { id, productName, productImage, productPrice, productUnitPrice, productDiscount, quantity } = cart
+              const {
+                id,
+                productName,
+                productImage,
+                productPrice,
+                productUnitPrice,
+                productQuantity,
+                productDiscount,
+                quantity
+              } = cart
 
               return (
                 <Tr key={id}>
@@ -110,7 +136,13 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
                     </Text>
                   </Td>
                   <Td>
-                    <QuantityInput />
+                    <QuantityController
+                      maxQuantity={productQuantity}
+                      currentQuantity={quantity}
+                      onIncreaseQuantity={() => onIncreaseQuantity(id)}
+                      onChangeQuantity={(value) => onChangeQuantity(id, Number(value))}
+                      onDecreaseQuantity={() => onDecreaseQuantity(id)}
+                    />
                   </Td>
                   <Td>
                     <Text>
