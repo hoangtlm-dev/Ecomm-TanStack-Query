@@ -49,7 +49,7 @@ const Navbar = () => {
 
   return (
     <Container>
-      <HStack justifyContent="space-between" p={4} position="relative" zIndex={2}>
+      <HStack justifyContent="space-between" py={4} position="relative" zIndex={2}>
         <BrandingLogo />
         <HStack as="nav" spacing={10} display={{ base: 'none', lg: 'flex' }}>
           <NavMenuLinks />

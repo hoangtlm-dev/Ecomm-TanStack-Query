@@ -42,6 +42,8 @@ const ProductDetails = () => {
     }
   }, [currentProduct, productId, fetchProducts])
 
+  console.log(currentProductQuantityRef.current && Number(currentProductQuantityRef.current.value))
+
   const handleAddProductToCart = (product: Product) => {
     const { id, name, price, unitPrice, quantity, discount, image } = product
 
