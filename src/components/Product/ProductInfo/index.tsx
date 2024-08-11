@@ -99,6 +99,7 @@ const ProductInfo = ({
           >
             <HStack>
               <QuantityController
+                size="xl"
                 maxQuantity={product.quantity}
                 currentQuantity={currentQuantity}
                 onIncreaseQuantity={onIncreaseQuantity}

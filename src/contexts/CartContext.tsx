@@ -58,12 +58,12 @@ export interface IDeleteFromCartSuccessAction {
 
 export interface IIncreaseQuantityAction {
   type: ActionTypes.INCREASE_QUANTITY
-  payload: number // cartId
+  payload: number
 }
 
 export interface IDecreaseQuantityAction {
   type: ActionTypes.DECREASE_QUANTITY
-  payload: number // cartId
+  payload: number
 }
 
 // Failure actions

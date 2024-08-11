@@ -1,12 +1,21 @@
 import { Button, HStack, NumberInput, NumberInputField } from '@chakra-ui/react'
 
-interface IQuantityControllerProps {
+export interface IQuantityControllerProps {
   minQuantity?: number
   maxQuantity: number
   currentQuantity: number
   onIncreaseQuantity: () => void
   onDecreaseQuantity: () => void
   onChangeQuantity: (value: number) => void
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+}
+
+const sizeMap = {
+  xs: '24px',
+  sm: '32px',
+  md: '40px',
+  lg: '48px',
+  xl: '56px'
 }
 
 const QuantityController = ({
@@ -15,23 +24,55 @@ const QuantityController = ({
   currentQuantity,
   onIncreaseQuantity,
   onDecreaseQuantity,
-  onChangeQuantity
+  onChangeQuantity,
+  size = 'md'
 }: IQuantityControllerProps) => {
+  const buttonSize = sizeMap[size]
+
   return (
-    <HStack maxW={{ base: 'full', sm: '320px' }} spacing={0} bg="backgroundBlurGray" borderRadius="8px">
-      <HStack>
-        <Button onClick={onDecreaseQuantity}>-</Button>
-        <NumberInput
-          defaultValue={currentQuantity}
-          value={currentQuantity}
-          min={minQuantity}
-          max={maxQuantity}
-          onChange={(value) => onChangeQuantity(Number(value))}
-        >
-          <NumberInputField />
-        </NumberInput>
-        <Button onClick={onIncreaseQuantity}>+</Button>
-      </HStack>
+    <HStack gap={0}>
+      <Button
+        onClick={onDecreaseQuantity}
+        variant="ghost"
+        boxSize={buttonSize}
+        minW="unset"
+        p="unset"
+        backgroundColor="backgroundBlurGray"
+        borderTopRightRadius={0}
+        borderBottomRightRadius={0}
+      >
+        -
+      </Button>
+      <NumberInput
+        value={currentQuantity}
+        min={minQuantity}
+        max={maxQuantity}
+        onChange={(value) => onChangeQuantity(Number(value))}
+        zIndex="unset"
+        textAlign="center"
+        backgroundColor="backgroundBlurGray"
+      >
+        <NumberInputField
+          boxSize={buttonSize}
+          p="unset"
+          textAlign="center"
+          border="none"
+          borderRadius={0}
+          backgroundColor="backgroundBlurGray"
+        />
+      </NumberInput>
+      <Button
+        onClick={onIncreaseQuantity}
+        variant="ghost"
+        boxSize={buttonSize}
+        minW="unset"
+        p="unset"
+        backgroundColor="backgroundBlurGray"
+        borderTopLeftRadius={0}
+        borderBottomLeftRadius={0}
+      >
+        +
+      </Button>
     </HStack>
   )
 }

@@ -142,6 +142,7 @@ const CartList = ({
                       onIncreaseQuantity={() => onIncreaseQuantity(id)}
                       onChangeQuantity={(value) => onChangeQuantity(id, Number(value))}
                       onDecreaseQuantity={() => onDecreaseQuantity(id)}
+                      size="md"
                     />
                   </Td>
                   <Td>

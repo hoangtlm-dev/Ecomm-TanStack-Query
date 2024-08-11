@@ -61,7 +61,7 @@ const Cart = () => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Remove item
+              Delete
             </AlertDialogHeader>
 
             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
