@@ -1,32 +1,31 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  forwardRef,
-  Heading,
-  HStack,
-  Image,
-  Stack,
-  StackDivider,
-  Text
-} from '@chakra-ui/react'
+import { Box, Button, Center, Flex, Heading, HStack, Image, Stack, StackDivider, Text } from '@chakra-ui/react'
 
 // Types
 import { Product } from '@app/types'
 
 // Components
-import { CartButtonIcon, FacebookIcon, TwitterIcon, ProductRating, QuantityInput } from '@app/components'
+import { CartButtonIcon, FacebookIcon, TwitterIcon, ProductRating, QuantityController } from '@app/components'
 
 // Utils
 import { calculateProductPrice } from '@app/utils'
 
-interface IProductInfo {
+interface IProductInfoProps {
   product: Product
   onAddToCart: (product: Product) => void
+  currentQuantity: number
+  onIncreaseQuantity: () => void
+  onDecreaseQuantity: () => void
+  onChangeQuantity: (value: number) => void
 }
 
-const ProductInfo = forwardRef<IProductInfo, 'div'>(({ product, onAddToCart }: IProductInfo, ref) => {
+const ProductInfo = ({
+  product,
+  onAddToCart,
+  currentQuantity,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
+  onChangeQuantity
+}: IProductInfoProps) => {
   const { name, description, image, price, unitPrice, quantity, discount, reviewNumber, ratingStar, categoryName } =
     product
 
@@ -98,7 +97,16 @@ const ProductInfo = forwardRef<IProductInfo, 'div'>(({ product, onAddToCart }: I
             direction={{ base: 'column', sm: 'row' }}
             justifyContent="space-between"
           >
-            <QuantityInput ref={ref} />
+            <HStack>
+              <QuantityController
+                size="xl"
+                maxQuantity={product.quantity}
+                currentQuantity={currentQuantity}
+                onIncreaseQuantity={onIncreaseQuantity}
+                onDecreaseQuantity={onDecreaseQuantity}
+                onChangeQuantity={onChangeQuantity}
+              />
+            </HStack>
             <Button h={14} gap={4} bg="brand.50" _hover={{ opacity: 0.6 }} onClick={() => onAddToCart(product)}>
               <CartButtonIcon color="textBlue" />
               <Text color="textBlue">Add to Cart</Text>
@@ -132,6 +140,6 @@ const ProductInfo = forwardRef<IProductInfo, 'div'>(({ product, onAddToCart }: I
       </Stack>
     </Stack>
   )
-})
+}
 
 export default ProductInfo

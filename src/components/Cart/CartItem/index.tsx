@@ -4,7 +4,7 @@ import { Box, Flex, Heading, IconButton, Image, Stack, Text } from '@chakra-ui/r
 import { Cart } from '@app/types'
 
 // Components
-import { CloseIcon, QuantityInput } from '@app/components'
+import { CloseIcon, QuantityController } from '@app/components'
 
 // Utils
 import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
@@ -12,10 +12,20 @@ import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
 interface ICartItemProps {
   cart: Cart
   onRemoveItemFromCart: (cartId: number) => void
+  onIncreaseQuantity: (cartId: number) => void
+  onDecreaseQuantity: (cartId: number) => void
+  onChangeQuantity: (cartId: number, value: number) => void
 }
 
-const CartItem = ({ cart, onRemoveItemFromCart }: ICartItemProps) => {
-  const { id, productName, productImage, productPrice, productUnitPrice, productDiscount, quantity } = cart
+const CartItem = ({
+  cart,
+  onRemoveItemFromCart,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
+  onChangeQuantity
+}: ICartItemProps) => {
+  const { id, productName, productImage, productPrice, productQuantity, productUnitPrice, productDiscount, quantity } =
+    cart
 
   return (
     <Flex gap={4} display={{ base: 'flex', lg: 'none' }}>
@@ -42,7 +52,13 @@ const CartItem = ({ cart, onRemoveItemFromCart }: ICartItemProps) => {
             {productUnitPrice}
             {calculateProductPrice(productPrice, productDiscount)}
           </Text>
-          <QuantityInput />
+          <QuantityController
+            maxQuantity={productQuantity}
+            currentQuantity={quantity}
+            onIncreaseQuantity={() => onIncreaseQuantity(id)}
+            onChangeQuantity={(value) => onChangeQuantity(id, Number(value))}
+            onDecreaseQuantity={() => onDecreaseQuantity(id)}
+          />
           <Text fontSize="textSmall">
             {productUnitPrice}
             {calculateProductPriceInCart(productPrice, productDiscount, quantity)}

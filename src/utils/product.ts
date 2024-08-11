@@ -11,5 +11,5 @@ export const calculateProductPrice = (price: number, discount: number) =>
 export const calculateProductPriceInCart = (price: number, discount: number, quantityInCart: number) => {
   const originalProductPrice = calculateProductPrice(price, discount)
 
-  return originalProductPrice * quantityInCart
+  return parseFloat((originalProductPrice * quantityInCart).toFixed(2))
 }
