@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Image, Stack, Text } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react'
 
 // Types
 import { Cart } from '@app/types'
@@ -7,7 +7,7 @@ import { Cart } from '@app/types'
 import { CloseIcon, QuantityController } from '@app/components'
 
 // Utils
-import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
+import { calculateProductPrice } from '@app/utils'
 
 interface ICartItemProps {
   cart: Cart
@@ -47,12 +47,13 @@ const CartItem = ({
             onClick={() => onRemoveItemFromCart(id)}
           />
         </Flex>
-        <Flex gap={4}>
+        <HStack gap={{ base: 2, sm: 4, md: 8 }}>
           <Text fontSize="textSmall">
             {productUnitPrice}
             {calculateProductPrice(productPrice, productDiscount)}
           </Text>
           <QuantityController
+            size="xs"
             maxQuantity={productQuantity}
             currentQuantity={quantity}
             onIncreaseQuantity={() => onIncreaseQuantity(id)}
@@ -61,9 +62,9 @@ const CartItem = ({
           />
           <Text fontSize="textSmall">
             {productUnitPrice}
-            {calculateProductPriceInCart(productPrice, productDiscount, quantity)}
+            {calculateProductPrice(productPrice, productDiscount, quantity)}
           </Text>
-        </Flex>
+        </HStack>
       </Stack>
     </Flex>
   )
