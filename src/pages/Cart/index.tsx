@@ -1,5 +1,15 @@
-import { useEffect } from 'react'
-import { Container } from '@chakra-ui/react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  Container,
+  useDisclosure
+} from '@chakra-ui/react'
 
 // Components
 import { CartList } from '@app/components'
@@ -8,20 +18,53 @@ import { CartList } from '@app/components'
 import { useCartContext } from '@app/hooks'
 
 const Cart = () => {
-  const { state: cartState, fetchCarts } = useCartContext()
+  const { state: cartState, fetchCarts, removeFromCart } = useCartContext()
   const { isFetching, cartList } = cartState
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
+
+  const cancelRef = useRef<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     fetchCarts()
   }, [fetchCarts])
 
   const handleRemoveItemFromCart = (cartId: number) => {
-    console.log(cartId)
+    setSelectedCartId(cartId)
+    onOpen()
+  }
+
+  const handleConfirmRemoveItemFromCart = () => {
+    if (selectedCartId !== null) {
+      removeFromCart(selectedCartId)
+      onClose()
+    }
   }
 
   return (
     <Container>
       <CartList isFetching={isFetching} carts={cartList.data} onRemoveItemFromCart={handleRemoveItemFromCart} />
+      <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Remove item
+            </AlertDialogHeader>
+
+            <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={onClose} ref={cancelRef}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleConfirmRemoveItemFromCart} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Container>
   )
 }

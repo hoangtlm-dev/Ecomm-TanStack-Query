@@ -29,3 +29,6 @@ export const getCartsService = async (queryParams: QueryParams<Partial<Cart>>): 
 
   return await httpRequest<PaginationRequest, PaginationResponse<Cart>>(paginationApiUrl, 'POST', requestData)
 }
+
+export const removeFromCartServices = async (cartId: number): Promise<void> =>
+  await httpRequest(`${cartApiUrl}/${cartId}`, 'DELETE')
