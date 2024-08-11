@@ -27,7 +27,7 @@ import { Cart } from '@app/types'
 import { CloseIcon, ProductListEmpty, SkeletonCartItem, CartItem, QuantityController } from '@app/components'
 
 // Utils
-import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
+import { calculateProductPrice } from '@app/utils'
 
 interface ICartListProps {
   isFetching: boolean
@@ -148,7 +148,7 @@ const CartList = ({
                   <Td>
                     <Text>
                       {productUnitPrice}
-                      {calculateProductPriceInCart(productPrice, productDiscount, quantity)}
+                      {calculateProductPrice(productPrice, productDiscount, quantity)}
                     </Text>
                   </Td>
                 </Tr>

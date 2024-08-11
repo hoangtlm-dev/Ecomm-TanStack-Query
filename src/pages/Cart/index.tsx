@@ -8,14 +8,16 @@ import {
   AlertDialogOverlay,
   Button,
   Container,
+  Flex,
   useDisclosure
 } from '@chakra-ui/react'
 
 // Components
-import { CartList } from '@app/components'
+import { CartList, Invoice } from '@app/components'
 
 // Hooks
 import { useCartContext } from '@app/hooks'
+import { calculateProductPrice } from '@app/utils'
 
 const Cart = () => {
   const { state: cartState, fetchCarts, removeFromCart, increaseQuantity, decreaseQuantity } = useCartContext()
@@ -47,6 +49,17 @@ const Cart = () => {
     console.log(value)
   }
 
+  const subTotal = cartList.data.reduce((acc, cartItem) => {
+    const { productPrice, productDiscount, quantity } = cartItem
+
+    const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
+    return parseFloat((acc + totalPriceItemInCart).toFixed(2))
+  }, 0)
+
+  const handleCheckOut = () => {
+    // Todo: Handle checkout cart
+  }
+
   return (
     <Container>
       <CartList
@@ -57,6 +70,9 @@ const Cart = () => {
         onDecreaseQuantity={decreaseQuantity}
         onChangeQuantity={handleChangeQuantity}
       />
+      <Flex justifyContent="flex-end" mt={12}>
+        <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
+      </Flex>
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>
         <AlertDialogOverlay>
           <AlertDialogContent>
