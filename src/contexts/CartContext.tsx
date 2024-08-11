@@ -7,7 +7,7 @@ import { MESSAGES, PAGINATION } from '@app/constants'
 import { Cart, PaginationResponse, QueryParams } from '@app/types'
 
 // Services
-import { addToCartService, getCartsService } from '@app/services'
+import { addToCartService, getCartsService, removeFromCartServices } from '@app/services'
 
 export interface ICartState {
   cartList: PaginationResponse<Cart>
@@ -24,12 +24,17 @@ enum ActionTypes {
   // Fetch carts
   FETCH_CARTS_PENDING,
   FETCH_CARTS_SUCCESS,
-  FETCH_CARTS_FAILED
+  FETCH_CARTS_FAILED,
+
+  // Delete from cart
+  REMOVE_FROM_CART_PENDING,
+  REMOVE_FROM_CART_SUCCESS,
+  REMOVE_FROM_CART_FAILED
 }
 
 // Pending actions
 export interface IRequestPendingAction {
-  type: ActionTypes.ADD_TO_CART_PENDING | ActionTypes.FETCH_CARTS_PENDING
+  type: ActionTypes.ADD_TO_CART_PENDING | ActionTypes.FETCH_CARTS_PENDING | ActionTypes.REMOVE_FROM_CART_PENDING
 }
 
 // Success actions
@@ -43,9 +48,14 @@ export interface IFetchCartsSuccessAction {
   payload: PaginationResponse<Cart>
 }
 
+export interface IDeleteFromCartSuccessAction {
+  type: ActionTypes.REMOVE_FROM_CART_SUCCESS
+  payload: number
+}
+
 // Failure actions
 export interface IRequestFailureAction {
-  type: ActionTypes.ADD_TO_CART_FAILED | ActionTypes.FETCH_CARTS_FAILED
+  type: ActionTypes.ADD_TO_CART_FAILED | ActionTypes.FETCH_CARTS_FAILED | ActionTypes.REMOVE_FROM_CART_FAILED
   payload: string
 }
 
@@ -53,6 +63,7 @@ export type ICartAction =
   | IRequestPendingAction
   | IAddToCartsSuccessAction
   | IFetchCartsSuccessAction
+  | IDeleteFromCartSuccessAction
   | IRequestFailureAction
 
 const initialState: ICartState = {
@@ -75,6 +86,7 @@ const cartReducer = (state: ICartState, action: ICartAction): ICartState => {
   switch (action.type) {
     case ActionTypes.ADD_TO_CART_PENDING:
     case ActionTypes.FETCH_CARTS_PENDING:
+    case ActionTypes.REMOVE_FROM_CART_PENDING:
       return { ...state, isFetching: true, error: null }
 
     case ActionTypes.ADD_TO_CART_SUCCESS: {
@@ -112,8 +124,22 @@ const cartReducer = (state: ICartState, action: ICartAction): ICartState => {
         cartList: action.payload
       }
 
+    case ActionTypes.REMOVE_FROM_CART_SUCCESS: {
+      const updatedCartData = state.cartList.data.filter((item) => item.id !== action.payload)
+
+      return {
+        ...state,
+        isFetching: false,
+        cartList: {
+          ...state.cartList,
+          data: updatedCartData
+        }
+      }
+    }
+
     case ActionTypes.ADD_TO_CART_FAILED:
     case ActionTypes.FETCH_CARTS_FAILED:
+    case ActionTypes.REMOVE_FROM_CART_FAILED:
       return { ...state, isFetching: false, error: action.payload }
 
     default:
@@ -126,6 +152,7 @@ export interface ICartContextType {
   dispatch: Dispatch<ICartAction>
   addToCart: (cart: Cart) => Promise<void>
   fetchCarts: (params?: Partial<QueryParams<Cart>>) => Promise<void>
+  removeFromCart: (cartId: number) => Promise<void>
 }
 
 export const CartContext = createContext<ICartContextType | null>(null)
@@ -167,14 +194,31 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     [fetchCarts]
   )
 
+  const removeFromCart = useCallback(
+    async (cartId: number) => {
+      dispatch({ type: ActionTypes.REMOVE_FROM_CART_PENDING })
+
+      try {
+        await removeFromCartServices(cartId)
+        dispatch({ type: ActionTypes.REMOVE_FROM_CART_SUCCESS, payload: cartId })
+
+        fetchCarts() // Optionally refetch the cart list after deletion
+      } catch (error) {
+        dispatch({ type: ActionTypes.REMOVE_FROM_CART_FAILED, payload: MESSAGES.REMOVE_FROM_CART_FAILED })
+      }
+    },
+    [fetchCarts]
+  )
+
   const cartContextValue: ICartContextType = useMemo(
     () => ({
       state,
       dispatch,
       fetchCarts,
-      addToCart
+      addToCart,
+      removeFromCart
     }),
-    [state, fetchCarts, addToCart]
+    [state, fetchCarts, addToCart, removeFromCart]
   )
 
   return <CartContext.Provider value={cartContextValue}>{children}</CartContext.Provider>

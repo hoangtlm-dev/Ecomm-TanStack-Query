@@ -6,13 +6,16 @@ import { Cart } from '@app/types'
 // Components
 import { CloseIcon, QuantityInput } from '@app/components'
 
+// Utils
+import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
+
 interface ICartItemProps {
   cart: Cart
   onRemoveItemFromCart: (cartId: number) => void
 }
 
 const CartItem = ({ cart, onRemoveItemFromCart }: ICartItemProps) => {
-  const { id, productName, productImage, productPrice } = cart
+  const { id, productName, productImage, productPrice, productUnitPrice, productDiscount, quantity } = cart
 
   return (
     <Flex gap={4} display={{ base: 'flex', lg: 'none' }}>
@@ -35,9 +38,15 @@ const CartItem = ({ cart, onRemoveItemFromCart }: ICartItemProps) => {
           />
         </Flex>
         <Flex gap={4}>
-          <Text fontSize="textSmall">{productPrice}</Text>
+          <Text fontSize="textSmall">
+            {productUnitPrice}
+            {calculateProductPrice(productPrice, productDiscount)}
+          </Text>
           <QuantityInput />
-          <Text fontSize="textSmall">$499.99</Text>
+          <Text fontSize="textSmall">
+            {productUnitPrice}
+            {calculateProductPriceInCart(productPrice, productDiscount, quantity)}
+          </Text>
         </Flex>
       </Stack>
     </Flex>

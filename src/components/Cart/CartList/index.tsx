@@ -26,6 +26,9 @@ import { Cart } from '@app/types'
 // Components
 import { CloseIcon, ProductListEmpty, QuantityInput, SkeletonCartItem, CartItem } from '@app/components'
 
+// Utils
+import { calculateProductPrice, calculateProductPriceInCart } from '@app/utils'
+
 interface ICartListProps {
   isFetching: boolean
   carts: Cart[]
@@ -74,7 +77,7 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
           </Thead>
           <Tbody>
             {carts.map((cart) => {
-              const { id, productName, productImage, productPrice, productUnitPrice } = cart
+              const { id, productName, productImage, productPrice, productUnitPrice, productDiscount, quantity } = cart
 
               return (
                 <Tr key={id}>
@@ -103,7 +106,7 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
                   <Td>
                     <Text>
                       {productUnitPrice}
-                      {productPrice}
+                      {calculateProductPrice(productPrice, productDiscount)}
                     </Text>
                   </Td>
                   <Td>
@@ -111,8 +114,8 @@ const CartList = ({ isFetching, carts, onRemoveItemFromCart }: ICartListProps) =
                   </Td>
                   <Td>
                     <Text>
-                      {productPrice}
-                      {productPrice}
+                      {productUnitPrice}
+                      {calculateProductPriceInCart(productPrice, productDiscount, quantity)}
                     </Text>
                   </Td>
                 </Tr>
