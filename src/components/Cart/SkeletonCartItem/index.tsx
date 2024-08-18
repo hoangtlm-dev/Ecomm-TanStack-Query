@@ -10,9 +10,9 @@ const SkeletonCartItem = () => {
           <Skeleton boxSize={6} />
         </Flex>
         <Flex gap={4}>
-          <Skeleton w="30%" maxW="80px" h={6} />
-          <Skeleton w="30%" maxW="80px" h={6} />
-          <Skeleton w="30%" maxW="80px" h={6} />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} w="30%" maxW="80px" h={6} />
+          ))}
         </Flex>
       </Stack>
     </Flex>

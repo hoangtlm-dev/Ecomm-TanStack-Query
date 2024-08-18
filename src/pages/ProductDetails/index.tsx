@@ -1,6 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Container, Heading, useToast, VStack } from '@chakra-ui/react'
+import {
+  Center,
+  Container,
+  Heading,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  useDisclosure,
+  useToast,
+  VStack
+} from '@chakra-ui/react'
 
 // Constants
 import { MESSAGES } from '@app/constants'
@@ -18,17 +29,18 @@ import { useCartContext, useProductContext } from '@app/hooks'
 import { getIdFromSlug } from '@app/utils'
 
 const ProductDetails = () => {
+  const [currentProductQuantity, setCurrentProductQuantity] = useState(1)
   const { productSlug } = useParams()
-  const productId = productSlug && Number(getIdFromSlug(productSlug))
-
-  const { state, fetchProducts, fetchCurrentProduct } = useProductContext()
-  const { state: cartState, addToCart } = useCartContext()
-  const { productList, currentProduct, isProductListFetching, isCurrentProductFetching } = state
-  const { cartList } = cartState
 
   const toast = useToast()
+  const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
 
-  const [currentProductQuantity, setCurrentProductQuantity] = useState(1)
+  const { state: productState, fetchProducts, fetchCurrentProduct } = useProductContext()
+  const { state: cartState, addToCart } = useCartContext()
+  const { productList, currentProduct, isProductListLoading, isCurrentProductLoading } = productState
+  const { cartList, isAddToCartLoading } = cartState
+
+  const productId = productSlug && Number(getIdFromSlug(productSlug))
 
   useEffect(() => {
     if (productId) {
@@ -42,31 +54,45 @@ const ProductDetails = () => {
     }
   }, [currentProduct, productId, fetchProducts])
 
-  const handleAddProductToCart = (product: Product) => {
+  useEffect(() => {
+    if (isAddToCartLoading) {
+      onOpenLoadingModal()
+    }
+  }, [isAddToCartLoading, onOpenLoadingModal])
+
+  const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, unitPrice, quantity, discount, image } = product
 
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
     const cartQuantity = currentProduct?.id === product.id ? currentProductQuantity : 1
-    addToCart({
-      id: cartItemFound ? cartItemFound.id : 0,
-      productId: id,
-      productName: name,
-      productPrice: price,
-      productQuantity: quantity,
-      productUnitPrice: unitPrice,
-      productDiscount: discount,
-      productImage: image,
-      quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
-    })
 
-    toast({
-      position: 'bottom-right',
-      title: 'Success',
-      description: MESSAGES.ADD_PRODUCT_SUCCESS,
-      status: 'success',
-      duration: 3000,
-      isClosable: true
-    })
+    try {
+      await addToCart({
+        id: cartItemFound ? cartItemFound.id : 0,
+        productId: id,
+        productName: name,
+        productPrice: price,
+        productQuantity: quantity,
+        productUnitPrice: unitPrice,
+        productDiscount: discount,
+        productImage: image,
+        quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
+      })
+
+      toast({
+        title: 'Success',
+        description: MESSAGES.ADD_PRODUCT_SUCCESS,
+        status: 'success'
+      })
+    } catch (error) {
+      toast({
+        title: 'Failed',
+        description: String(error),
+        status: 'error'
+      })
+    }
+
+    onCloseLoadingModal()
   }
 
   const handleIncreaseQuantity = () => {
@@ -85,25 +111,21 @@ const ProductDetails = () => {
     setCurrentProductQuantity(value)
   }
 
-  if (isCurrentProductFetching) {
-    return (
-      <Container>
-        <SkeletonProductInfo />
-      </Container>
-    )
-  }
-
   return (
     <Container>
-      {currentProduct && (
-        <ProductInfo
-          product={currentProduct}
-          onAddToCart={handleAddProductToCart}
-          currentQuantity={currentProductQuantity}
-          onIncreaseQuantity={handleIncreaseQuantity}
-          onDecreaseQuantity={handleDecreaseQuantity}
-          onChangeQuantity={handleChangeQuantity}
-        />
+      {isCurrentProductLoading ? (
+        <SkeletonProductInfo />
+      ) : (
+        currentProduct && (
+          <ProductInfo
+            product={currentProduct}
+            onAddToCart={handleAddProductToCart}
+            currentQuantity={currentProductQuantity}
+            onIncreaseQuantity={handleIncreaseQuantity}
+            onDecreaseQuantity={handleDecreaseQuantity}
+            onChangeQuantity={handleChangeQuantity}
+          />
+        )
       )}
 
       <VStack mt={12} spacing={12}>
@@ -111,13 +133,30 @@ const ProductDetails = () => {
           Related Products
         </Heading>
         <ProductList
-          isFetching={isProductListFetching}
+          isLoading={isProductListLoading}
           products={productList.data}
           listType="grid"
           onAddToCart={handleAddProductToCart}
           gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }}
+          skeletonTemplateColumns={4}
         />
       </VStack>
+
+      {/* Modal for loading indicator */}
+      <Modal
+        isCentered
+        isOpen={isOpenLoadingModal}
+        onClose={onCloseLoadingModal}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <ModalContent backgroundColor="transparent" boxShadow="none">
+          <Center>
+            <Spinner size="lg" speed="0.8s" color="brand.600" />
+          </Center>
+        </ModalContent>
+      </Modal>
     </Container>
   )
 }

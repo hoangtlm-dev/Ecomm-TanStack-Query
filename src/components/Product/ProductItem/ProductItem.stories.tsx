@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 
+// Types
+import { Product } from '@app/types'
+
 // Components
 import { ProductItem } from '@app/components'
 
@@ -16,8 +19,7 @@ const meta: Meta<typeof ProductItem> = {
     },
     listType: {
       control: { type: 'radio', options: ['grid', 'list'] }
-    },
-    onAddToCart: { action: 'added to cart' }
+    }
   }
 }
 
@@ -25,16 +27,18 @@ export default meta
 
 type Story = StoryObj<typeof ProductItem>
 
+const mockProduct: Product = MOCK_PRODUCT
+
 export const GridView: Story = {
   args: {
-    product: MOCK_PRODUCT,
+    product: mockProduct,
     listType: 'grid'
   }
 }
 
 export const ListView: Story = {
   args: {
-    product: MOCK_PRODUCT,
+    product: mockProduct,
     listType: 'list'
   }
 }
@@ -42,7 +46,7 @@ export const ListView: Story = {
 export const NoDiscountedProduct: Story = {
   args: {
     product: {
-      ...MOCK_PRODUCT,
+      ...mockProduct,
       discount: 0,
       isHotDeal: false,
       price: 500
@@ -54,7 +58,7 @@ export const NoDiscountedProduct: Story = {
 export const DiscountedProduct: Story = {
   args: {
     product: {
-      ...MOCK_PRODUCT,
+      ...mockProduct,
       discount: 20,
       price: 500
     },
@@ -65,7 +69,7 @@ export const DiscountedProduct: Story = {
 export const NoRatingProduct: Story = {
   args: {
     product: {
-      ...MOCK_PRODUCT,
+      ...mockProduct,
       ratingStar: 0,
       isHotDeal: false
     },
@@ -76,7 +80,7 @@ export const NoRatingProduct: Story = {
 export const HotDealProduct: Story = {
   args: {
     product: {
-      ...MOCK_PRODUCT,
+      ...mockProduct,
       isHotDeal: true
     },
     listType: 'grid'

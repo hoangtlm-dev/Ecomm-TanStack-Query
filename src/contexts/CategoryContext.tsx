@@ -1,46 +1,20 @@
 import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } from 'react'
 
 // Constants
-import { MESSAGES, PAGINATION } from '@app/constants'
+import { ACTION_TYPES, MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
-import { Category, PaginationResponse, QueryParams } from '@app/types'
+import { Category, CategoryAction, ICategoryState, PaginationResponse, QueryParams } from '@app/types'
 
 // Services
 import { getCategoriesService } from '@app/services'
 
-export interface ICategoryState {
-  categoryList: PaginationResponse<Category>
-  isCategoryListFetching: boolean
-  error: string | null
-}
-
-enum ActionTypes {
-  FETCH_CATEGORIES_PENDING,
-  FETCH_CATEGORIES_SUCCESS,
-  FETCH_CATEGORIES_FAILURE
-}
-
-// Pending actions
-export interface IRequestPendingAction {
-  type: ActionTypes.FETCH_CATEGORIES_PENDING
-}
-
-// Success actions
-export interface IFetchCategoriesSuccessAction {
-  type: ActionTypes.FETCH_CATEGORIES_SUCCESS
-  payload: PaginationResponse<Category>
-}
-
-// Failure actions
-export interface IRequestFailureAction {
-  type: ActionTypes.FETCH_CATEGORIES_FAILURE
-  payload: string
-}
-
-export type ICategoryAction = IRequestPendingAction | IFetchCategoriesSuccessAction | IRequestFailureAction
+// Reducers
+import { categoryReducer } from '@app/reducers'
 
 const initialState: ICategoryState = {
+  // Category list
+  isCategoryListLoading: true,
   categoryList: {
     data: [],
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE,
@@ -52,26 +26,12 @@ const initialState: ICategoryState = {
     totalItems: 0,
     totalPages: 0
   },
-  isCategoryListFetching: false,
-  error: null
-}
-
-const categoryReducer = (state: ICategoryState, action: ICategoryAction): ICategoryState => {
-  switch (action.type) {
-    case ActionTypes.FETCH_CATEGORIES_PENDING:
-      return { ...state, isCategoryListFetching: true, error: null }
-    case ActionTypes.FETCH_CATEGORIES_SUCCESS:
-      return { ...state, isCategoryListFetching: false, categoryList: action.payload }
-    case ActionTypes.FETCH_CATEGORIES_FAILURE:
-      return { ...state, isCategoryListFetching: false, error: action.payload }
-    default:
-      return state
-  }
+  categoryListError: null
 }
 
 export interface ICategoryContextType {
   state: ICategoryState
-  dispatch: Dispatch<ICategoryAction>
+  dispatch: Dispatch<CategoryAction>
   fetchCategories: (params?: Partial<QueryParams<Category>>) => Promise<void>
 }
 
@@ -81,7 +41,7 @@ const CategoryProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(categoryReducer, initialState)
 
   const fetchCategories = useCallback(async (params: Partial<QueryParams<Category>> = {}) => {
-    dispatch({ type: ActionTypes.FETCH_CATEGORIES_PENDING })
+    dispatch({ type: ACTION_TYPES.FETCH_CATEGORIES_PENDING })
 
     const defaultParams: QueryParams<Partial<Category>> = {
       _sort: params._sort ?? 'id',
@@ -93,9 +53,9 @@ const CategoryProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const response: PaginationResponse<Category> = await getCategoriesService(defaultParams)
-      dispatch({ type: ActionTypes.FETCH_CATEGORIES_SUCCESS, payload: response })
+      dispatch({ type: ACTION_TYPES.FETCH_CATEGORIES_SUCCESS, payload: response })
     } catch (error) {
-      dispatch({ type: ActionTypes.FETCH_CATEGORIES_FAILURE, payload: MESSAGES.FETCH_CATEGORIES_FAILED })
+      dispatch({ type: ACTION_TYPES.FETCH_CATEGORIES_FAILURE, payload: MESSAGES.FETCH_CATEGORIES_FAILED })
     }
   }, [])
 

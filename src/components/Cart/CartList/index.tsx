@@ -6,6 +6,7 @@ import {
   HStack,
   IconButton,
   Image,
+  Skeleton,
   Stack,
   Table,
   TableContainer,
@@ -21,7 +22,7 @@ import {
 import { PAGINATION } from '@app/constants'
 
 // Types
-import { Cart } from '@app/types'
+import { CartItem as CartItemType } from '@app/types'
 
 // Components
 import { CloseIcon, ProductListEmpty, SkeletonCartItem, CartItem, QuantityController } from '@app/components'
@@ -30,8 +31,8 @@ import { CloseIcon, ProductListEmpty, SkeletonCartItem, CartItem, QuantityContro
 import { calculateProductPrice } from '@app/utils'
 
 interface ICartListProps {
-  isFetching: boolean
-  carts: Cart[]
+  isLoading: boolean
+  carts: CartItemType[]
   onRemoveItemFromCart: (cartId: number) => void
   onIncreaseQuantity: (cartId: number) => void
   onDecreaseQuantity: (cartId: number) => void
@@ -39,15 +40,17 @@ interface ICartListProps {
 }
 
 const CartList = ({
-  isFetching,
+  isLoading,
   carts,
   onRemoveItemFromCart,
   onIncreaseQuantity,
   onDecreaseQuantity,
   onChangeQuantity
 }: ICartListProps) => {
+  const tableHeadings = ['', 'Product', 'Unit Price', 'Qty', 'Price']
+
   const renderCartContent = () => {
-    if (isFetching) {
+    if (isLoading) {
       return Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
         <Fragment key={index}>
           <SkeletonCartItem />
@@ -56,7 +59,7 @@ const CartList = ({
       ))
     }
 
-    if (!carts.length) {
+    if (!isLoading && !carts.length) {
       return <ProductListEmpty />
     }
 
@@ -80,20 +83,54 @@ const CartList = ({
       <Stack display={{ base: 'flex', lg: 'none' }} gap={8}>
         {renderCartContent()}
       </Stack>
+
       {/* Table for Desktop screen */}
       <TableContainer display={{ base: 'none', lg: 'block' }}>
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th></Th>
-              <Th>Product</Th>
-              <Th>Unit Price</Th>
-              <Th>Qty</Th>
-              <Th>Price</Th>
+              {tableHeadings.map((heading) => (
+                <Th key={heading}>{heading}</Th>
+              ))}
             </Tr>
           </Thead>
           <Tbody>
-            {carts && carts.length ? (
+            {/* Skeleton loading for table */}
+            {isLoading && (
+              <>
+                {Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <Skeleton boxSize={4} />
+                    </Td>
+                    <Td>
+                      <HStack gap={8}>
+                        <Skeleton boxSize="80px" />
+                        <Skeleton w="200px" h={6} />
+                      </HStack>
+                    </Td>
+                    <Td>
+                      <Skeleton w="120px" h={6} />
+                    </Td>
+                    <Td>
+                      <Skeleton w="120px" h={6} />
+                    </Td>
+                    <Td>
+                      <Skeleton w="120px" h={6} />
+                    </Td>
+                  </Tr>
+                ))}
+              </>
+            )}
+            {!isLoading && !carts.length && (
+              <Tr>
+                <Td colSpan={5}>
+                  <ProductListEmpty />
+                </Td>
+              </Tr>
+            )}
+            {!isLoading &&
+              carts.length > 0 &&
               carts.map((cart) => {
                 const {
                   id,
@@ -153,14 +190,7 @@ const CartList = ({
                     </Td>
                   </Tr>
                 )
-              })
-            ) : (
-              <Tr>
-                <Td colSpan={5}>
-                  <ProductListEmpty />
-                </Td>
-              </Tr>
-            )}
+              })}
           </Tbody>
         </Table>
       </TableContainer>

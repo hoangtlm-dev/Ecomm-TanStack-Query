@@ -1,8 +1,7 @@
-import { Button, Center, VStack, Image, Text } from '@chakra-ui/react'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Center, VStack, Image, Text } from '@chakra-ui/react'
 
 // Constants
-import { logo, ROUTES } from '@app/constants'
+import { logo } from '@app/constants'
 
 const ProductListEmpty = () => {
   return (
@@ -14,9 +13,6 @@ const ProductListEmpty = () => {
         </Text>
         <Text>Please search with other keyword or add another new product.</Text>
       </VStack>
-      <Button variant="outline" as={ReactRouterLink} to={ROUTES.ROOT}>
-        Shop now!
-      </Button>
     </Center>
   )
 }

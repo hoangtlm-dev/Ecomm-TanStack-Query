@@ -15,7 +15,12 @@
     "build-storybook": "storybook build"
   },
   "lint-staged": {
-    "*.ts, *.tsx": "eslint --cache --fix"
+    "*.{js, jsx,ts,tsx}": [
+      "eslint --quiet --fix"
+    ],
+    "*.{json,js,ts,jsx,tsx,html}": [
+      "prettier --write --ignore-unknown"
+    ]
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
@@ -51,6 +56,7 @@
     "lint-staged": "^15.2.8",
     "prettier": "3.3.3",
     "storybook": "^8.2.7",
+    "storybook-addon-remix-react-router": "^3.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
   }

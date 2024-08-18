@@ -35,8 +35,8 @@ const QuantityController = ({
         onClick={onDecreaseQuantity}
         variant="ghost"
         boxSize={buttonSize}
-        minW="unset"
-        p="unset"
+        minW={0}
+        p={0}
         backgroundColor="backgroundBlurGray"
         borderTopRightRadius={0}
         borderBottomRightRadius={0}
@@ -48,13 +48,13 @@ const QuantityController = ({
         min={minQuantity}
         max={maxQuantity}
         onChange={(value) => onChangeQuantity(Number(value))}
-        zIndex="unset"
+        zIndex={1}
         textAlign="center"
         backgroundColor="backgroundBlurGray"
       >
         <NumberInputField
           boxSize={buttonSize}
-          p="unset"
+          p={0}
           textAlign="center"
           border="none"
           borderRadius={0}
@@ -65,8 +65,8 @@ const QuantityController = ({
         onClick={onIncreaseQuantity}
         variant="ghost"
         boxSize={buttonSize}
-        minW="unset"
-        p="unset"
+        minW={0}
+        p={0}
         backgroundColor="backgroundBlurGray"
         borderTopLeftRadius={0}
         borderBottomLeftRadius={0}

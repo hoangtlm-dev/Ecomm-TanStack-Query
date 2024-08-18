@@ -1,6 +1,18 @@
 import { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { Container, Flex, Stack, useToast } from '@chakra-ui/react'
+import {
+  Center,
+  Container,
+  Flex,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  useBreakpointValue,
+  useDisclosure,
+  useToast
+} from '@chakra-ui/react'
 
 // Constants
 import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
@@ -27,26 +39,56 @@ import { getIdFromSlug } from '@app/utils'
 
 const Home = () => {
   const [activeColor, setActiveColor] = useState('')
-  const [listType, setListType] = useState<'grid' | 'list'>('grid')
+  const [listType, setListType] = useState<'grid' | 'list'>(() => {
+    const savedListType = localStorage.getItem('listType') as 'grid' | 'list' | null
+    return savedListType || 'grid'
+  })
+
+  const [priceRange, setPriceRange] = useState([0, 1000])
+
   const navigate = useNavigate()
+  const toast = useToast()
+  const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
+
+  // Use breakpoint value to determine screenListType
+  const screenListType: 'grid' | 'list' = useBreakpointValue({ base: 'grid', md: listType }) || 'grid'
 
   const { state: productState, fetchProducts } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
   const { state: cartState, fetchCarts, addToCart } = useCartContext()
-  const { productList, isProductListFetching } = productState
+  const { productList, isProductListLoading } = productState
   const { categoryList } = categoryState
-  const { cartList } = cartState
+  const { cartList, isAddToCartLoading } = cartState
+
   const queryParams = useQueryParams()
 
-  const toast = useToast()
-
   // Get current params from query params
-  const currentCategoryId = queryParams.brand ? Number(getIdFromSlug(queryParams.brand)) : 1
+  const currentCategoryId = queryParams.brand ? Number(getIdFromSlug(queryParams.brand)) : 0
   const currentPage = queryParams.page ? Number(queryParams.page) : 1
 
+  // Save listType to localStorage whenever it changes
   useEffect(() => {
-    fetchProducts({ categoryId: currentCategoryId, page: currentPage })
-  }, [fetchProducts, currentCategoryId, currentPage])
+    localStorage.setItem('listType', listType)
+  }, [listType])
+
+  useEffect(() => {
+    fetchProducts({
+      categoryId: currentCategoryId,
+      page: currentPage,
+      _sort: queryParams.sort,
+      limit: queryParams.limit ? Number(queryParams.limit) : PAGINATION.DEFAULT_ITEMS_PER_PAGE,
+      price_gte: Number(queryParams.min_price),
+      price_lte: Number(queryParams.max_price)
+    })
+  }, [
+    fetchProducts,
+    currentCategoryId,
+    currentPage,
+    queryParams.sort,
+    queryParams.limit,
+    queryParams.min_price,
+    queryParams.max_price
+  ])
 
   useEffect(() => {
     fetchCategories()
@@ -60,9 +102,16 @@ const Home = () => {
     setListType(type)
   }
 
-  const handleFilterByPrices = (priceRange: number[]) => {
-    // Todo: Handle logic for filtering products by price range
-    console.log(priceRange)
+  const handleFilterByPrices = async (priceRange: number[]) => {
+    setPriceRange(priceRange)
+    navigate({
+      pathname: ROUTES.ROOT,
+      search: createSearchParams({
+        ...queryParams,
+        min_price: priceRange[0].toString(),
+        max_price: priceRange[1].toString()
+      }).toString()
+    })
   }
 
   const filteredColors = ['filterBlue', 'filterRed', 'filterBlack', 'filterYellow', 'filterPink', 'filterBlurPink']
@@ -72,8 +121,7 @@ const Home = () => {
     setActiveColor(color)
   }
 
-  const handleSortByField = (fieldName: string) => {
-    fetchProducts({ categoryId: currentCategoryId, page: currentPage, _sort: fieldName.toLowerCase() })
+  const handleSortByField = async (fieldName: string) => {
     navigate({
       pathname: ROUTES.ROOT,
       search: createSearchParams({
@@ -83,8 +131,7 @@ const Home = () => {
     })
   }
 
-  const handleShowListByItemsPerPage = (itemsPerPage: number) => {
-    fetchProducts({ categoryId: currentCategoryId, page: currentPage, limit: itemsPerPage })
+  const handleShowListByItemsPerPage = async (itemsPerPage: number) => {
     navigate({
       pathname: ROUTES.ROOT,
       search: createSearchParams({
@@ -94,31 +141,44 @@ const Home = () => {
     })
   }
 
-  const handleAddProductToCart = (product: Product) => {
+  useEffect(() => {
+    if (isAddToCartLoading) {
+      onOpenLoadingModal()
+    }
+  }, [isAddToCartLoading, onOpenLoadingModal])
+
+  const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, unitPrice, quantity, discount, image } = product
 
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
 
-    addToCart({
-      id: cartItemFound ? cartItemFound.id : 0,
-      productId: id,
-      productName: name,
-      productPrice: price,
-      productUnitPrice: unitPrice,
-      productQuantity: quantity,
-      productDiscount: discount,
-      productImage: image,
-      quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
-    })
+    try {
+      await addToCart({
+        id: cartItemFound ? cartItemFound.id : 0,
+        productId: id,
+        productName: name,
+        productPrice: price,
+        productUnitPrice: unitPrice,
+        productQuantity: quantity,
+        productDiscount: discount,
+        productImage: image,
+        quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
+      })
 
-    toast({
-      position: 'bottom-right',
-      title: 'Success',
-      description: MESSAGES.ADD_PRODUCT_SUCCESS,
-      status: 'success',
-      duration: 3000,
-      isClosable: true
-    })
+      toast({
+        title: 'Success',
+        description: MESSAGES.ADD_PRODUCT_SUCCESS,
+        status: 'success'
+      })
+    } catch (error) {
+      toast({
+        title: 'Failed',
+        description: String(error),
+        status: 'error'
+      })
+    }
+
+    onCloseLoadingModal()
   }
 
   return (
@@ -126,7 +186,11 @@ const Home = () => {
       <Flex gap={8} direction={{ base: 'column', lg: 'row' }}>
         <Stack gap={8}>
           <FilterCategories categories={categoryList.data} />
-          <FilterPrices minPrice={13.99} maxPrice={25.33} onFilterByPrices={handleFilterByPrices} />
+          <FilterPrices
+            minPrice={queryParams.min_price ? Number(queryParams.min_price) : priceRange[0]}
+            maxPrice={queryParams.max_price ? Number(queryParams.max_price) : priceRange[1]}
+            onFilterByPrices={handleFilterByPrices}
+          />
           <FilterColors colors={filteredColors} activeColor={activeColor} onFilterByColors={handleFilterByColors} />
         </Stack>
         <Stack gap={8} flex={1}>
@@ -140,16 +204,16 @@ const Home = () => {
             totalItems={productList.totalItems}
             sortOptions={['Id', 'Name', 'Price']}
             showOptions={[6, 9, 12]}
-            listType={listType}
+            listType={screenListType}
             onListTypeChange={handleListTypeChange}
             onSortByField={handleSortByField}
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
           />
 
           <ProductList
-            isFetching={isProductListFetching}
+            isLoading={isProductListLoading}
             products={productList.data}
-            listType={listType}
+            listType={screenListType}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination
@@ -159,6 +223,22 @@ const Home = () => {
           />
         </Stack>
       </Flex>
+
+      {/* Modal for loading indicator */}
+      <Modal
+        isCentered
+        isOpen={isOpenLoadingModal}
+        onClose={onCloseLoadingModal}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <ModalContent backgroundColor="transparent" boxShadow="none">
+          <Center>
+            <Spinner size="lg" speed="0.8s" color="brand.600" />
+          </Center>
+        </ModalContent>
+      </Modal>
     </Container>
   )
 }

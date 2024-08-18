@@ -11,14 +11,22 @@ import { Product } from '@app/types'
 import { SkeletonProductItem, ProductItem, ProductListEmpty } from '@app/components'
 
 interface IProductListProps {
-  isFetching: boolean
+  isLoading: boolean
   products: Product[]
   listType: 'grid' | 'list'
   onAddToCart: (product: Product) => void
   gridTemplateColumns?: { [key: string]: string }
+  skeletonTemplateColumns?: number
 }
 
-const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplateColumns }: IProductListProps) => {
+const ProductList = ({
+  isLoading,
+  products,
+  listType,
+  onAddToCart,
+  gridTemplateColumns,
+  skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE
+}: IProductListProps) => {
   const defaultGridTemplateColumns =
     listType === 'grid'
       ? {
@@ -29,11 +37,11 @@ const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplate
       : 'repeat(1, 1fr)'
 
   const renderProducts = () => {
-    if (isFetching) {
-      return Array.from({ length: PAGINATION.DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
+    if (isLoading) {
+      return Array.from({ length: skeletonTemplateColumns }).map((_, index) => (
         <React.Fragment key={index}>
           <SkeletonProductItem listType={listType} />
-          {listType === 'list' && index < PAGINATION.DEFAULT_ITEMS_PER_PAGE - 1 && <Divider orientation="horizontal" />}
+          {listType === 'list' && index < skeletonTemplateColumns - 1 && <Divider orientation="horizontal" />}
         </React.Fragment>
       ))
     }
@@ -52,7 +60,7 @@ const ProductList = ({ isFetching, products, listType, onAddToCart, gridTemplate
 
   return (
     <>
-      {!isFetching && !products.length ? (
+      {!isLoading && !products.length ? (
         <Center>
           <ProductListEmpty />
         </Center>
