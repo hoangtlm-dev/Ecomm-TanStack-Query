@@ -26,7 +26,7 @@ import { Product } from '@app/types'
 import { CartButtonIcon, ProductRating } from '@app/components'
 
 // Utils
-import { calculateProductPrice, generateSlugByNameAndId } from '@app/utils'
+import { generateSlugByNameAndId } from '@app/utils'
 
 interface IProductItemProps {
   product: Product
@@ -173,7 +173,7 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
             <HStack alignSelf="flex-start">
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
                 {unitPrice}
-                {calculateProductPrice(price, discount)}
+                {parseFloat((price - (price * discount) / 100).toFixed(2))}
               </Text>
               {discount && (
                 <>

@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react'
 
 // Types
-import { Cart } from '@app/types'
+import { CartItem as CartItemType } from '@app/types'
 
 // Components
 import { CloseIcon, QuantityController } from '@app/components'
@@ -10,7 +10,7 @@ import { CloseIcon, QuantityController } from '@app/components'
 import { calculateProductPrice } from '@app/utils'
 
 interface ICartItemProps {
-  cart: Cart
+  cart: CartItemType
   onRemoveItemFromCart: (cartId: number) => void
   onIncreaseQuantity: (cartId: number) => void
   onDecreaseQuantity: (cartId: number) => void
@@ -39,7 +39,7 @@ const CartItem = ({
           </Heading>
           <IconButton
             boxSize={4}
-            minW="unset"
+            minW={0}
             aria-label="close"
             backgroundColor="backgroundBlurGray"
             icon={<CloseIcon boxSize={2} color="textLightRed" />}

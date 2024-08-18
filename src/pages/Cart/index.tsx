@@ -9,24 +9,45 @@ import {
   Button,
   Container,
   Flex,
-  useDisclosure
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 
+// Constants
+import { MESSAGES } from '@app/constants'
+
 // Components
-import { CartList, Invoice } from '@app/components'
+import { CartList, CheckoutDialog, Invoice } from '@app/components'
 
 // Hooks
 import { useCartContext } from '@app/hooks'
+
+// Utils
 import { calculateProductPrice } from '@app/utils'
 
 const Cart = () => {
-  const { state: cartState, fetchCarts, removeFromCart, increaseQuantity, decreaseQuantity } = useCartContext()
-  const { isFetching, cartList } = cartState
+  const toast = useToast()
+  const { isOpen: isConfirmDeleteOpen, onOpen: onConfirmDeleteOpen, onClose: onConfirmDeleteClose } = useDisclosure()
+  const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    state: cartState,
+    fetchCarts,
+    increaseQuantity,
+    decreaseQuantity,
+    changeQuantity,
+    removeFromCart
+  } = useCartContext()
+
+  const { isCartListLoading, cartList, isRemoveFromCartLoading } = cartState
+
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
-
-  const cancelRef = useRef<HTMLButtonElement | null>(null)
+  const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     fetchCarts()
@@ -34,19 +55,27 @@ const Cart = () => {
 
   const handleRemoveItemFromCart = (cartId: number) => {
     setSelectedCartId(cartId)
-    onOpen()
+    onConfirmDeleteOpen()
   }
 
-  const handleConfirmRemoveItemFromCart = () => {
+  const handleConfirmRemoveItemFromCart = async () => {
     if (selectedCartId) {
-      removeFromCart(selectedCartId)
-      onClose()
+      try {
+        await removeFromCart(selectedCartId)
+        toast({
+          title: 'Success',
+          description: MESSAGES.REMOVE_PRODUCT_SUCCESS,
+          status: 'success'
+        })
+      } catch (error) {
+        toast({
+          title: 'Failed',
+          description: String(error),
+          status: 'error'
+        })
+      }
+      onConfirmDeleteClose()
     }
-  }
-
-  const handleChangeQuantity = (cartId: number, value: number) => {
-    setSelectedCartId(cartId)
-    console.log(value)
   }
 
   const subTotal = cartList.data.reduce((acc, cartItem) => {
@@ -57,23 +86,43 @@ const Cart = () => {
   }, 0)
 
   const handleCheckOut = () => {
-    // Todo: Handle checkout cart
+    onCheckOutOpen()
+  }
+
+  const handleCompleteCheckout = () => {
+    onCheckOutClose()
+    toast({
+      title: 'Success',
+      description: MESSAGES.CHECKOUT_SUCCESS,
+      status: 'success'
+    })
   }
 
   return (
     <Container>
       <CartList
-        isFetching={isFetching}
+        isLoading={isCartListLoading}
         carts={cartList.data}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onIncreaseQuantity={increaseQuantity}
         onDecreaseQuantity={decreaseQuantity}
-        onChangeQuantity={handleChangeQuantity}
+        onChangeQuantity={changeQuantity}
       />
-      <Flex justifyContent="flex-end" mt={12}>
-        <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
-      </Flex>
-      <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>
+      {!isCartListLoading && cartList.data.length > 0 && (
+        <Flex justifyContent="flex-end" mt={12}>
+          <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
+        </Flex>
+      )}
+
+      {/* Alert Dialog for Confirm delete */}
+      <AlertDialog
+        isCentered
+        isOpen={isConfirmDeleteOpen}
+        leastDestructiveRef={cancelConfirmDeleteRef}
+        onClose={onConfirmDeleteClose}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+      >
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -83,16 +132,33 @@ const Cart = () => {
             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={onClose} ref={cancelRef}>
+              <Button onClick={onConfirmDeleteClose} ref={cancelConfirmDeleteRef} disabled={isRemoveFromCartLoading}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={handleConfirmRemoveItemFromCart} ml={3}>
+              <Button
+                colorScheme="red"
+                onClick={handleConfirmRemoveItemFromCart}
+                ml={3}
+                disabled={isRemoveFromCartLoading}
+                isLoading={isRemoveFromCartLoading}
+              >
                 Delete
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      {/* Modal for Checkout */}
+      <Modal isOpen={isCheckOutOpen} onClose={onCheckOutClose} isCentered>
+        <ModalOverlay />
+        <ModalContent maxW={{ base: '300px', sm: '500px', lg: '800px' }}>
+          <ModalCloseButton />
+          <ModalBody p={10}>
+            <CheckoutDialog onCheckOut={handleCompleteCheckout} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   )
 }

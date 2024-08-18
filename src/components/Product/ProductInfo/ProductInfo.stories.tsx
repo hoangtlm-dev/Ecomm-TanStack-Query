@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { Container } from '@chakra-ui/react'
 
 // Types
 import { Product } from '@app/types'
@@ -12,12 +13,18 @@ import { MOCK_PRODUCT } from '@app/mocks'
 const meta: Meta<typeof ProductInfo> = {
   title: 'Components/Product/ProductInfo',
   component: ProductInfo,
-  decorators: [(Story) => <Story />],
   argTypes: {
     product: {
       control: 'object'
     }
-  }
+  },
+  decorators: [
+    (Story) => (
+      <Container>
+        <Story />
+      </Container>
+    )
+  ]
 }
 
 export default meta

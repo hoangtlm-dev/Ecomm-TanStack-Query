@@ -30,30 +30,30 @@ type Story = StoryObj<typeof ProductList>
 
 export const GridView: Story = {
   args: {
-    isFetching: false,
-    products: MOCK_PRODUCTS(6),
+    isLoading: false,
+    products: MOCK_PRODUCTS(),
     listType: 'grid'
   }
 }
 
 export const ListView: Story = {
   args: {
-    isFetching: false,
-    products: MOCK_PRODUCTS(6),
+    isLoading: false,
+    products: MOCK_PRODUCTS(),
     listType: 'list'
   }
 }
 
 export const GridFetching: Story = {
   args: {
-    isFetching: true,
+    isLoading: true,
     listType: 'grid'
   }
 }
 
 export const ListFetching: Story = {
   args: {
-    isFetching: true,
+    isLoading: true,
     listType: 'list'
   }
 }

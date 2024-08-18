@@ -1,17 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 
-import { ProductProvider, CategoryProvider, CartProvider } from '@app/contexts'
+// Constants
+import { MESSAGES } from '@app/constants'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <CartProvider>
-      <CategoryProvider>
-        <ProductProvider>
-          <App />
-        </ProductProvider>
-      </CategoryProvider>
-    </CartProvider>
-  </React.StrictMode>
-)
+// Contexts
+import { AppProviders } from '@app/contexts'
+
+const domNode = document.getElementById('root')
+
+if (domNode) {
+  createRoot(domNode).render(
+    <StrictMode>
+      <AppProviders>
+        <App />
+      </AppProviders>
+    </StrictMode>
+  )
+} else {
+  throw new Error(MESSAGES.DOM_NOT_FOUND)
+}

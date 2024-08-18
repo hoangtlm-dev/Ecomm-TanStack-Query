@@ -1,7 +1,9 @@
 import React from 'react'
 import type { Preview } from '@storybook/react'
-import { Center, ChakraProvider } from '@chakra-ui/react'
-import { BrowserRouter } from 'react-router-dom'
+import { ChakraProvider } from '@chakra-ui/react'
+
+// Contexts
+import { AppProviders } from '../src/contexts'
 
 // Theme
 import { theme } from '../src/themes'
@@ -16,16 +18,16 @@ const preview: Preview = {
     }
   },
   decorators: [
-    (Story, context) => {
-      const Router = context.parameters?.router || BrowserRouter
+    (Story) => {
       return (
-        <ChakraProvider theme={theme}>
-          <Router>
-            <Center>
-              <Story />
-            </Center>
-          </Router>
-        </ChakraProvider>
+        <AppProviders>
+          <ChakraProvider
+            theme={theme}
+            toastOptions={{ defaultOptions: { position: 'bottom-right', isClosable: true, duration: 3000 } }}
+          >
+            <Story />
+          </ChakraProvider>
+        </AppProviders>
       )
     }
   ],

@@ -2,7 +2,7 @@
 import { API_PATHS, PAGINATION } from '@app/constants'
 
 // Types
-import { Cart, PaginationRequest, PaginationResponse, QueryParams } from '@app/types'
+import { CartItem, PaginationRequest, PaginationResponse, QueryParams } from '@app/types'
 
 // Utils
 import { getEnvValue, httpRequest, updateQueryParams } from '@app/utils'
@@ -11,14 +11,34 @@ import { getEnvValue, httpRequest, updateQueryParams } from '@app/utils'
 const cartApiUrl = `${getEnvValue('VITE_BASE_API_URL')}/${API_PATHS.CARTS}`
 const paginationApiUrl = getEnvValue('VITE_PAGINATION_API_URL')
 
-export const addToCartService = async (cartData: Cart): Promise<Cart> => {
+/**
+ * Adds a new cart item or updates an existing cart item in the backend.
+ *
+ * @param cartData - The cart object that needs to be added or updated.
+ * If `cartData` has an `id`, it will be updated;
+ * otherwise, a new cart item will be created.
+ *
+ * @returns - A promise that resolves to the cart object returned by the server
+ * after the operation (either creation or update).
+ */
+export const addToCartService = async (cartData: CartItem): Promise<CartItem> => {
   if (!cartData.id) {
-    return await httpRequest<Omit<Cart, 'id'>, Cart>(cartApiUrl, 'POST', cartData)
+    return await httpRequest<Omit<CartItem, 'id'>, CartItem>(cartApiUrl, 'POST', cartData)
   }
-  return await httpRequest<Cart, Cart>(`${cartApiUrl}/${cartData.id}`, 'PUT', cartData)
+  return await httpRequest<CartItem, CartItem>(`${cartApiUrl}/${cartData.id}`, 'PUT', cartData)
 }
 
-export const getCartsService = async (queryParams: QueryParams<Partial<Cart>>): Promise<PaginationResponse<Cart>> => {
+/**
+ * Retrieves a paginated list of cart items based on the provided query parameters.
+ *
+ * @param queryParams - An object containing query parameters to filter the cart items.
+ *
+ * @returns - A promise that resolves to a paginated response containing an array of cart items and pagination metadata.
+ *
+ */
+export const getCartsService = async (
+  queryParams: QueryParams<Partial<CartItem>>
+): Promise<PaginationResponse<CartItem>> => {
   const queryString = updateQueryParams(queryParams)
 
   const requestData: PaginationRequest = {
@@ -27,8 +47,17 @@ export const getCartsService = async (queryParams: QueryParams<Partial<Cart>>): 
     limit: queryParams.limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
-  return await httpRequest<PaginationRequest, PaginationResponse<Cart>>(paginationApiUrl, 'POST', requestData)
+  return await httpRequest<PaginationRequest, PaginationResponse<CartItem>>(paginationApiUrl, 'POST', requestData)
 }
 
+/**
+ * Removes a cart item from the backend.
+ *
+ * @param cartId - The ID of the cart item that needs to be removed.
+ *
+ * @returns - A promise that resolves when the cart item is successfully deleted.
+ * The promise resolves to `void` since no data is expected to be returned by the server after the deletion.
+ *
+ */
 export const removeFromCartServices = async (cartId: number): Promise<void> =>
   await httpRequest(`${cartApiUrl}/${cartId}`, 'DELETE')

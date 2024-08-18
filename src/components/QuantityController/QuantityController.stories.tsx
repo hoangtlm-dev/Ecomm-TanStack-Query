@@ -1,7 +1,9 @@
-import { Meta, StoryObj } from '@storybook/react'
-import QuantityController from '.'
 import { useState } from 'react'
-import { IQuantityControllerProps } from './index'
+import { Meta, StoryObj } from '@storybook/react'
+import { Center } from '@chakra-ui/react'
+
+// Components
+import { IQuantityControllerProps, QuantityController } from '@app/components'
 
 const meta: Meta<typeof QuantityController> = {
   title: 'Components/QuantityController',
@@ -38,13 +40,15 @@ export const Default: Story = (args: IQuantityControllerProps) => {
   }
 
   return (
-    <QuantityController
-      {...args}
-      currentQuantity={quantity}
-      onIncreaseQuantity={handleIncreaseQuantity}
-      onDecreaseQuantity={handleDecreaseQuantity}
-      onChangeQuantity={handleChangeQuantity}
-    />
+    <Center>
+      <QuantityController
+        {...args}
+        currentQuantity={quantity}
+        onIncreaseQuantity={handleIncreaseQuantity}
+        onDecreaseQuantity={handleDecreaseQuantity}
+        onChangeQuantity={handleChangeQuantity}
+      />
+    </Center>
   )
 }
 
