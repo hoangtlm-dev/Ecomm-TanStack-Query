@@ -7,7 +7,7 @@ interface IActionBarProps {
   totalItems: number
   sortOptions: string[]
   showOptions: number[]
-  listType: 'grid' | 'list'
+  listType?: 'grid' | 'list'
   onListTypeChange: (type: 'grid' | 'list') => void
   onSortByField: (fieldName: string) => void
   onShowListByItemsPerPage: (itemsPerPage: number) => void
@@ -17,7 +17,7 @@ const ActionBar = ({
   totalItems,
   sortOptions,
   showOptions,
-  listType,
+  listType = 'grid',
   onListTypeChange,
   onSortByField,
   onShowListByItemsPerPage

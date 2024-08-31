@@ -21,6 +21,12 @@ export const productReducer = (state: IProductState, action: ProductAction): IPr
       return { ...state, isCurrentProductLoading: false, currentProduct: action.payload }
     case ACTION_TYPES.FETCH_PRODUCT_DETAILS_ERROR:
       return { ...state, isCurrentProductLoading: false, currentProductError: action.payload }
+
+    // Change list type
+    case ACTION_TYPES.SET_LIST_TYPE:
+      localStorage.setItem('listType', action.payload)
+
+      return { ...state, listType: action.payload }
     default:
       return state
   }

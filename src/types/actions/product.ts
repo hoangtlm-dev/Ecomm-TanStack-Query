@@ -14,6 +14,9 @@ export interface IProductState {
   isCurrentProductLoading: boolean
   currentProduct: Product | null
   currentProductError: string | null
+
+  // Add listType
+  listType: 'grid' | 'list'
 }
 
 // Pending actions
@@ -47,4 +50,14 @@ type ProductRequestFailureAction =
       payload: string
     }
 
-export type ProductAction = ProductRequestPendingAction | ProductRequestSuccessAction | ProductRequestFailureAction
+// List Type
+type ListTypeChangeAction = {
+  type: ACTION_TYPES.SET_LIST_TYPE
+  payload: 'grid' | 'list'
+}
+
+export type ProductAction =
+  | ProductRequestPendingAction
+  | ProductRequestSuccessAction
+  | ProductRequestFailureAction
+  | ListTypeChangeAction

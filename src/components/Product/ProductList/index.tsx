@@ -13,7 +13,7 @@ import { SkeletonProductItem, ProductItem, ProductListEmpty } from '@app/compone
 interface IProductListProps {
   isLoading: boolean
   products: Product[]
-  listType: 'grid' | 'list'
+  listType?: 'grid' | 'list'
   onAddToCart: (product: Product) => void
   gridTemplateColumns?: { [key: string]: string }
   skeletonTemplateColumns?: number
@@ -22,7 +22,7 @@ interface IProductListProps {
 const ProductList = ({
   isLoading,
   products,
-  listType,
+  listType = 'grid',
   onAddToCart,
   gridTemplateColumns,
   skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE
