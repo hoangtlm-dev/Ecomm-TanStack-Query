@@ -9,7 +9,6 @@ import {
   ModalOverlay,
   Spinner,
   Stack,
-  useBreakpointValue,
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
@@ -39,37 +38,23 @@ import { getIdFromSlug } from '@app/utils'
 
 const Home = () => {
   const [activeColor, setActiveColor] = useState('')
-  const [listType, setListType] = useState<'grid' | 'list'>(() => {
-    const savedListType = localStorage.getItem('listType') as 'grid' | 'list' | null
-    return savedListType || 'grid'
-  })
-
   const [priceRange, setPriceRange] = useState([0, 1000])
+  const { state: productState, fetchProducts, setListType } = useProductContext()
+  const { state: categoryState, fetchCategories } = useCategoryContext()
+  const { state: cartState, fetchCarts, addToCart } = useCartContext()
+  const { productList, isProductListLoading, listType } = productState
+  const { categoryList } = categoryState
+  const { cartList, isAddToCartLoading } = cartState
 
   const navigate = useNavigate()
   const toast = useToast()
   const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
-
-  // Use breakpoint value to determine screenListType
-  const screenListType: 'grid' | 'list' = useBreakpointValue({ base: 'grid', md: listType }) || 'grid'
-
-  const { state: productState, fetchProducts } = useProductContext()
-  const { state: categoryState, fetchCategories } = useCategoryContext()
-  const { state: cartState, fetchCarts, addToCart } = useCartContext()
-  const { productList, isProductListLoading } = productState
-  const { categoryList } = categoryState
-  const { cartList, isAddToCartLoading } = cartState
 
   const queryParams = useQueryParams()
 
   // Get current params from query params
   const currentCategoryId = queryParams.brand ? Number(getIdFromSlug(queryParams.brand)) : 0
   const currentPage = queryParams.page ? Number(queryParams.page) : 1
-
-  // Save listType to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('listType', listType)
-  }, [listType])
 
   useEffect(() => {
     fetchProducts({
@@ -204,7 +189,7 @@ const Home = () => {
             totalItems={productList.totalItems}
             sortOptions={['Id', 'Name', 'Price']}
             showOptions={[6, 9, 12]}
-            listType={screenListType}
+            listType={listType}
             onListTypeChange={handleListTypeChange}
             onSortByField={handleSortByField}
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
@@ -213,7 +198,7 @@ const Home = () => {
           <ProductList
             isLoading={isProductListLoading}
             products={productList.data}
-            listType={screenListType}
+            listType={listType}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination

@@ -4,7 +4,7 @@ import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } 
 import { ACTION_TYPES, MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
-import { IProductState, PaginationResponse, Product, ProductAction, QueryParams } from '@app/types'
+import { ExtendedQueryParams, IProductState, PaginationResponse, Product, ProductAction, QueryParams } from '@app/types'
 
 // Services
 import { getCurrentProductServices, getProductsService } from '@app/services'
@@ -31,14 +31,18 @@ const initialState: IProductState = {
   // Product details
   isCurrentProductLoading: true,
   currentProduct: null,
-  currentProductError: null
+  currentProductError: null,
+
+  //listType
+  listType: (localStorage.getItem('listType') as 'grid' | 'list') || 'grid'
 }
 
 export interface IProductContextType {
   state: IProductState
   dispatch: Dispatch<ProductAction>
-  fetchProducts: (params?: Partial<QueryParams<Product>>) => Promise<void>
+  fetchProducts: (params?: Partial<ExtendedQueryParams<Product>>) => Promise<void>
   fetchCurrentProduct: (productId: number) => Promise<void>
+  setListType: (listType: 'grid' | 'list') => void
 }
 
 export const ProductContext = createContext<IProductContextType | null>(null)
@@ -46,7 +50,7 @@ export const ProductContext = createContext<IProductContextType | null>(null)
 const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(productReducer, initialState)
 
-  const fetchProducts = useCallback(async (params: Partial<QueryParams<Product>> = {}) => {
+  const fetchProducts = useCallback(async (params: Partial<ExtendedQueryParams<Product>> = {}) => {
     dispatch({ type: ACTION_TYPES.FETCH_PRODUCTS_PENDING })
 
     const defaultParams: QueryParams<Partial<Product>> = {
@@ -76,14 +80,19 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [])
 
+  const setListType = useCallback((type: 'grid' | 'list') => {
+    dispatch({ type: ACTION_TYPES.SET_LIST_TYPE, payload: type })
+  }, [])
+
   const productContextValue: IProductContextType = useMemo(
     () => ({
       state,
       dispatch,
       fetchProducts,
-      fetchCurrentProduct
+      fetchCurrentProduct,
+      setListType
     }),
-    [state, fetchProducts, fetchCurrentProduct]
+    [state, fetchProducts, fetchCurrentProduct, setListType]
   )
 
   return <ProductContext.Provider value={productContextValue}>{children}</ProductContext.Provider>

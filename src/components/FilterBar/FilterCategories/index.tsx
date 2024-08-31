@@ -30,7 +30,7 @@ const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCate
         {categories.map((category) => {
           const { id, name, totalProducts } = category
 
-          const isActive = queryParams.brand ? queryParams.brand.includes(name) : id === 1
+          const isActive = queryParams.brand?.includes(name)
 
           return (
             <Link

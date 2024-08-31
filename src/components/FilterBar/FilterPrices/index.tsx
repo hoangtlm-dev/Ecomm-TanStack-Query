@@ -34,8 +34,10 @@ const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterByPrices }:
         <RangeSlider
           aria-label={['min', 'max']}
           focusThumbOnChange={false}
-          onChangeEnd={(priceRange) => onFilterByPrices(priceRange)}
+          onChangeEnd={onFilterByPrices}
           defaultValue={[minPrice, maxPrice]}
+          min={0}
+          max={1000}
         >
           <RangeSliderTrack>
             <RangeSliderFilledTrack bg="backgroundLightBlue" />
