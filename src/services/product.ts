@@ -2,7 +2,7 @@
 import { API_PATHS, PAGINATION } from '@app/constants'
 
 // Types
-import { PaginationRequest, PaginationResponse, Product, QueryParams } from '@app/types'
+import { ExtendedQueryParams, PaginationRequest, PaginationResponse, Product, ProductParams } from '@app/types'
 
 // Utils
 import { getEnvValue, httpRequest, updateQueryParams } from '@app/utils'
@@ -12,7 +12,7 @@ const productApiUrl = `${getEnvValue('VITE_BASE_API_URL')}/${API_PATHS.PRODUCTS}
 const paginationApiUrl = getEnvValue('VITE_PAGINATION_API_URL')
 
 export const getProductsService = async (
-  queryParams: QueryParams<Partial<Product>>
+  queryParams: ExtendedQueryParams<Partial<ProductParams>>
 ): Promise<PaginationResponse<Product>> => {
   const queryString = updateQueryParams(queryParams)
 

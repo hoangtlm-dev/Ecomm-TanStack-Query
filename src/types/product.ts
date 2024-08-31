@@ -14,3 +14,7 @@ export type Product = {
   categoryId: number
   categoryName: string
 }
+
+export type ProductParams = {
+  [K in keyof Product]: Product[K] extends string[] ? string : Product[K]
+}
