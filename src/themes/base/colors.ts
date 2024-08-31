@@ -55,12 +55,12 @@ export const colors = {
   twitter: socialColors.twitter,
 
   // Filters
-  filterBlue: filterColors.blue,
-  filterRed: filterColors.red,
-  filterBlack: filterColors.black,
-  filterYellow: filterColors.yellow,
-  filterPink: filterColors.pink,
-  filterBlurPink: filterColors.blurPink,
+  filterBlue: generateShades(filterColors.blue),
+  filterRed: generateShades(filterColors.red),
+  filterBlack: generateShades(filterColors.black),
+  filterYellow: generateShades(filterColors.yellow),
+  filterPink: generateShades(filterColors.pink),
+  filterBlurPink: generateShades(filterColors.blurPink),
 
   // Texts
   textDefault: systemColors.black,

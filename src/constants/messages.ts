@@ -9,6 +9,9 @@ export const MESSAGES = {
   ERROR_SENDING_REQUEST: 'Error while sending request',
   MISSING_ENV: (key: EnvKey) => `The required env ${key} is missing`,
 
+  // Color not found
+  COLOR_NOT_INCLUDE_FILTER: (colorName: string) => `The color with name ${colorName} is not started with 'filter'`,
+
   // Context
   CONTEXT_ERROR: (contextName: string) => `use${contextName}Context must be used within a ${contextName}Provider`,
   FETCH_PRODUCTS_FAILED: 'Failed to fetch product',

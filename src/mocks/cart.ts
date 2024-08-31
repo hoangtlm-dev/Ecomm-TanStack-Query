@@ -9,7 +9,7 @@ export const MOCK_CART: CartItem = {
   productId: 1,
   productName: 'Nike Airmax 270 React',
   productPrice: 539.99,
-  productUnitPrice: '$',
+  productCurrencyUnit: '$',
   productQuantity: 100,
   productDiscount: 20,
   productImage: mockProductImage,

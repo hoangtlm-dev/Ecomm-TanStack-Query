@@ -11,7 +11,7 @@ export type QueryParams<T extends Record<string, string | number | boolean>> = {
 export type OmitPageAndLimit<T> = Omit<T, 'page' | 'limit'>
 
 type AddSuffix<T, Suffix extends string> = {
-  [K in keyof T as `${Extract<K, string>}${Suffix}`]?: T[K]
+  [K in keyof T as `${Extract<K, string>}${Suffix}`]?: T[K] extends string[] ? string : T[K]
 }
 
 export type ExtendedQueryParams<T extends Record<string, string | number | boolean>> = QueryParams<T> &

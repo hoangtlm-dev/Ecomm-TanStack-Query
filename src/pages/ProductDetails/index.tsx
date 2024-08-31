@@ -61,7 +61,7 @@ const ProductDetails = () => {
   }, [isAddToCartLoading, onOpenLoadingModal])
 
   const handleAddProductToCart = async (product: Product) => {
-    const { id, name, price, unitPrice, quantity, discount, image } = product
+    const { id, name, price, currencyUnit, quantity, discount, image } = product
 
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
     const cartQuantity = currentProduct?.id === product.id ? currentProductQuantity : 1
@@ -73,7 +73,7 @@ const ProductDetails = () => {
         productName: name,
         productPrice: price,
         productQuantity: quantity,
-        productUnitPrice: unitPrice,
+        productCurrencyUnit: currencyUnit,
         productDiscount: discount,
         productImage: image,
         quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity

@@ -24,8 +24,16 @@ const CartItem = ({
   onDecreaseQuantity,
   onChangeQuantity
 }: ICartItemProps) => {
-  const { id, productName, productImage, productPrice, productQuantity, productUnitPrice, productDiscount, quantity } =
-    cart
+  const {
+    id,
+    productName,
+    productImage,
+    productPrice,
+    productQuantity,
+    productCurrencyUnit,
+    productDiscount,
+    quantity
+  } = cart
 
   return (
     <Flex gap={4} display={{ base: 'flex', lg: 'none' }}>
@@ -49,7 +57,7 @@ const CartItem = ({
         </Flex>
         <HStack gap={{ base: 2, sm: 4, md: 8 }}>
           <Text fontSize="textSmall">
-            {productUnitPrice}
+            {productCurrencyUnit}
             {calculateProductPrice(productPrice, productDiscount)}
           </Text>
           <QuantityController
@@ -61,7 +69,7 @@ const CartItem = ({
             onDecreaseQuantity={() => onDecreaseQuantity(id)}
           />
           <Text fontSize="textSmall">
-            {productUnitPrice}
+            {productCurrencyUnit}
             {calculateProductPrice(productPrice, productDiscount, quantity)}
           </Text>
         </HStack>

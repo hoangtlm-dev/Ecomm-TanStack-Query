@@ -2,8 +2,9 @@ export type Product = {
   id: number
   name: string
   description: string
+  colors: string[]
   price: number
-  unitPrice: string
+  currencyUnit: string
   quantity: number
   discount: number
   image: string
