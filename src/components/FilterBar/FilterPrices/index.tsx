@@ -12,11 +12,11 @@ import {
 interface IFilterPricesProps {
   minPrice: number
   maxPrice: number
-  unitPrice?: string
+  currencyUnit?: string
   onFilterByPrices: (priceRange: number[]) => void
 }
 
-const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterByPrices }: IFilterPricesProps) => {
+const FilterPrices = ({ minPrice, maxPrice, currencyUnit = '$', onFilterByPrices }: IFilterPricesProps) => {
   return (
     <Stack p={4} bg="backgroundBlurGray">
       <Heading as="h3" fontSize="textMedium" fontWeight="medium" textTransform="uppercase">
@@ -26,8 +26,8 @@ const FilterPrices = ({ minPrice, maxPrice, unitPrice = '$', onFilterByPrices }:
         <HStack justifyContent="space-between">
           <Text>Ranger:</Text>
           <Text>
-            {unitPrice}
-            {minPrice} - {unitPrice}
+            {currencyUnit}
+            {minPrice} - {currencyUnit}
             {maxPrice}
           </Text>
         </HStack>

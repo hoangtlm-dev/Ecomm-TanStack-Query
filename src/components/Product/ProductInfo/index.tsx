@@ -26,7 +26,7 @@ const ProductInfo = ({
   onDecreaseQuantity,
   onChangeQuantity
 }: IProductInfoProps) => {
-  const { name, description, image, price, unitPrice, quantity, discount, reviewNumber, ratingStar, categoryName } =
+  const { name, description, image, price, currencyUnit, quantity, discount, reviewNumber, ratingStar, categoryName } =
     product
 
   return (
@@ -59,13 +59,13 @@ const ProductInfo = ({
           <Stack>
             <HStack spacing={4}>
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
-                {unitPrice}
+                {currencyUnit}
                 {calculateProductPrice(price, discount)}
               </Text>
               {discount && (
                 <>
                   <Text fontSize="textSmall" color="textGray" textDecoration="line-through">
-                    {unitPrice}
+                    {currencyUnit}
                     {price}
                   </Text>
                   <Text fontSize="textSmall" fontWeight="bold" color="textLightRed">

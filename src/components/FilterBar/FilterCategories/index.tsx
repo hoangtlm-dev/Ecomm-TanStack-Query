@@ -40,8 +40,7 @@ const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCate
                 pathname: currentPath,
                 search: createSearchParams({
                   ...queryParams,
-                  brand: generateSlugByNameAndId({ name, id }),
-                  page: '1'
+                  brand: generateSlugByNameAndId({ name, id })
                 }).toString()
               }}
               display="flex"

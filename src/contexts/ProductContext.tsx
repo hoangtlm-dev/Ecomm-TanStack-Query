@@ -4,7 +4,14 @@ import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } 
 import { ACTION_TYPES, MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
-import { ExtendedQueryParams, IProductState, PaginationResponse, Product, ProductAction, QueryParams } from '@app/types'
+import {
+  ExtendedQueryParams,
+  IProductState,
+  PaginationResponse,
+  Product,
+  ProductAction,
+  ProductParams
+} from '@app/types'
 
 // Services
 import { getCurrentProductServices, getProductsService } from '@app/services'
@@ -40,7 +47,7 @@ const initialState: IProductState = {
 export interface IProductContextType {
   state: IProductState
   dispatch: Dispatch<ProductAction>
-  fetchProducts: (params?: Partial<ExtendedQueryParams<Product>>) => Promise<void>
+  fetchProducts: (params?: Partial<ExtendedQueryParams<ProductParams>>) => Promise<void>
   fetchCurrentProduct: (productId: number) => Promise<void>
   setListType: (listType: 'grid' | 'list') => void
 }
@@ -50,10 +57,10 @@ export const ProductContext = createContext<IProductContextType | null>(null)
 const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(productReducer, initialState)
 
-  const fetchProducts = useCallback(async (params: Partial<ExtendedQueryParams<Product>> = {}) => {
+  const fetchProducts = useCallback(async (params: Partial<ExtendedQueryParams<ProductParams>> = {}) => {
     dispatch({ type: ACTION_TYPES.FETCH_PRODUCTS_PENDING })
 
-    const defaultParams: QueryParams<Partial<Product>> = {
+    const defaultParams: Partial<ExtendedQueryParams<ProductParams>> = {
       _sort: params._sort ?? 'id',
       _order: params._order ?? 'desc',
       limit: params.limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE,

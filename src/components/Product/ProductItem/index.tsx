@@ -37,7 +37,7 @@ interface IProductItemProps {
 const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const { id, name, description, price, unitPrice, discount, image, ratingStar, reviewNumber, isHotDeal } = product
+  const { id, name, description, price, currencyUnit, discount, image, ratingStar, reviewNumber, isHotDeal } = product
 
   return listType === 'grid' ? (
     <LinkBox
@@ -96,13 +96,13 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
         <ProductRating ratingNumber={ratingStar} />
         <HStack>
           <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
-            {unitPrice}
+            {currencyUnit}
             {parseFloat((price - (price * discount) / 100).toFixed(2))}
           </Text>
           {discount && (
             <>
               <Text fontSize="textTiny" color="textGray" textDecoration="line-through">
-                {unitPrice}
+                {currencyUnit}
                 {price}
               </Text>
               <Text fontSize="textTiny" fontWeight="bold" color="textLightRed">
@@ -172,13 +172,13 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
           <VStack gap={4} w="full">
             <HStack alignSelf="flex-start">
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
-                {unitPrice}
+                {currencyUnit}
                 {parseFloat((price - (price * discount) / 100).toFixed(2))}
               </Text>
               {discount && (
                 <>
                   <Text fontSize="textTiny" color="textGray" textDecoration="line-through">
-                    {unitPrice}
+                    {currencyUnit}
                     {price}
                   </Text>
                   <Text fontSize="textTiny" fontWeight="bold" color="textLightRed">

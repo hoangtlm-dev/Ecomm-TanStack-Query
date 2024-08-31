@@ -137,7 +137,7 @@ const CartList = ({
                   productName,
                   productImage,
                   productPrice,
-                  productUnitPrice,
+                  productCurrencyUnit,
                   productQuantity,
                   productDiscount,
                   quantity
@@ -168,7 +168,7 @@ const CartList = ({
                     </Td>
                     <Td>
                       <Text>
-                        {productUnitPrice}
+                        {productCurrencyUnit}
                         {calculateProductPrice(productPrice, productDiscount)}
                       </Text>
                     </Td>
@@ -184,7 +184,7 @@ const CartList = ({
                     </Td>
                     <Td>
                       <Text>
-                        {productUnitPrice}
+                        {productCurrencyUnit}
                         {calculateProductPrice(productPrice, productDiscount, quantity)}
                       </Text>
                     </Td>

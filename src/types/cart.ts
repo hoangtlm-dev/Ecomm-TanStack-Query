@@ -3,7 +3,7 @@ export type CartItem = {
   productId: number
   productName: string
   productPrice: number
-  productUnitPrice: string
+  productCurrencyUnit: string
   productQuantity: number
   productDiscount: number
   productImage: string

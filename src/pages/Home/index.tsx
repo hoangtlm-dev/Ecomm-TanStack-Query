@@ -34,10 +34,17 @@ import {
 import { useCartContext, useCategoryContext, useProductContext, useQueryParams } from '@app/hooks'
 
 // Utils
-import { getIdFromSlug } from '@app/utils'
+import { convertColorParamsToCamelCase, getIdFromSlug } from '@app/utils'
 
 const Home = () => {
-  const [activeColor, setActiveColor] = useState('')
+  const filteredColors = [
+    'filterBlue.500',
+    'filterRed.500',
+    'filterBlack.500',
+    'filterYellow.500',
+    'filterPink.500',
+    'filterBlurPink.500'
+  ]
   const [priceRange, setPriceRange] = useState([0, 1000])
   const { state: productState, fetchProducts, setListType } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
@@ -63,7 +70,8 @@ const Home = () => {
       _sort: queryParams.sort,
       limit: queryParams.limit ? Number(queryParams.limit) : PAGINATION.DEFAULT_ITEMS_PER_PAGE,
       price_gte: Number(queryParams.min_price),
-      price_lte: Number(queryParams.max_price)
+      price_lte: Number(queryParams.max_price),
+      colors_like: queryParams.color && convertColorParamsToCamelCase(queryParams.color)
     })
   }, [
     fetchProducts,
@@ -72,7 +80,8 @@ const Home = () => {
     queryParams.sort,
     queryParams.limit,
     queryParams.min_price,
-    queryParams.max_price
+    queryParams.max_price,
+    queryParams.color
   ])
 
   useEffect(() => {
@@ -97,13 +106,6 @@ const Home = () => {
         max_price: priceRange[1].toString()
       }).toString()
     })
-  }
-
-  const filteredColors = ['filterBlue', 'filterRed', 'filterBlack', 'filterYellow', 'filterPink', 'filterBlurPink']
-
-  const handleFilterByColors = (color: string) => {
-    // Todo: Handle logic for filtering products by color
-    setActiveColor(color)
   }
 
   const handleSortByField = async (fieldName: string) => {
@@ -133,7 +135,7 @@ const Home = () => {
   }, [isAddToCartLoading, onOpenLoadingModal])
 
   const handleAddProductToCart = async (product: Product) => {
-    const { id, name, price, unitPrice, quantity, discount, image } = product
+    const { id, name, price, currencyUnit, quantity, discount, image } = product
 
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
 
@@ -143,7 +145,7 @@ const Home = () => {
         productId: id,
         productName: name,
         productPrice: price,
-        productUnitPrice: unitPrice,
+        productCurrencyUnit: currencyUnit,
         productQuantity: quantity,
         productDiscount: discount,
         productImage: image,
@@ -176,7 +178,7 @@ const Home = () => {
             maxPrice={queryParams.max_price ? Number(queryParams.max_price) : priceRange[1]}
             onFilterByPrices={handleFilterByPrices}
           />
-          <FilterColors colors={filteredColors} activeColor={activeColor} onFilterByColors={handleFilterByColors} />
+          <FilterColors colors={filteredColors} />
         </Stack>
         <Stack gap={8} flex={1}>
           <Banner
