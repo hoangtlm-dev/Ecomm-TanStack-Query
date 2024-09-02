@@ -1,93 +1,70 @@
-# Ecomm TanStack Query
+# E-Comm - Ecommerce Web Application
 
+## Overview
 
+E-Comm is a web application designed to facilitate online shopping and provide a seamless experience for buyers. It offers a wide range of products across various categories, allowing users to browse, add prodcuts to cart, and purchase items conveniently.
 
-## Getting started
+Author: Hoang Tran &lt;[hoangtlm2410@gmail.com.vn](hoangtlm2410@gmail.com.vn)&gt;
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Design: [Figma](https://www.figma.com/design/1n1f1UrNSfznNV1vjZKbr3/E-Comm?node-id=14-581&t=vWuXw3Cf6s8Qdstk-1)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Tech Stacks
 
-## Add your files
+- Front-end
+  - React v18
+  - React Router v6
+  - Storybook
+  - Chakra UI
+- Other third parties
+  - JSON server
+  - Pagination API
+- Deployment:
+  - CI/CD: GitLab Pipeline
+  - Render for JSON server: 🔥 Coming soon!
+  - Vercel for Web site: 🔥 Coming soon!
+  - Vercel for Storybook: 🔥 Coming soon!
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Requirements
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/tranleminhhoang2410/ecomm-tanstack-query.git
-git branch -M main
-git push -uf origin main
-```
+- [Vite](https://vitejs.dev/) &gt;= 5.3.4
+- [Node](https://nodejs.org/en/) &gt;= 20.12.2 / [npm](https://www.npmjs.com/) &gt;= 7.7.6
+- [pnpm](https://pnpm.io/) &gt;= 8.7.0
 
-## Integrate with your tools
+## Getting Started
 
-- [ ] [Set up project integrations](https://gitlab.com/tranleminhhoang2410/ecomm-tanstack-query/-/settings/integrations)
+**Step by step to run the web site and storybook in your local**
 
-## Collaborate with your team
+1. Clone the project repository
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+   ```
+   git clone git@gitlab.com:tranleminhhoang2410/ecomm-chakra-ui.git`
+   ```
 
-## Test and Deploy
+2. Install project dependencies
 
-Use the built-in continuous integration in GitLab.
+   ```
+   pnpm install
+   ```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+3. Set up environment variables
 
-***
+- Create a `.env` file in the root directory
+- Contact the author to get the value of environment variables (please follow `.env.example` to get the key)
 
-# Editing this README
+4. Running the page
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- Open a new terminal
+- Run the page
+  ```
+  pnpm dev
+  ```
+- The page will run on [http://localhost:5173](http://localhost:5173) by default. You can access it using your browser.
 
-## Suggestions for a good README
+5. Running the storybook
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Open a new terminal
+- Run the storybook
+  ```
+  pnpm storybook
+  ```
+- The storybook will run on [http://localhost:6006](http://localhost:6006) by default. You can access it using your browser.
