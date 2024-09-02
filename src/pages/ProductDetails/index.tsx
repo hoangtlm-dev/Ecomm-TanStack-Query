@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import {
   Center,
   Container,
@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 
 // Constants
-import { MESSAGES } from '@app/constants'
+import { MESSAGES, ROUTES } from '@app/constants'
 
 // Components
 import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
@@ -43,15 +43,21 @@ const ProductDetails = () => {
   const productId = productSlug && Number(getIdFromSlug(productSlug))
 
   useEffect(() => {
-    if (productId) {
-      fetchCurrentProduct(productId)
+    const handleGetCurrentProduct = async () => {
+      if (productId) {
+        await fetchCurrentProduct(productId)
+      }
     }
+    handleGetCurrentProduct()
   }, [productId, fetchCurrentProduct])
 
   useEffect(() => {
-    if (currentProduct && productId) {
-      fetchProducts({ id_ne: productId, limit: 4, categoryId: currentProduct.categoryId })
+    const handleFetchRelatedProducts = async () => {
+      if (currentProduct && productId) {
+        await fetchProducts({ id_ne: productId, limit: 4, categoryId: currentProduct.categoryId })
+      }
     }
+    handleFetchRelatedProducts()
   }, [currentProduct, productId, fetchProducts])
 
   useEffect(() => {
@@ -59,6 +65,10 @@ const ProductDetails = () => {
       onOpenLoadingModal()
     }
   }, [isAddToCartLoading, onOpenLoadingModal])
+
+  if (!productId) {
+    return <Navigate to={ROUTES.NOT_FOUND} />
+  }
 
   const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, currencyUnit, quantity, discount, image } = product

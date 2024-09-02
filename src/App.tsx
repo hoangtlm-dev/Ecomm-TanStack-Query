@@ -1,5 +1,6 @@
 import { ChakraProvider, Container, Heading, VStack, Text, Link } from '@chakra-ui/react'
 import { BrowserRouter, Route, Routes, Link as ReactRouterLink } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
 
 // Constants
 import { ROUTES } from '@app/constants'
@@ -7,11 +8,14 @@ import { ROUTES } from '@app/constants'
 // Themes
 import { theme } from '@app/themes'
 
-/// Layouts
+// Components
+import { Fallback } from '@app/components'
+
+// Layouts
 import { MainLayout } from '@app/layouts'
 
 // Pages
-import { Cart, Home, ProductDetails } from '@app/pages'
+import { Cart, Home, ProductDetails, NotFound } from '@app/pages'
 
 const PlaceholderPage = ({ pageName = 'Placeholder' }: { pageName?: string }) => (
   <Container>
@@ -31,22 +35,24 @@ const App = () => {
       theme={theme}
       toastOptions={{ defaultOptions: { position: 'bottom-right', isClosable: true, duration: 3000 } }}
     >
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path={ROUTES.ROOT} element={<Home />} />
-            <Route path={ROUTES.PRODUCT_DETAILS} element={<ProductDetails />} />
-            <Route path={ROUTES.CART} element={<Cart />} />
-            <Route path={ROUTES.NOT_FOUND} element={<PlaceholderPage pageName="Not found" />} />
+      <ErrorBoundary fallback={<Fallback />}>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route path={ROUTES.ROOT} element={<Home />} />
+              <Route path={ROUTES.PRODUCT_DETAILS} element={<ProductDetails />} />
+              <Route path={ROUTES.CART} element={<Cart />} />
+              <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
 
-            {/* Menus */}
-            <Route path={ROUTES.BAGS} element={<PlaceholderPage pageName="Bags" />} />
-            <Route path={ROUTES.SNEAKERS} element={<PlaceholderPage pageName="Sneakers" />} />
-            <Route path={ROUTES.BELT} element={<PlaceholderPage pageName="Belt" />} />
-            <Route path={ROUTES.CONTACT} element={<PlaceholderPage pageName="Contact" />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+              {/* Menus */}
+              <Route path={ROUTES.BAGS} element={<PlaceholderPage pageName="Bags" />} />
+              <Route path={ROUTES.SNEAKERS} element={<PlaceholderPage pageName="Sneakers" />} />
+              <Route path={ROUTES.BELT} element={<PlaceholderPage pageName="Belt" />} />
+              <Route path={ROUTES.CONTACT} element={<PlaceholderPage pageName="Contact" />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ErrorBoundary>
     </ChakraProvider>
   )
 }
