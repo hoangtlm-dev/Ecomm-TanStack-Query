@@ -17,7 +17,7 @@ import {
 import { MESSAGES, ROUTES } from '@app/constants'
 
 // Components
-import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
+import { ProductInfo, ProductList } from '@app/components'
 
 // Types
 import { Product } from '@app/types'
@@ -105,20 +105,15 @@ const ProductDetails = () => {
 
   return (
     <Container>
-      {isCurrentProductPending ? (
-        <SkeletonProductInfo />
-      ) : (
-        currentProduct && (
-          <ProductInfo
-            product={currentProduct}
-            onAddToCart={handleAddProductToCart}
-            currentQuantity={currentProductQuantity}
-            onIncreaseQuantity={handleIncreaseQuantity}
-            onDecreaseQuantity={handleDecreaseQuantity}
-            onChangeQuantity={handleChangeQuantity}
-          />
-        )
-      )}
+      <ProductInfo
+        isLoading={isCurrentProductPending}
+        product={currentProduct}
+        onAddToCart={handleAddProductToCart}
+        currentQuantity={currentProductQuantity}
+        onIncreaseQuantity={handleIncreaseQuantity}
+        onDecreaseQuantity={handleDecreaseQuantity}
+        onChangeQuantity={handleChangeQuantity}
+      />
 
       <VStack mt={12} spacing={12}>
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
