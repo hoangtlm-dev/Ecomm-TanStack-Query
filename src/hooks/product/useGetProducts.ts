@@ -7,7 +7,7 @@ import { PAGINATION, QUERY_KEYS } from '@app/constants'
 import { ExtendedQueryParams, PaginationResponse, Product, ProductParams } from '@app/types'
 
 // Services
-import { getCurrentProductServices, getProductsService } from '@app/services'
+import { getProductsService } from '@app/services'
 
 // Hooks
 import { useQueryParams } from '@app/hooks'
@@ -53,33 +53,5 @@ export const useGetProducts = (params?: ExtendedQueryParams<Partial<ProductParam
       totalPages: 0
     },
     productListError: error
-  }
-}
-
-export const useGetCurrentProduct = (productId: number) => {
-  const { isPending, data, error } = useQuery<Product>({
-    queryKey: [QUERY_KEYS.CURRENT_PRODUCT, productId],
-    queryFn: () => getCurrentProductServices(productId)
-  })
-
-  return {
-    isCurrentProductPending: isPending,
-    currentProduct: data || {
-      id: 0,
-      name: '',
-      description: '',
-      colors: [''],
-      price: 0,
-      currencyUnit: '',
-      quantity: 0,
-      discount: 0,
-      image: '',
-      ratingStar: 0,
-      reviewNumber: 0,
-      isHotDeal: false,
-      categoryId: 0,
-      categoryName: ''
-    },
-    currentProductError: error
   }
 }
