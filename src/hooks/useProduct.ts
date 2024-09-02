@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 // Constants
-import { PAGINATION } from '@app/constants'
+import { PAGINATION, QUERY_KEYS } from '@app/constants'
 
 /// Types
 import { ExtendedQueryParams, PaginationResponse, Product, ProductParams } from '@app/types'
@@ -35,7 +35,7 @@ export const useGetProducts = (params?: ExtendedQueryParams<Partial<ProductParam
   }
 
   const { isPending, data, error } = useQuery<PaginationResponse<Product>>({
-    queryKey: ['products', { ...defaultParams, ...params }],
+    queryKey: [QUERY_KEYS.PRODUCTS, { ...defaultParams, ...params }],
     queryFn: () => getProductsService({ ...defaultParams, ...params })
   })
 
@@ -58,7 +58,7 @@ export const useGetProducts = (params?: ExtendedQueryParams<Partial<ProductParam
 
 export const useGetCurrentProduct = (productId: number) => {
   const { isPending, data, error } = useQuery<Product>({
-    queryKey: ['product', productId],
+    queryKey: [QUERY_KEYS.CURRENT_PRODUCT, productId],
     queryFn: () => getCurrentProductServices(productId)
   })
 
