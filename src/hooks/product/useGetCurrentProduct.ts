@@ -3,14 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 // Constants
 import { QUERY_KEYS } from '@app/constants'
 
-// Types
-import { Product } from '@app/types'
-
 // Services
 import { getCurrentProductServices } from '@app/services'
 
 export const useGetCurrentProduct = (productId: number) => {
-  const { isPending, data, error } = useQuery<Product>({
+  const { isPending, data, error } = useQuery({
     queryKey: [QUERY_KEYS.CURRENT_PRODUCT, productId],
     queryFn: () => getCurrentProductServices(productId)
   })

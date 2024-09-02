@@ -9,12 +9,11 @@ import {
   ModalOverlay,
   Spinner,
   Stack,
-  useDisclosure,
-  useToast
+  useDisclosure
 } from '@chakra-ui/react'
 
 // Constants
-import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
+import { banner, PAGINATION, ROUTES } from '@app/constants'
 
 // Types
 import { Product } from '@app/types'
@@ -31,7 +30,14 @@ import {
 } from '@app/components'
 
 // Hooks
-import { useCartContext, useCategoryContext, useGetProducts, useProductContext, useQueryParams } from '@app/hooks'
+import {
+  useAddToCart,
+  useCartContext,
+  useCategoryContext,
+  useGetProducts,
+  useProductContext,
+  useQueryParams
+} from '@app/hooks'
 
 const Home = () => {
   const filteredColors = [
@@ -45,18 +51,18 @@ const Home = () => {
   const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
   const { state: categoryState, fetchCategories } = useCategoryContext()
-  const { state: cartState, fetchCart, addToCart } = useCartContext()
+  const { state: cartState, fetchCart } = useCartContext()
   const { listType } = productState
   const { categoryList } = categoryState
-  const { cartList, isAddToCartLoading } = cartState
+  const { cartList } = cartState
 
   const navigate = useNavigate()
-  const toast = useToast()
-  const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
+  const { onClose: onCloseLoadingModal } = useDisclosure()
 
   const queryParams = useQueryParams()
 
   const { isProductListPending, productList } = useGetProducts()
+  const { isAddToCartPending, addToCart } = useAddToCart()
 
   useEffect(() => {
     fetchCategories()
@@ -102,42 +108,22 @@ const Home = () => {
     })
   }
 
-  useEffect(() => {
-    if (isAddToCartLoading) {
-      onOpenLoadingModal()
-    }
-  }, [isAddToCartLoading, onOpenLoadingModal])
-
   const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, currencyUnit, quantity, discount, image } = product
 
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
 
-    try {
-      await addToCart({
-        id: cartItemFound ? cartItemFound.id : 0,
-        productId: id,
-        productName: name,
-        productPrice: price,
-        productCurrencyUnit: currencyUnit,
-        productQuantity: quantity,
-        productDiscount: discount,
-        productImage: image,
-        quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
-      })
-
-      toast({
-        title: 'Success',
-        description: MESSAGES.ADD_PRODUCT_SUCCESS,
-        status: 'success'
-      })
-    } catch (error) {
-      toast({
-        title: 'Failed',
-        description: String(error),
-        status: 'error'
-      })
-    }
+    await addToCart({
+      id: cartItemFound ? cartItemFound.id : 0,
+      productId: id,
+      productName: name,
+      productPrice: price,
+      productCurrencyUnit: currencyUnit,
+      productQuantity: quantity,
+      productDiscount: discount,
+      productImage: image,
+      quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
+    })
 
     onCloseLoadingModal()
   }
@@ -188,7 +174,7 @@ const Home = () => {
       {/* Modal for loading indicator */}
       <Modal
         isCentered
-        isOpen={isOpenLoadingModal}
+        isOpen={isAddToCartPending}
         onClose={onCloseLoadingModal}
         closeOnEsc={false}
         closeOnOverlayClick={false}
