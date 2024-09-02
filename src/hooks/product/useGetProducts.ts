@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { PAGINATION, QUERY_KEYS } from '@app/constants'
 
 /// Types
-import { ExtendedQueryParams, PaginationResponse, Product, ProductParams } from '@app/types'
+import { ExtendedQueryParams, ProductParams } from '@app/types'
 
 // Services
 import { getProductsService } from '@app/services'
@@ -34,7 +34,7 @@ export const useGetProducts = (params?: ExtendedQueryParams<Partial<ProductParam
     colors_like: queryParams.color ? queryParams.color : ''
   }
 
-  const { isPending, data, error } = useQuery<PaginationResponse<Product>>({
+  const { isPending, data, error } = useQuery({
     queryKey: [QUERY_KEYS.PRODUCTS, { ...defaultParams, ...params }],
     queryFn: () => getProductsService({ ...defaultParams, ...params })
   })

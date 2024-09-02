@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import {
   Center,
@@ -9,12 +9,11 @@ import {
   ModalOverlay,
   Spinner,
   useDisclosure,
-  useToast,
   VStack
 } from '@chakra-ui/react'
 
 // Constants
-import { MESSAGES, ROUTES } from '@app/constants'
+import { ROUTES } from '@app/constants'
 
 // Components
 import { ProductInfo, ProductList } from '@app/components'
@@ -23,7 +22,7 @@ import { ProductInfo, ProductList } from '@app/components'
 import { Product } from '@app/types'
 
 // Hooks
-import { useCartContext, useGetCurrentProduct, useGetProducts } from '@app/hooks'
+import { useAddToCart, useCartContext, useGetCurrentProduct, useGetProducts } from '@app/hooks'
 
 // Utils
 import { getIdFromSlug } from '@app/utils'
@@ -31,22 +30,15 @@ import { getIdFromSlug } from '@app/utils'
 const ProductDetails = () => {
   const [currentProductQuantity, setCurrentProductQuantity] = useState(1)
   const { productSlug } = useParams()
-
-  const toast = useToast()
-  const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
-  const { state: cartState, addToCart } = useCartContext()
-  const { cartList, isAddToCartLoading } = cartState
+  const { onClose: onCloseLoadingModal } = useDisclosure()
+  const { state: cartState } = useCartContext()
+  const { cartList } = cartState
 
   const productId = productSlug && Number(getIdFromSlug(productSlug))
 
   const { isProductListPending, productList } = useGetProducts({ page: 1, limit: 4 })
   const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(Number(productId))
-
-  useEffect(() => {
-    if (isAddToCartLoading) {
-      onOpenLoadingModal()
-    }
-  }, [isAddToCartLoading, onOpenLoadingModal])
+  const { isAddToCartPending, addToCart } = useAddToCart()
 
   if (!productId) {
     return <Navigate to={ROUTES.NOT_FOUND} />
@@ -58,31 +50,17 @@ const ProductDetails = () => {
     const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
     const cartQuantity = currentProduct?.id === product.id ? currentProductQuantity : 1
 
-    try {
-      await addToCart({
-        id: cartItemFound ? cartItemFound.id : 0,
-        productId: id,
-        productName: name,
-        productPrice: price,
-        productQuantity: quantity,
-        productCurrencyUnit: currencyUnit,
-        productDiscount: discount,
-        productImage: image,
-        quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
-      })
-
-      toast({
-        title: 'Success',
-        description: MESSAGES.ADD_PRODUCT_SUCCESS,
-        status: 'success'
-      })
-    } catch (error) {
-      toast({
-        title: 'Failed',
-        description: String(error),
-        status: 'error'
-      })
-    }
+    await addToCart({
+      id: cartItemFound ? cartItemFound.id : 0,
+      productId: id,
+      productName: name,
+      productPrice: price,
+      productQuantity: quantity,
+      productCurrencyUnit: currencyUnit,
+      productDiscount: discount,
+      productImage: image,
+      quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
+    })
 
     onCloseLoadingModal()
   }
@@ -132,7 +110,7 @@ const ProductDetails = () => {
       {/* Modal for loading indicator */}
       <Modal
         isCentered
-        isOpen={isOpenLoadingModal}
+        isOpen={isAddToCartPending}
         onClose={onCloseLoadingModal}
         closeOnEsc={false}
         closeOnOverlayClick={false}
