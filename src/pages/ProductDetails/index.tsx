@@ -23,7 +23,7 @@ import { ProductInfo, ProductList, SkeletonProductInfo } from '@app/components'
 import { Product } from '@app/types'
 
 // Hooks
-import { useCartContext, useProductContext } from '@app/hooks'
+import { useCartContext, useGetCurrentProduct, useGetProducts } from '@app/hooks'
 
 // Utils
 import { getIdFromSlug } from '@app/utils'
@@ -34,31 +34,13 @@ const ProductDetails = () => {
 
   const toast = useToast()
   const { isOpen: isOpenLoadingModal, onOpen: onOpenLoadingModal, onClose: onCloseLoadingModal } = useDisclosure()
-
-  const { state: productState, fetchProducts, fetchCurrentProduct } = useProductContext()
   const { state: cartState, addToCart } = useCartContext()
-  const { productList, currentProduct, isProductListLoading, isCurrentProductLoading } = productState
   const { cartList, isAddToCartLoading } = cartState
 
   const productId = productSlug && Number(getIdFromSlug(productSlug))
 
-  useEffect(() => {
-    const handleGetCurrentProduct = async () => {
-      if (productId) {
-        await fetchCurrentProduct(productId)
-      }
-    }
-    handleGetCurrentProduct()
-  }, [productId, fetchCurrentProduct])
-
-  useEffect(() => {
-    const handleFetchRelatedProducts = async () => {
-      if (currentProduct && productId) {
-        await fetchProducts({ id_ne: productId, limit: 4, categoryId: currentProduct.categoryId })
-      }
-    }
-    handleFetchRelatedProducts()
-  }, [currentProduct, productId, fetchProducts])
+  const { isProductListPending, productList } = useGetProducts({ page: 1, limit: 4 })
+  const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(Number(productId))
 
   useEffect(() => {
     if (isAddToCartLoading) {
@@ -123,7 +105,7 @@ const ProductDetails = () => {
 
   return (
     <Container>
-      {isCurrentProductLoading ? (
+      {isCurrentProductPending ? (
         <SkeletonProductInfo />
       ) : (
         currentProduct && (
@@ -143,7 +125,7 @@ const ProductDetails = () => {
           Related Products
         </Heading>
         <ProductList
-          isLoading={isProductListLoading}
+          isLoading={isProductListPending}
           products={productList.data}
           listType="grid"
           onAddToCart={handleAddProductToCart}

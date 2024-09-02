@@ -31,10 +31,7 @@ import {
 } from '@app/components'
 
 // Hooks
-import { useCartContext, useCategoryContext, useProductContext, useQueryParams } from '@app/hooks'
-
-// Utils
-import { convertColorParamsToCamelCase, getIdFromSlug } from '@app/utils'
+import { useCartContext, useCategoryContext, useGetProducts, useProductContext, useQueryParams } from '@app/hooks'
 
 const Home = () => {
   const filteredColors = [
@@ -45,11 +42,11 @@ const Home = () => {
     'filterPink.500',
     'filterBlurPink.500'
   ]
+  const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
-  const { state: productState, fetchProducts, setListType } = useProductContext()
   const { state: categoryState, fetchCategories } = useCategoryContext()
   const { state: cartState, fetchCarts, addToCart } = useCartContext()
-  const { productList, isProductListLoading, listType } = productState
+  const { listType } = productState
   const { categoryList } = categoryState
   const { cartList, isAddToCartLoading } = cartState
 
@@ -59,30 +56,7 @@ const Home = () => {
 
   const queryParams = useQueryParams()
 
-  // Get current params from query params
-  const currentCategoryId = queryParams.brand ? Number(getIdFromSlug(queryParams.brand)) : 0
-  const currentPage = queryParams.page ? Number(queryParams.page) : 1
-
-  useEffect(() => {
-    fetchProducts({
-      categoryId: currentCategoryId,
-      page: currentPage,
-      _sort: queryParams.sort,
-      limit: queryParams.limit ? Number(queryParams.limit) : PAGINATION.DEFAULT_ITEMS_PER_PAGE,
-      price_gte: Number(queryParams.min_price),
-      price_lte: Number(queryParams.max_price),
-      colors_like: queryParams.color && convertColorParamsToCamelCase(queryParams.color)
-    })
-  }, [
-    fetchProducts,
-    currentCategoryId,
-    currentPage,
-    queryParams.sort,
-    queryParams.limit,
-    queryParams.min_price,
-    queryParams.max_price,
-    queryParams.color
-  ])
+  const { isProductListPending, productList } = useGetProducts()
 
   useEffect(() => {
     fetchCategories()
@@ -198,7 +172,7 @@ const Home = () => {
           />
 
           <ProductList
-            isLoading={isProductListLoading}
+            isLoading={isProductListPending}
             products={productList.data}
             listType={listType}
             onAddToCart={handleAddProductToCart}
