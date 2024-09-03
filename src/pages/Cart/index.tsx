@@ -25,7 +25,7 @@ import { MESSAGES } from '@app/constants'
 import { CartList, CheckoutDialog, Invoice } from '@app/components'
 
 // Hooks
-import { useCartContext, useGetCart } from '@app/hooks'
+import { useCartContext, useGetCart, useRemoveFromCart } from '@app/hooks'
 
 // Utils
 import { calculateProductPrice } from '@app/utils'
@@ -35,14 +35,12 @@ const Cart = () => {
   const { isOpen: isConfirmDeleteOpen, onOpen: onConfirmDeleteOpen, onClose: onConfirmDeleteClose } = useDisclosure()
   const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
-  const { state: cartState, increaseQuantity, decreaseQuantity, changeQuantity, removeFromCart } = useCartContext()
-
-  const { isRemoveFromCartLoading } = cartState
-
+  const { increaseQuantity, decreaseQuantity, changeQuantity } = useCartContext()
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
   const { isCartListPending, cartList } = useGetCart()
+  const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
 
   const handleRemoveItemFromCart = (cartId: number) => {
     setSelectedCartId(cartId)
@@ -51,22 +49,9 @@ const Cart = () => {
 
   const handleConfirmRemoveItemFromCart = async () => {
     if (selectedCartId) {
-      try {
-        await removeFromCart(selectedCartId)
-        toast({
-          title: 'Success',
-          description: MESSAGES.REMOVE_PRODUCT_SUCCESS,
-          status: 'success'
-        })
-      } catch (error) {
-        toast({
-          title: 'Failed',
-          description: String(error),
-          status: 'error'
-        })
-      }
-      onConfirmDeleteClose()
+      await removeFromCart(selectedCartId)
     }
+    onConfirmDeleteClose()
   }
 
   const subTotal = cartList.data.reduce((acc, cartItem) => {
@@ -123,15 +108,15 @@ const Cart = () => {
             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={onConfirmDeleteClose} ref={cancelConfirmDeleteRef} disabled={isRemoveFromCartLoading}>
+              <Button onClick={onConfirmDeleteClose} ref={cancelConfirmDeleteRef} disabled={isRemoveFromCartPending}>
                 Cancel
               </Button>
               <Button
                 colorScheme="red"
                 onClick={handleConfirmRemoveItemFromCart}
                 ml={3}
-                disabled={isRemoveFromCartLoading}
-                isLoading={isRemoveFromCartLoading}
+                disabled={isRemoveFromCartPending}
+                isLoading={isRemoveFromCartPending}
               >
                 Delete
               </Button>
