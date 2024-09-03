@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import { Box, Center, Divider, Grid } from '@chakra-ui/react'
 
 // Constants
@@ -38,12 +37,18 @@ const ProductList = ({
 
   if (isLoading) {
     return (
-      <Grid w="full" templateColumns={gridTemplateColumns || defaultGridTemplateColumns} gap={4}>
+      <Grid
+        as="ul"
+        w="full"
+        listStyleType="none"
+        templateColumns={gridTemplateColumns || defaultGridTemplateColumns}
+        gap={4}
+      >
         {Array.from({ length: skeletonTemplateColumns }).map((_, index) => (
-          <Fragment key={index}>
+          <Box as="li" key={index}>
             <SkeletonProductItem listType={listType} />
             {listType === 'list' && index < skeletonTemplateColumns - 1 && <Divider orientation="horizontal" />}
-          </Fragment>
+          </Box>
         ))}
       </Grid>
     )
