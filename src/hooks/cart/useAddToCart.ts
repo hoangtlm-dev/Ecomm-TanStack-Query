@@ -23,7 +23,7 @@ export const useAddToCart = () => {
       })
       toast({
         title: 'Success',
-        description: MESSAGES.ADD_PRODUCT_SUCCESS,
+        description: MESSAGES.ADD_TO_CART_SUCCESS,
         status: 'success'
       })
     },
