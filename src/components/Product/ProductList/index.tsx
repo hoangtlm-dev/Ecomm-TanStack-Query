@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Center, Divider, Grid } from '@chakra-ui/react'
+import { Box, Center, Divider, Grid } from '@chakra-ui/react'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -14,18 +14,18 @@ interface IProductListProps {
   isLoading: boolean
   products: Product[]
   listType?: 'grid' | 'list'
-  onAddToCart: (product: Product) => void
   gridTemplateColumns?: { [key: string]: string }
   skeletonTemplateColumns?: number
+  onAddToCart: (product: Product) => void
 }
 
 const ProductList = ({
   isLoading,
   products,
   listType = 'grid',
-  onAddToCart,
   gridTemplateColumns,
-  skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE
+  skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE,
+  onAddToCart
 }: IProductListProps) => {
   const defaultGridTemplateColumns =
     listType === 'grid'
@@ -58,12 +58,18 @@ const ProductList = ({
   }
 
   return (
-    <Grid w="full" templateColumns={gridTemplateColumns || defaultGridTemplateColumns} gap={4}>
+    <Grid
+      as="ul"
+      w="full"
+      listStyleType="none"
+      templateColumns={gridTemplateColumns || defaultGridTemplateColumns}
+      gap={4}
+    >
       {products.map((product, index) => (
-        <Fragment key={product.id}>
+        <Box as="li" key={product.id}>
           <ProductItem product={product} listType={listType} onAddToCart={onAddToCart} />
           {listType === 'list' && index < products.length - 1 && <Divider orientation="horizontal" />}
-        </Fragment>
+        </Box>
       ))}
     </Grid>
   )
