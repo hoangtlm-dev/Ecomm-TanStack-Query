@@ -34,10 +34,10 @@ const ProductDetails = () => {
   const { state: cartState } = useCartContext()
   const { cartList } = cartState
 
-  const productId = productSlug && Number(getIdFromSlug(productSlug))
+  const productId = Number(productSlug && getIdFromSlug(productSlug))
 
   const { isProductListPending, productList } = useGetProducts({ page: 1, limit: 4 })
-  const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(Number(productId))
+  const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(productId)
   const { isAddToCartPending, addToCart } = useAddToCart()
 
   if (!productId) {
