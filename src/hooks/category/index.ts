@@ -1,1 +1,1 @@
-export * from './useCategoryContext'
+export * from './useGetCategory'

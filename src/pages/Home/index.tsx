@@ -33,7 +33,7 @@ import {
 import {
   useAddToCart,
   useCartContext,
-  useCategoryContext,
+  useGetCategories,
   useGetProducts,
   useProductContext,
   useQueryParams
@@ -50,10 +50,8 @@ const Home = () => {
   ]
   const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
-  const { state: categoryState, fetchCategories } = useCategoryContext()
   const { state: cartState, fetchCart } = useCartContext()
   const { listType } = productState
-  const { categoryList } = categoryState
   const { cartList } = cartState
 
   const navigate = useNavigate()
@@ -63,10 +61,7 @@ const Home = () => {
 
   const { isProductListPending, productList } = useGetProducts()
   const { isAddToCartPending, addToCart } = useAddToCart()
-
-  useEffect(() => {
-    fetchCategories()
-  }, [fetchCategories])
+  const { categories } = useGetCategories()
 
   useEffect(() => {
     fetchCart()
@@ -132,7 +127,7 @@ const Home = () => {
     <Container>
       <Flex gap={8} direction={{ base: 'column', lg: 'row' }}>
         <Stack gap={8}>
-          <FilterCategories categories={categoryList.data} />
+          <FilterCategories categories={categories.data} />
           <FilterPrices
             minPrice={queryParams.min_price ? Number(queryParams.min_price) : priceRange[0]}
             maxPrice={queryParams.max_price ? Number(queryParams.max_price) : priceRange[1]}
