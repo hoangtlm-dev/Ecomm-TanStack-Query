@@ -151,7 +151,6 @@ const Home = () => {
             onSortByField={handleSortByField}
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
           />
-
           <ProductList
             isLoading={isProductListPending}
             products={productList.data}
