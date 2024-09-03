@@ -20,7 +20,7 @@ export const useRemoveFromCart = () => {
       })
       toast({
         title: 'Success',
-        description: MESSAGES.REMOVE_PRODUCT_SUCCESS,
+        description: MESSAGES.REMOVE_FROM_CART_FAILED,
         status: 'success'
       })
     },
