@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Box, Circle, Container, HStack, Link, Text } from '@chakra-ui/react'
 
@@ -9,14 +8,10 @@ import { ROUTES } from '@app/constants'
 import { CartHeaderIcon, UserIcon } from '@app/components'
 
 // Hooks
-import { useCartContext } from '@app/hooks'
+import { useGetCart } from '@app/hooks'
 
 const ActionHeader = () => {
-  const { state: cartState, fetchCart } = useCartContext()
-
-  useEffect(() => {
-    fetchCart()
-  }, [fetchCart])
+  const { cartList } = useGetCart()
 
   return (
     <Box pt={8} pb={4} borderBottomWidth={2} borderColor="borderBlurGray">
@@ -43,7 +38,7 @@ const ActionHeader = () => {
                 borderColor="white"
                 borderWidth={2}
               >
-                {cartState.cartList.totalItems}
+                {cartList.totalItems}
               </Circle>
             </Box>
           </Link>

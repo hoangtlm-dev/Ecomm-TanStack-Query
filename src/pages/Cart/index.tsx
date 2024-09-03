@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   AlertDialog,
   AlertDialogBody,
@@ -25,7 +25,7 @@ import { MESSAGES } from '@app/constants'
 import { CartList, CheckoutDialog, Invoice } from '@app/components'
 
 // Hooks
-import { useCartContext } from '@app/hooks'
+import { useCartContext, useGetCart } from '@app/hooks'
 
 // Utils
 import { calculateProductPrice } from '@app/utils'
@@ -35,23 +35,14 @@ const Cart = () => {
   const { isOpen: isConfirmDeleteOpen, onOpen: onConfirmDeleteOpen, onClose: onConfirmDeleteClose } = useDisclosure()
   const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
-  const {
-    state: cartState,
-    fetchCart,
-    increaseQuantity,
-    decreaseQuantity,
-    changeQuantity,
-    removeFromCart
-  } = useCartContext()
+  const { state: cartState, increaseQuantity, decreaseQuantity, changeQuantity, removeFromCart } = useCartContext()
 
-  const { isCartListLoading, cartList, isRemoveFromCartLoading } = cartState
+  const { isRemoveFromCartLoading } = cartState
 
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
-  useEffect(() => {
-    fetchCart()
-  }, [fetchCart])
+  const { isCartListPending, cartList } = useGetCart()
 
   const handleRemoveItemFromCart = (cartId: number) => {
     setSelectedCartId(cartId)
@@ -101,14 +92,14 @@ const Cart = () => {
   return (
     <Container>
       <CartList
-        isLoading={isCartListLoading}
+        isLoading={isCartListPending}
         cart={cartList.data}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onIncreaseQuantity={increaseQuantity}
         onDecreaseQuantity={decreaseQuantity}
         onChangeQuantity={changeQuantity}
       />
-      {!isCartListLoading && cartList.data.length > 0 && (
+      {!isCartListPending && cartList.data.length > 0 && (
         <Flex justifyContent="flex-end" mt={12}>
           <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
         </Flex>
