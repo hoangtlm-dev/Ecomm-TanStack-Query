@@ -35,7 +35,7 @@ import {
   useGetCart,
   useGetCategories,
   useGetProducts,
-  useProductContext,
+  useListTypeStore,
   useQueryParams
 } from '@app/hooks'
 
@@ -48,9 +48,7 @@ const Home = () => {
     'filterPink.500',
     'filterBlurPink.500'
   ]
-  const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
-  const { listType } = productState
 
   const navigate = useNavigate()
   const { onClose: onCloseLoadingModal } = useDisclosure()
@@ -61,9 +59,10 @@ const Home = () => {
   const { categories } = useGetCategories()
   const { isAddToCartPending, addToCart } = useAddToCart()
   const { cartList } = useGetCart()
+  const { listType, setListType } = useListTypeStore()
 
-  const handleListTypeChange = (type: 'grid' | 'list') => {
-    setListType(type)
+  const handleListTypeChange = (listType: 'grid' | 'list') => {
+    setListType(listType)
   }
 
   const handleFilterByPrices = async (priceRange: number[]) => {
