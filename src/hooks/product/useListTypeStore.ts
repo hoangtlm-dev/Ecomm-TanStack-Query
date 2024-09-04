@@ -10,10 +10,10 @@ export const useListTypeStore = createWithEqualityFn(
   persist<IListTypeState>(
     (set) => ({
       listType: 'grid',
-      setListType: (listType: 'grid' | 'list') => {
-        set({ listType })
-      }
+      setListType: (listType: 'grid' | 'list') => set({ listType })
     }),
-    { name: 'listType' }
+    {
+      name: 'listType'
+    }
   )
 )
