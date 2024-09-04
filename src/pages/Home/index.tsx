@@ -32,7 +32,7 @@ import {
 // Hooks
 import {
   useAddToCart,
-  useCartContext,
+  useGetCart,
   useGetCategories,
   useGetProducts,
   useProductContext,
@@ -50,9 +50,7 @@ const Home = () => {
   ]
   const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
-  const { state: cartState } = useCartContext()
   const { listType } = productState
-  const { cartList } = cartState
 
   const navigate = useNavigate()
   const { onClose: onCloseLoadingModal } = useDisclosure()
@@ -60,8 +58,9 @@ const Home = () => {
   const queryParams = useQueryParams()
 
   const { isProductListPending, productList } = useGetProducts()
-  const { isAddToCartPending, addToCart } = useAddToCart()
   const { categories } = useGetCategories()
+  const { isAddToCartPending, addToCart } = useAddToCart()
+  const { cartList } = useGetCart()
 
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)
