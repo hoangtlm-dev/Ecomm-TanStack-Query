@@ -84,11 +84,9 @@ const Cart = () => {
         onDecreaseQuantity={decreaseQuantity}
         onChangeQuantity={changeQuantity}
       />
-      {!isCartListPending && cartList.data.length > 0 && (
-        <Flex justifyContent="flex-end" mt={12}>
-          <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
-        </Flex>
-      )}
+      <Flex justifyContent="flex-end" mt={12}>
+        <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
+      </Flex>
 
       {/* Alert Dialog for Confirm delete */}
       <AlertDialog
