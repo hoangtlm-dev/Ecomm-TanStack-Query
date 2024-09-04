@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import {
   Center,
@@ -50,7 +50,7 @@ const Home = () => {
   ]
   const { state: productState, setListType } = useProductContext()
   const [priceRange, setPriceRange] = useState([0, 1000])
-  const { state: cartState, fetchCart } = useCartContext()
+  const { state: cartState } = useCartContext()
   const { listType } = productState
   const { cartList } = cartState
 
@@ -62,10 +62,6 @@ const Home = () => {
   const { isProductListPending, productList } = useGetProducts()
   const { isAddToCartPending, addToCart } = useAddToCart()
   const { categories } = useGetCategories()
-
-  useEffect(() => {
-    fetchCart()
-  }, [fetchCart])
 
   const handleListTypeChange = (type: 'grid' | 'list') => {
     setListType(type)
