@@ -61,3 +61,6 @@ export const getCartService = async (
  */
 export const removeFromCartService = async (cartId: number): Promise<void> =>
   await httpRequest(`${cartApiUrl}/${cartId}`, 'DELETE')
+
+export const updateItemInCartService = async (cartId: number, cartData: CartItem): Promise<CartItem> =>
+  await httpRequest<CartItem, CartItem>(`${cartApiUrl}/${cartId}`, 'PUT', cartData)

@@ -25,7 +25,7 @@ import { MESSAGES } from '@app/constants'
 import { CartList, CheckoutDialog, Invoice } from '@app/components'
 
 // Hooks
-import { useCartContext, useGetCart, useRemoveFromCart } from '@app/hooks'
+import { useGetCart, useRemoveFromCart, useUpdateItemInCart } from '@app/hooks'
 
 // Utils
 import { calculateProductPrice } from '@app/utils'
@@ -35,12 +35,34 @@ const Cart = () => {
   const { isOpen: isConfirmDeleteOpen, onOpen: onConfirmDeleteOpen, onClose: onConfirmDeleteClose } = useDisclosure()
   const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
-  const { increaseQuantity, decreaseQuantity, changeQuantity } = useCartContext()
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
   const { isCartListPending, cartList } = useGetCart()
   const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
+  const { updateItemInCart } = useUpdateItemInCart()
+
+  const handleUpdateQuantityInCart = async (
+    cartId: number,
+    action: 'increase' | 'decrease' | 'change',
+    newQuantity?: number
+  ) => {
+    const cartItemFound = cartList.data.find((cart) => (cart.id = cartId))
+
+    if (!cartItemFound) return
+
+    switch (action) {
+      case 'decrease':
+        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 } })
+        break
+      case 'increase':
+        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 } })
+        break
+      case 'change':
+        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
+        break
+    }
+  }
 
   const handleRemoveItemFromCart = (cartId: number) => {
     setSelectedCartId(cartId)
@@ -80,9 +102,7 @@ const Cart = () => {
         isLoading={isCartListPending}
         cart={cartList.data}
         onRemoveItemFromCart={handleRemoveItemFromCart}
-        onIncreaseQuantity={increaseQuantity}
-        onDecreaseQuantity={decreaseQuantity}
-        onChangeQuantity={changeQuantity}
+        onUpdateQuantity={handleUpdateQuantityInCart}
       />
       <Flex justifyContent="flex-end" mt={12}>
         <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
