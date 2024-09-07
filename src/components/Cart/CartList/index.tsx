@@ -34,19 +34,10 @@ interface ICartListProps {
   isLoading: boolean
   cart: CartItemType[]
   onRemoveItemFromCart: (cartId: number) => void
-  onIncreaseQuantity: (cartId: number) => void
-  onDecreaseQuantity: (cartId: number) => void
-  onChangeQuantity: (cartId: number, value: number) => void
+  onUpdateQuantity: (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
 }
 
-const CartList = ({
-  isLoading,
-  cart,
-  onRemoveItemFromCart,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
-  onChangeQuantity
-}: ICartListProps) => {
+const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: ICartListProps) => {
   const tableHeadings = ['', 'Product', 'Unit Price', 'Qty', 'Price']
 
   const renderCartContent = () => {
@@ -65,13 +56,7 @@ const CartList = ({
 
     return cart.map((cartItem, index) => (
       <Fragment key={cartItem.id}>
-        <CartItem
-          cart={cartItem}
-          onRemoveItemFromCart={onRemoveItemFromCart}
-          onIncreaseQuantity={() => onIncreaseQuantity(cartItem.id)}
-          onChangeQuantity={(value) => onChangeQuantity(cartItem.id, Number(value))}
-          onDecreaseQuantity={() => onDecreaseQuantity(cartItem.id)}
-        />
+        <CartItem cart={cartItem} onRemoveItemFromCart={onRemoveItemFromCart} onUpdateQuantity={onUpdateQuantity} />
         {index < cart.length - 1 && <Divider orientation="horizontal" />}
       </Fragment>
     ))
@@ -176,9 +161,9 @@ const CartList = ({
                       <QuantityController
                         maxQuantity={productQuantity}
                         currentQuantity={quantity}
-                        onIncreaseQuantity={() => onIncreaseQuantity(id)}
-                        onChangeQuantity={(value) => onChangeQuantity(id, Number(value))}
-                        onDecreaseQuantity={() => onDecreaseQuantity(id)}
+                        onDecreaseQuantity={() => onUpdateQuantity(id, 'decrease')}
+                        onChangeQuantity={(value) => onUpdateQuantity(id, 'change', Number(value))}
+                        onIncreaseQuantity={() => onUpdateQuantity(id, 'increase')}
                         size="md"
                       />
                     </Td>

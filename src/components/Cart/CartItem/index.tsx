@@ -12,18 +12,10 @@ import { calculateProductPrice } from '@app/utils'
 interface ICartItemProps {
   cart: CartItemType
   onRemoveItemFromCart: (cartId: number) => void
-  onIncreaseQuantity: (cartId: number) => void
-  onDecreaseQuantity: (cartId: number) => void
-  onChangeQuantity: (cartId: number, value: number) => void
+  onUpdateQuantity: (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
 }
 
-const CartItem = ({
-  cart,
-  onRemoveItemFromCart,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
-  onChangeQuantity
-}: ICartItemProps) => {
+const CartItem = ({ cart, onRemoveItemFromCart, onUpdateQuantity }: ICartItemProps) => {
   const {
     id,
     productName,
@@ -64,9 +56,9 @@ const CartItem = ({
             size="xs"
             maxQuantity={productQuantity}
             currentQuantity={quantity}
-            onIncreaseQuantity={() => onIncreaseQuantity(id)}
-            onChangeQuantity={(value) => onChangeQuantity(id, Number(value))}
-            onDecreaseQuantity={() => onDecreaseQuantity(id)}
+            onDecreaseQuantity={() => onUpdateQuantity(id, 'decrease')}
+            onChangeQuantity={(value) => onUpdateQuantity(id, 'change', Number(value))}
+            onIncreaseQuantity={() => onUpdateQuantity(id, 'increase')}
           />
           <Text fontSize="textSmall">
             {productCurrencyUnit}
