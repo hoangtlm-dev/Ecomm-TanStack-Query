@@ -5,7 +5,7 @@ import { useToast } from '@chakra-ui/react'
 import { MESSAGES, QUERY_KEYS } from '@app/constants'
 
 // Services
-import { removeFromCartServices } from '@app/services'
+import { removeFromCartService } from '@app/services'
 
 export const useRemoveFromCart = () => {
   const queryClient = useQueryClient()
@@ -13,7 +13,7 @@ export const useRemoveFromCart = () => {
   const toast = useToast()
 
   const { isPending, mutateAsync } = useMutation({
-    mutationFn: (cartId: number) => removeFromCartServices(cartId),
+    mutationFn: (cartId: number) => removeFromCartService(cartId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.CART]

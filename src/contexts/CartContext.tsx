@@ -4,10 +4,10 @@ import { createContext, Dispatch, ReactNode, useCallback, useMemo, useReducer } 
 import { ACTION_TYPES, MESSAGES, PAGINATION } from '@app/constants'
 
 // Types
-import { CartAction, CartItem, ICartState, PaginationResponse, ExtendedQueryParams } from '@app/types'
+import { CartAction, CartItem, ExtendedQueryParams, ICartState, PaginationResponse } from '@app/types'
 
 // Services
-import { addToCartService, getCartService, removeFromCartServices } from '@app/services'
+import { addToCartService, getCartService, removeFromCartService } from '@app/services'
 
 // Reducers
 import { cartReducer } from '@app/reducers'
@@ -56,15 +56,16 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   const fetchCart = useCallback(async (params: Partial<ExtendedQueryParams<CartItem>> = {}) => {
     dispatch({ type: ACTION_TYPES.FETCH_CART_PENDING })
 
-    const defaultParams: ExtendedQueryParams<Partial<CartItem>> = {
+    const defaultParams: Partial<ExtendedQueryParams<CartItem>> = {
       _sort: params._sort ?? 'id',
       _order: params._order ?? 'desc',
       limit: params.limit ?? PAGINATION.DEFAULT_ITEMS_PER_PAGE,
-      id: params.id ?? 0
+      id: params.id ?? 0,
+      ...params
     }
 
     try {
-      const response: PaginationResponse<CartItem> = await getCartService({ ...defaultParams, ...params })
+      const response: PaginationResponse<CartItem> = await getCartService(defaultParams)
       dispatch({ type: ACTION_TYPES.FETCH_CART_SUCCESS, payload: response })
     } catch (error) {
       dispatch({ type: ACTION_TYPES.FETCH_CART_FAILED, payload: MESSAGES.FETCH_CART_FAILED })
@@ -78,7 +79,6 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: ACTION_TYPES.ADD_TO_CART_SUCCESS, payload: newCart })
     } catch (error) {
       dispatch({ type: ACTION_TYPES.ADD_TO_CART_FAILED, payload: MESSAGES.ADD_TO_CART_FAILED })
-      throw new Error(MESSAGES.ADD_TO_CART_FAILED)
     }
   }, [])
 
@@ -98,15 +98,16 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: ACTION_TYPES.REMOVE_FROM_CART_PENDING })
 
     try {
-      await removeFromCartServices(cartId)
-
+      await removeFromCartService(cartId)
       dispatch({
         type: ACTION_TYPES.REMOVE_FROM_CART_SUCCESS,
         payload: cartId
       })
     } catch (error) {
-      dispatch({ type: ACTION_TYPES.REMOVE_FROM_CART_FAILED, payload: MESSAGES.REMOVE_FROM_CART_FAILED })
-      throw new Error(MESSAGES.REMOVE_FROM_CART_FAILED)
+      dispatch({
+        type: ACTION_TYPES.REMOVE_FROM_CART_FAILED,
+        payload: MESSAGES.ADD_TO_CART_FAILED
+      })
     }
   }, [])
 
