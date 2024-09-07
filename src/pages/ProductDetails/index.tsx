@@ -36,12 +36,12 @@ const ProductDetails = () => {
   const toast = useToast()
 
   const productId = Number(productSlug && getIdFromSlug(productSlug))
-  const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(productId)
-  const { isProductListFetching, productList } = useGetProducts({ page: 1, limit: 4, id_ne: productId })
-  const { isAddToCartPending, addToCart } = useAddToCart()
+  const { isCurrentProductLoading, currentProduct } = useGetCurrentProduct(productId)
+  const { isProductListLoading, productList } = useGetProducts({ page: 1, limit: 4, id_ne: productId })
+  const { isAddToCartLoading, addToCart } = useAddToCart()
   const { cartList } = useGetCart()
 
-  const handleAddProductToCart = (product: Product) => {
+  const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, currencyUnit, quantity, discount, image } = product
 
     const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
@@ -61,7 +61,7 @@ const ProductDetails = () => {
       quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
     }
 
-    addToCart(cartData, {
+    await addToCart(cartData, {
       onSuccess: () => {
         toast({
           title: 'Success',
@@ -100,7 +100,7 @@ const ProductDetails = () => {
   return (
     <Container>
       <ProductInfo
-        isLoading={isCurrentProductPending}
+        isLoading={isCurrentProductLoading}
         product={currentProduct}
         onAddToCart={handleAddProductToCart}
         currentQuantity={currentProductQuantity}
@@ -113,7 +113,7 @@ const ProductDetails = () => {
           Related Products
         </Heading>
         <ProductList
-          isLoading={isProductListFetching}
+          isLoading={isProductListLoading}
           products={productList}
           listType="grid"
           onAddToCart={handleAddProductToCart}
@@ -125,7 +125,7 @@ const ProductDetails = () => {
       {/* Modal for loading indicator */}
       <Modal
         isCentered
-        isOpen={isAddToCartPending}
+        isOpen={isAddToCartLoading}
         onClose={onCloseLoadingModal}
         closeOnEsc={false}
         closeOnOverlayClick={false}

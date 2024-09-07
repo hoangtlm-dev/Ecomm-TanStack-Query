@@ -9,11 +9,12 @@ import {
   ModalOverlay,
   Spinner,
   Stack,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 
 // Constants
-import { banner, PAGINATION, ROUTES } from '@app/constants'
+import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
 
 // Types
 import { Product } from '@app/types'
@@ -52,12 +53,13 @@ const Home = () => {
 
   const navigate = useNavigate()
   const { onClose: onCloseLoadingModal } = useDisclosure()
+  const toast = useToast()
 
   const queryParams = useQueryParams()
 
-  const { isProductListFetching, productList, totalItems, itemsPerPage, currentPage } = useGetProducts()
+  const { isProductListLoading, productList, totalItems, itemsPerPage, currentPage } = useGetProducts()
   const { categories } = useGetCategories()
-  const { isAddToCartPending, addToCart } = useAddToCart()
+  const { isAddToCartLoading, addToCart } = useAddToCart()
   const { cartList } = useGetCart()
   const { listType, setListType } = useListTypeStore()
 
@@ -102,7 +104,8 @@ const Home = () => {
 
     const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
 
-    await addToCart({
+    const cartData = {
+      // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
       id: cartItemFound ? cartItemFound.id : 0,
       productId: id,
       productName: name,
@@ -111,7 +114,25 @@ const Home = () => {
       productQuantity: quantity,
       productDiscount: discount,
       productImage: image,
+      // If the item already exists in the cart, increase its quantity by 1. Otherwise, set the quantity to 1 for a new item.
       quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
+    }
+
+    await addToCart(cartData, {
+      onSuccess: () => {
+        toast({
+          title: 'Success',
+          description: MESSAGES.ADD_TO_CART_SUCCESS,
+          status: 'success'
+        })
+      },
+      onError: () => {
+        toast({
+          title: 'Failed',
+          description: MESSAGES.ADD_TO_CART_FAILED,
+          status: 'error'
+        })
+      }
     })
 
     onCloseLoadingModal()
@@ -146,7 +167,7 @@ const Home = () => {
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
           />
           <ProductList
-            isLoading={isProductListFetching}
+            isLoading={isProductListLoading}
             products={productList}
             listType={listType}
             onAddToCart={handleAddProductToCart}
@@ -162,7 +183,7 @@ const Home = () => {
       {/* Modal for loading indicator */}
       <Modal
         isCentered
-        isOpen={isAddToCartPending}
+        isOpen={isAddToCartLoading}
         onClose={onCloseLoadingModal}
         closeOnEsc={false}
         closeOnOverlayClick={false}

@@ -18,7 +18,7 @@ export const useGetCategories = (params?: ExtendedQueryParams<Partial<Category>>
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
-  const { isFetching, data, ...rest } = useInfiniteQuery({
+  const { isPending, data, ...rest } = useInfiniteQuery({
     queryKey: [QUERY_KEYS.CATEGORIES, { ...defaultParams, ...params }],
     queryFn: () => getCategoriesService({ ...defaultParams, ...params }),
     initialPageParam: 1,
@@ -42,7 +42,7 @@ export const useGetCategories = (params?: ExtendedQueryParams<Partial<Category>>
   const currentPage = Number(lastPage?.page)
 
   return {
-    isCategoriesFetching: isFetching,
+    isCategoriesLoading: isPending,
     categories,
     lastPage,
     totalItems,
