@@ -11,7 +11,7 @@ import { CartHeaderIcon, UserIcon } from '@app/components'
 import { useGetCart } from '@app/hooks'
 
 const ActionHeader = () => {
-  const { cartList } = useGetCart()
+  const { totalItems } = useGetCart()
 
   return (
     <Box pt={8} pb={4} borderBottomWidth={2} borderColor="borderBlurGray">
@@ -38,7 +38,7 @@ const ActionHeader = () => {
                 borderColor="white"
                 borderWidth={2}
               >
-                {cartList.totalItems}
+                {totalItems}
               </Circle>
             </Box>
           </Link>

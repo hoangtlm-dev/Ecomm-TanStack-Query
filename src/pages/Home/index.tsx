@@ -55,7 +55,7 @@ const Home = () => {
 
   const queryParams = useQueryParams()
 
-  const { isProductListPending, productList } = useGetProducts()
+  const { isProductListFetching, productList, totalItems, itemsPerPage, currentPage } = useGetProducts()
   const { categories } = useGetCategories()
   const { isAddToCartPending, addToCart } = useAddToCart()
   const { cartList } = useGetCart()
@@ -100,7 +100,7 @@ const Home = () => {
   const handleAddProductToCart = async (product: Product) => {
     const { id, name, price, currencyUnit, quantity, discount, image } = product
 
-    const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
+    const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
 
     await addToCart({
       id: cartItemFound ? cartItemFound.id : 0,
@@ -121,7 +121,7 @@ const Home = () => {
     <Container>
       <Flex gap={8} direction={{ base: 'column', lg: 'row' }}>
         <Stack gap={8}>
-          <FilterCategories categories={categories.data} />
+          <FilterCategories categories={categories} />
           <FilterPrices
             minPrice={queryParams.min_price ? Number(queryParams.min_price) : priceRange[0]}
             maxPrice={queryParams.max_price ? Number(queryParams.max_price) : priceRange[1]}
@@ -137,7 +137,7 @@ const Home = () => {
             description="Performance and design. Taken right to the edge."
           />
           <ActionBar
-            totalItems={productList.totalItems}
+            totalItems={totalItems}
             sortOptions={['Id', 'Name', 'Price']}
             showOptions={[6, 9, 12]}
             listType={listType}
@@ -146,15 +146,15 @@ const Home = () => {
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
           />
           <ProductList
-            isLoading={isProductListPending}
-            products={productList.data}
+            isLoading={isProductListFetching}
+            products={productList}
             listType={listType}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination
-            totalItems={productList.totalItems}
-            itemsPerPage={productList.limit || PAGINATION.DEFAULT_ITEMS_PER_PAGE}
-            currentPage={productList.page}
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage || PAGINATION.DEFAULT_ITEMS_PER_PAGE}
+            currentPage={currentPage}
           />
         </Stack>
       </Flex>

@@ -5,6 +5,11 @@ export const MESSAGES = {
   // Check root element
   DOM_NOT_FOUND: 'Unable to find root element',
 
+  // Error boundary
+  UNKNOWN_ERROR: 'Oops! There’s something wrong',
+  UNKNOWN_ERROR_DETAILS: 'An error occurred. For more help, feel free to reach out to our support team.',
+  RENDERED_SUCCESS: 'This content is rendered successfully without errors.',
+
   // Http request
   ERROR_SENDING_REQUEST: 'Error while sending request',
   MISSING_ENV: (key: EnvKey) => `The required env ${key} is missing`,

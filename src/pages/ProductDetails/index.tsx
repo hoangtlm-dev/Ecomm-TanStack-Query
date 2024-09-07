@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   Center,
   Container,
@@ -9,11 +9,12 @@ import {
   ModalOverlay,
   Spinner,
   useDisclosure,
+  useToast,
   VStack
 } from '@chakra-ui/react'
 
 // Constants
-import { ROUTES } from '@app/constants'
+import { MESSAGES } from '@app/constants'
 
 // Components
 import { ProductInfo, ProductList } from '@app/components'
@@ -22,7 +23,7 @@ import { ProductInfo, ProductList } from '@app/components'
 import { Product } from '@app/types'
 
 // Hooks
-import { useAddToCart, useCartContext, useGetCurrentProduct, useGetProducts } from '@app/hooks'
+import { useAddToCart, useGetCart, useGetCurrentProduct, useGetProducts } from '@app/hooks'
 
 // Utils
 import { getIdFromSlug } from '@app/utils'
@@ -30,27 +31,24 @@ import { getIdFromSlug } from '@app/utils'
 const ProductDetails = () => {
   const [currentProductQuantity, setCurrentProductQuantity] = useState(1)
   const { productSlug } = useParams()
+
   const { onClose: onCloseLoadingModal } = useDisclosure()
-  const { state: cartState } = useCartContext()
-  const { cartList } = cartState
+  const toast = useToast()
 
   const productId = Number(productSlug && getIdFromSlug(productSlug))
-
-  const { isProductListPending, productList } = useGetProducts({ page: 1, limit: 4 })
   const { isCurrentProductPending, currentProduct } = useGetCurrentProduct(productId)
+  const { isProductListFetching, productList } = useGetProducts({ page: 1, limit: 4, id_ne: productId })
   const { isAddToCartPending, addToCart } = useAddToCart()
+  const { cartList } = useGetCart()
 
-  if (!productId) {
-    return <Navigate to={ROUTES.NOT_FOUND} />
-  }
-
-  const handleAddProductToCart = async (product: Product) => {
+  const handleAddProductToCart = (product: Product) => {
     const { id, name, price, currencyUnit, quantity, discount, image } = product
 
-    const cartItemFound = cartList.data.find((cartItem) => cartItem.productId === id)
+    const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
     const cartQuantity = currentProduct?.id === product.id ? currentProductQuantity : 1
 
-    await addToCart({
+    const cartData = {
+      // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
       id: cartItemFound ? cartItemFound.id : 0,
       productId: id,
       productName: name,
@@ -59,7 +57,25 @@ const ProductDetails = () => {
       productCurrencyUnit: currencyUnit,
       productDiscount: discount,
       productImage: image,
+      // If the item already exists in the cart, increase its quantity by the new quantity. Otherwise, set the quantity to the initial quantity.
       quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
+    }
+
+    addToCart(cartData, {
+      onSuccess: () => {
+        toast({
+          title: 'Success',
+          description: MESSAGES.ADD_TO_CART_SUCCESS,
+          status: 'success'
+        })
+      },
+      onError: () => {
+        toast({
+          title: 'Failed',
+          description: MESSAGES.ADD_TO_CART_FAILED,
+          status: 'error'
+        })
+      }
     })
 
     onCloseLoadingModal()
@@ -92,14 +108,13 @@ const ProductDetails = () => {
         onDecreaseQuantity={handleDecreaseQuantity}
         onChangeQuantity={handleChangeQuantity}
       />
-
       <VStack mt={12} spacing={12}>
         <Heading fontSize={{ base: 'textLarge', md: 'headingSmall' }} textTransform="uppercase">
           Related Products
         </Heading>
         <ProductList
-          isLoading={isProductListPending}
-          products={productList.data}
+          isLoading={isProductListFetching}
+          products={productList}
           listType="grid"
           onAddToCart={handleAddProductToCart}
           gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: `repeat(4, 1fr)` }}
