@@ -15,7 +15,8 @@ import {
   FacebookIcon,
   TwitterIcon,
   CloseIcon,
-  CheckIcon
+  CheckIcon,
+  MaintenanceIcon
 } from '@app/components'
 
 type StoryWrapperProps = IconProps & {
@@ -158,5 +159,14 @@ export const Check: Story = {
     children: <CheckIcon />,
     boxSize: 12,
     color: '#9098b1'
+  }
+}
+
+export const Maintenance: Story = {
+  ...template,
+  args: {
+    children: <MaintenanceIcon />,
+    boxSize: 40,
+    color: '#22262A'
   }
 }

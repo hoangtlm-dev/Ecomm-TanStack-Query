@@ -4,22 +4,23 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { PAGINATION, QUERY_KEYS } from '@app/constants'
 
 /// Types
-import { CartItem, ExtendedQueryParams } from '@app/types'
+import { Category, ExtendedQueryParams } from '@app/types'
 
 // Services
-import { getCartService } from '@app/services'
+import { getCategoriesService } from '@app/services'
 
-export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
-  const defaultParams: ExtendedQueryParams<Partial<CartItem>> = {
+export const useGetCategories = (params?: ExtendedQueryParams<Partial<Category>>) => {
+  // Define default parameters
+  const defaultParams: ExtendedQueryParams<Partial<Category>> = {
     page: 1,
     _sort: 'id',
-    _order: 'desc',
+    _order: 'asc',
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
   const { isFetching, data, ...rest } = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.CART, { ...defaultParams, ...params }],
-    queryFn: () => getCartService({ ...defaultParams, ...params }),
+    queryKey: [QUERY_KEYS.CATEGORIES, { ...defaultParams, ...params }],
+    queryFn: () => getCategoriesService({ ...defaultParams, ...params }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined)
   })
@@ -35,14 +36,14 @@ export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
     totalItems: 0,
     totalPages: 0
   }
-  const cartList = data?.pages.flatMap((page) => page.data) || []
+  const categories = data?.pages.flatMap((page) => page.data) || []
   const totalItems = Number(lastPage?.totalItems)
   const itemsPerPage = Number(lastPage?.limit)
   const currentPage = Number(lastPage?.page)
 
   return {
-    isCartListFetching: isFetching,
-    cartList,
+    isCategoriesFetching: isFetching,
+    categories,
     lastPage,
     totalItems,
     itemsPerPage,

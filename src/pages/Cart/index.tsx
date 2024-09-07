@@ -38,7 +38,7 @@ const Cart = () => {
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
-  const { isCartListPending, cartList } = useGetCart()
+  const { isCartListFetching, cartList } = useGetCart()
   const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
   const { updateItemInCart } = useUpdateItemInCart()
 
@@ -47,7 +47,7 @@ const Cart = () => {
     action: 'increase' | 'decrease' | 'change',
     newQuantity?: number
   ) => {
-    const cartItemFound = cartList.data.find((cart) => (cart.id = cartId))
+    const cartItemFound = cartList.find((cart) => (cart.id = cartId))
 
     if (!cartItemFound) return
 
@@ -76,7 +76,7 @@ const Cart = () => {
     onConfirmDeleteClose()
   }
 
-  const subTotal = cartList.data.reduce((acc, cartItem) => {
+  const subTotal = cartList.reduce((acc, cartItem) => {
     const { productPrice, productDiscount, quantity } = cartItem
 
     const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
@@ -99,8 +99,8 @@ const Cart = () => {
   return (
     <Container>
       <CartList
-        isLoading={isCartListPending}
-        cart={cartList.data}
+        isLoading={isCartListFetching}
+        cart={cartList}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onUpdateQuantity={handleUpdateQuantityInCart}
       />
