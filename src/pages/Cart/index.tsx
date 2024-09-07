@@ -38,7 +38,7 @@ const Cart = () => {
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
-  const { isCartListFetching, cartList } = useGetCart()
+  const { isCartListLoading, cartList } = useGetCart()
   const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
   const { updateItemInCart } = useUpdateItemInCart()
 
@@ -71,7 +71,22 @@ const Cart = () => {
 
   const handleConfirmRemoveItemFromCart = async () => {
     if (selectedCartId) {
-      await removeFromCart(selectedCartId)
+      await removeFromCart(selectedCartId, {
+        onSuccess: () => {
+          toast({
+            title: 'Success',
+            description: MESSAGES.REMOVE_FROM_CART_SUCCESS,
+            status: 'success'
+          })
+        },
+        onError: () => {
+          toast({
+            title: 'Failed',
+            description: MESSAGES.REMOVE_FROM_CART_FAILED,
+            status: 'error'
+          })
+        }
+      })
     }
     onConfirmDeleteClose()
   }
@@ -99,7 +114,7 @@ const Cart = () => {
   return (
     <Container>
       <CartList
-        isLoading={isCartListFetching}
+        isLoading={isCartListLoading}
         cart={cartList}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onUpdateQuantity={handleUpdateQuantityInCart}

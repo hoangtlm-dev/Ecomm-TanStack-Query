@@ -17,7 +17,7 @@ export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
-  const { isFetching, data, ...rest } = useInfiniteQuery({
+  const { isPending, data, ...rest } = useInfiniteQuery({
     queryKey: [QUERY_KEYS.CART, { ...defaultParams, ...params }],
     queryFn: () => getCartService({ ...defaultParams, ...params }),
     initialPageParam: 1,
@@ -41,7 +41,7 @@ export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
   const currentPage = Number(lastPage?.page)
 
   return {
-    isCartListFetching: isFetching,
+    isCartListLoading: isPending,
     cartList,
     lastPage,
     totalItems,

@@ -33,7 +33,7 @@ export const useGetProducts = (params?: Partial<ExtendedQueryParams<ProductParam
     colors_like: queryParams.color ? convertColorParamsToCamelCase(queryParams.color) : ''
   }
 
-  const { isFetching, data, ...rest } = useInfiniteQuery({
+  const { isPending, data, ...rest } = useInfiniteQuery({
     queryKey: [QUERY_KEYS.PRODUCTS, { ...defaultParams, ...params }],
     queryFn: () => getProductsService({ ...defaultParams, ...params }),
     initialPageParam: 1,
@@ -57,7 +57,7 @@ export const useGetProducts = (params?: Partial<ExtendedQueryParams<ProductParam
   const currentPage = Number(lastPage?.page)
 
   return {
-    isProductListFetching: isFetching,
+    isProductListLoading: isPending,
     productList,
     lastPage,
     totalItems,

@@ -13,7 +13,7 @@ export const useGetCurrentProduct = (productId: number) => {
   })
 
   return {
-    isCurrentProductPending: isPending,
+    isCurrentProductLoading: isPending,
     currentProduct: data || {
       id: 0,
       name: '',
