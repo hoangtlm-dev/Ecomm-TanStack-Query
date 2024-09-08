@@ -1,4 +1,6 @@
+import { memo } from 'react'
 import { HStack, IconButton, Select, Text } from '@chakra-ui/react'
+import isEqual from 'react-fast-compare'
 
 // Components
 import { ArrowDownIcon, GridIcon, HamburgerIcon } from '@app/components'
@@ -22,6 +24,8 @@ const ActionBar = ({
   onSortByField,
   onShowListByItemsPerPage
 }: IActionBarProps) => {
+  console.log('re-render in action bar')
+
   return (
     <HStack
       px={4}
@@ -90,4 +94,6 @@ const ActionBar = ({
   )
 }
 
-export default ActionBar
+const MemoizedActionBar = memo(ActionBar, isEqual)
+
+export default MemoizedActionBar

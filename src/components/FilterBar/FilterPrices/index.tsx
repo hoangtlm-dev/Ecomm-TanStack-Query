@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   Heading,
   HStack,
@@ -8,6 +9,7 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
+import isEqual from 'react-fast-compare'
 
 interface IFilterPricesProps {
   minPrice: number
@@ -17,6 +19,8 @@ interface IFilterPricesProps {
 }
 
 const FilterPrices = ({ minPrice, maxPrice, currencyUnit = '$', onFilterByPrices }: IFilterPricesProps) => {
+  console.log('re-render in filter prices')
+
   return (
     <Stack p={4} bg="backgroundBlurGray">
       <Heading as="h3" fontSize="textMedium" fontWeight="medium" textTransform="uppercase">
@@ -50,4 +54,6 @@ const FilterPrices = ({ minPrice, maxPrice, currencyUnit = '$', onFilterByPrices
   )
 }
 
-export default FilterPrices
+const MemoizedFilterPrices = memo(FilterPrices, isEqual)
+
+export default MemoizedFilterPrices

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import {
   Box,
@@ -15,6 +16,7 @@ import {
   useDisclosure,
   VStack
 } from '@chakra-ui/react'
+import isEqual from 'react-fast-compare'
 
 // Constants
 import { ROUTES } from '@app/constants'
@@ -35,6 +37,7 @@ interface IProductItemProps {
 }
 
 const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
+  console.log('re-render in product item')
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { id, name, description, price, currencyUnit, discount, image, ratingStar, reviewNumber, isHotDeal } = product
@@ -216,4 +219,6 @@ const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
   )
 }
 
-export default ProductItem
+const MemoizedProductItem = memo(ProductItem, isEqual)
+
+export default MemoizedProductItem
