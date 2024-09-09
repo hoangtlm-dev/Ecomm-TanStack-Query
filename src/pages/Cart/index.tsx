@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import {
   AlertDialog,
   AlertDialogBody,
@@ -42,32 +42,34 @@ const Cart = () => {
   const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
   const { updateItemInCart } = useUpdateItemInCart()
 
-  const handleUpdateQuantityInCart = async (
-    cartId: number,
-    action: 'increase' | 'decrease' | 'change',
-    newQuantity?: number
-  ) => {
-    const cartItemFound = cartList.find((cart) => (cart.id = cartId))
+  const handleUpdateQuantityInCart = useCallback(
+    async (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
+      const cartItemFound = cartList.find((cart) => (cart.id = cartId))
 
-    if (!cartItemFound) return
+      if (!cartItemFound) return
 
-    switch (action) {
-      case 'decrease':
-        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 } })
-        break
-      case 'increase':
-        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 } })
-        break
-      case 'change':
-        await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
-        break
-    }
-  }
+      switch (action) {
+        case 'decrease':
+          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 } })
+          break
+        case 'increase':
+          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 } })
+          break
+        case 'change':
+          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
+          break
+      }
+    },
+    [cartList, updateItemInCart]
+  )
 
-  const handleRemoveItemFromCart = (cartId: number) => {
-    setSelectedCartId(cartId)
-    onConfirmDeleteOpen()
-  }
+  const handleRemoveItemFromCart = useCallback(
+    (cartId: number) => {
+      setSelectedCartId(cartId)
+      onConfirmDeleteOpen()
+    },
+    [setSelectedCartId, onConfirmDeleteOpen]
+  )
 
   const handleConfirmRemoveItemFromCart = async () => {
     if (selectedCartId) {
@@ -91,16 +93,20 @@ const Cart = () => {
     onConfirmDeleteClose()
   }
 
-  const subTotal = cartList.reduce((acc, cartItem) => {
-    const { productPrice, productDiscount, quantity } = cartItem
+  const subTotal = useMemo(
+    () =>
+      cartList.reduce((acc, cartItem) => {
+        const { productPrice, productDiscount, quantity } = cartItem
 
-    const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
-    return parseFloat((acc + totalPriceItemInCart).toFixed(2))
-  }, 0)
+        const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
+        return parseFloat((acc + totalPriceItemInCart).toFixed(2))
+      }, 0),
+    [cartList]
+  )
 
-  const handleCheckOut = () => {
+  const handleCheckOut = useCallback(() => {
     onCheckOutOpen()
-  }
+  }, [onCheckOutOpen])
 
   const handleCompleteCheckout = () => {
     onCheckOutClose()
