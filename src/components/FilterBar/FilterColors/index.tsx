@@ -1,5 +1,7 @@
+import { memo } from 'react'
 import { Box, Heading, HStack, Link, Stack } from '@chakra-ui/react'
 import { createSearchParams, Link as ReactRouterLink } from 'react-router-dom'
+import isEqual from 'react-fast-compare'
 
 // Constants
 import { ROUTES } from '@app/constants'
@@ -15,6 +17,8 @@ interface IFilterColorsProps {
 }
 
 const FilterColors = ({ colors, currentPath = ROUTES.ROOT }: IFilterColorsProps) => {
+  console.log('re-render in filter colors')
+
   const queryParams = useQueryParams()
 
   return (
@@ -60,4 +64,6 @@ const FilterColors = ({ colors, currentPath = ROUTES.ROOT }: IFilterColorsProps)
   )
 }
 
-export default FilterColors
+const MemoizedFilterColors = memo(FilterColors, isEqual)
+
+export default MemoizedFilterColors

@@ -1,5 +1,7 @@
+import { memo } from 'react'
 import { Heading, Link, Stack, Text } from '@chakra-ui/react'
 import { createSearchParams, NavLink } from 'react-router-dom'
+import isEqual from 'react-fast-compare'
 
 // Constants
 import { ROUTES } from '@app/constants'
@@ -19,6 +21,7 @@ interface IFilterCategoriesProps {
 }
 
 const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCategoriesProps) => {
+  console.log('re-render in filter categories')
   const queryParams = useQueryParams()
 
   return (
@@ -58,4 +61,6 @@ const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCate
   )
 }
 
-export default FilterCategories
+const MemoizedFilterCategories = memo(FilterCategories, isEqual)
+
+export default MemoizedFilterCategories

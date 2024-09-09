@@ -1,4 +1,6 @@
+import { memo } from 'react'
 import { Box, Center, Divider, Grid } from '@chakra-ui/react'
+import isEqual from 'react-fast-compare'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -26,6 +28,8 @@ const ProductList = ({
   skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE,
   onAddToCart
 }: IProductListProps) => {
+  console.log('re-render in product list')
+
   const defaultGridTemplateColumns =
     listType === 'grid'
       ? {
@@ -80,4 +84,6 @@ const ProductList = ({
   )
 }
 
-export default ProductList
+const MemoizedProductList = memo(ProductList, isEqual)
+
+export default MemoizedProductList

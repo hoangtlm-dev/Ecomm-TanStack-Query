@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import {
   Center,
@@ -67,76 +67,88 @@ const Home = () => {
     setListType(listType)
   }
 
-  const handleFilterByPrices = async (priceRange: number[]) => {
-    setPriceRange(priceRange)
-    navigate({
-      pathname: ROUTES.ROOT,
-      search: createSearchParams({
-        ...queryParams,
-        min_price: priceRange[0].toString(),
-        max_price: priceRange[1].toString()
-      }).toString()
-    })
-  }
+  const handleFilterByPrices = useCallback(
+    (priceRange: number[]) => {
+      setPriceRange(priceRange)
+      navigate({
+        pathname: ROUTES.ROOT,
+        search: createSearchParams({
+          ...queryParams,
+          min_price: priceRange[0].toString(),
+          max_price: priceRange[1].toString()
+        }).toString()
+      })
+    },
+    [setPriceRange, navigate, queryParams]
+  )
 
-  const handleSortByField = async (fieldName: string) => {
-    navigate({
-      pathname: ROUTES.ROOT,
-      search: createSearchParams({
-        ...queryParams,
-        sort: fieldName.toLowerCase()
-      }).toString()
-    })
-  }
+  const handleSortByField = useCallback(
+    async (fieldName: string) => {
+      navigate({
+        pathname: ROUTES.ROOT,
+        search: createSearchParams({
+          ...queryParams,
+          sort: fieldName.toLowerCase()
+        }).toString()
+      })
+    },
+    [queryParams, navigate]
+  )
 
-  const handleShowListByItemsPerPage = async (itemsPerPage: number) => {
-    navigate({
-      pathname: ROUTES.ROOT,
-      search: createSearchParams({
-        ...queryParams,
-        limit: itemsPerPage.toString()
-      }).toString()
-    })
-  }
+  const handleShowListByItemsPerPage = useCallback(
+    async (itemsPerPage: number) => {
+      navigate({
+        pathname: ROUTES.ROOT,
+        search: createSearchParams({
+          ...queryParams,
+          limit: itemsPerPage.toString()
+        }).toString()
+      })
+    },
+    [queryParams, navigate]
+  )
 
-  const handleAddProductToCart = async (product: Product) => {
-    const { id, name, price, currencyUnit, quantity, discount, image } = product
+  const handleAddProductToCart = useCallback(
+    async (product: Product) => {
+      const { id, name, price, currencyUnit, quantity, discount, image } = product
 
-    const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
+      const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
 
-    const cartData = {
-      // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
-      id: cartItemFound ? cartItemFound.id : 0,
-      productId: id,
-      productName: name,
-      productPrice: price,
-      productCurrencyUnit: currencyUnit,
-      productQuantity: quantity,
-      productDiscount: discount,
-      productImage: image,
-      // If the item already exists in the cart, increase its quantity by 1. Otherwise, set the quantity to 1 for a new item.
-      quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
-    }
-
-    await addToCart(cartData, {
-      onSuccess: () => {
-        toast({
-          title: 'Success',
-          description: MESSAGES.ADD_TO_CART_SUCCESS,
-          status: 'success'
-        })
-      },
-      onError: () => {
-        toast({
-          title: 'Failed',
-          description: MESSAGES.ADD_TO_CART_FAILED,
-          status: 'error'
-        })
+      const cartData = {
+        // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
+        id: cartItemFound ? cartItemFound.id : 0,
+        productId: id,
+        productName: name,
+        productPrice: price,
+        productCurrencyUnit: currencyUnit,
+        productQuantity: quantity,
+        productDiscount: discount,
+        productImage: image,
+        // If the item already exists in the cart, increase its quantity by 1. Otherwise, set the quantity to 1 for a new item.
+        quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
       }
-    })
 
-    onCloseLoadingModal()
-  }
+      await addToCart(cartData, {
+        onSuccess: () => {
+          toast({
+            title: 'Success',
+            description: MESSAGES.ADD_TO_CART_SUCCESS,
+            status: 'success'
+          })
+        },
+        onError: () => {
+          toast({
+            title: 'Failed',
+            description: MESSAGES.ADD_TO_CART_FAILED,
+            status: 'error'
+          })
+        }
+      })
+
+      onCloseLoadingModal()
+    },
+    [addToCart, cartList, onCloseLoadingModal, toast]
+  )
 
   return (
     <Container>
