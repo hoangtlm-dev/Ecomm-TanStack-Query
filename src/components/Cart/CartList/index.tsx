@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, memo } from 'react'
 import {
   Box,
   Divider,
@@ -17,6 +17,7 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react'
+import isEqual from 'react-fast-compare'
 
 // Constants
 import { PAGINATION } from '@app/constants'
@@ -183,4 +184,6 @@ const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: I
   )
 }
 
-export default CartList
+const MemoizedCartList = memo(CartList, isEqual)
+
+export default MemoizedCartList

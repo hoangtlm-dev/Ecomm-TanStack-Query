@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Button, Flex, Stack, Text } from '@chakra-ui/react'
 
 interface IInvoiceProps {
@@ -40,4 +41,6 @@ const Invoice = ({ subTotal, shippingFee = 0, coupon = 'No', currencyUnit = '$',
   )
 }
 
-export default Invoice
+const MemoizedInvoice = memo(Invoice)
+
+export default MemoizedInvoice
