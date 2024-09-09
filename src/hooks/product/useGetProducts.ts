@@ -14,6 +14,7 @@ import { useQueryParams } from '@app/hooks'
 
 // Utils
 import { convertColorParamsToCamelCase, getIdFromSlug } from '@app/utils'
+import { useMemo } from 'react'
 
 export const useGetProducts = (params?: Partial<ExtendedQueryParams<ProductParams>>) => {
   const queryParams = useQueryParams()
@@ -51,7 +52,7 @@ export const useGetProducts = (params?: Partial<ExtendedQueryParams<ProductParam
     totalItems: 0,
     totalPages: 0
   }
-  const productList = data?.pages.flatMap((page) => page.data) || []
+  const productList = useMemo(() => data?.pages.flatMap((page) => page.data) || [], [data?.pages])
   const totalItems = Number(lastPage?.totalItems)
   const itemsPerPage = Number(lastPage?.limit)
   const currentPage = Number(lastPage?.page)

@@ -37,7 +37,6 @@ interface IProductItemProps {
 }
 
 const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
-  console.log('re-render in product item')
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { id, name, description, price, currencyUnit, discount, image, ratingStar, reviewNumber, isHotDeal } = product

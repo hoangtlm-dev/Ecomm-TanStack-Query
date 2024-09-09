@@ -63,9 +63,12 @@ const Home = () => {
   const { cartList } = useGetCart()
   const { listType, setListType } = useListTypeStore()
 
-  const handleListTypeChange = (listType: 'grid' | 'list') => {
-    setListType(listType)
-  }
+  const handleListTypeChange = useCallback(
+    (listType: 'grid' | 'list') => {
+      setListType(listType)
+    },
+    [setListType]
+  )
 
   const handleFilterByPrices = useCallback(
     (priceRange: number[]) => {

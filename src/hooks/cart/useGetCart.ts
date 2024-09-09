@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 // Constants
@@ -35,7 +36,7 @@ export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
     totalItems: 0,
     totalPages: 0
   }
-  const cartList = data?.pages.flatMap((page) => page.data) || []
+  const cartList = useMemo(() => data?.pages.flatMap((page) => page.data) || [], [data?.pages])
   const totalItems = Number(lastPage?.totalItems)
   const itemsPerPage = Number(lastPage?.limit)
   const currentPage = Number(lastPage?.page)
