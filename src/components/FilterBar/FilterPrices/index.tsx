@@ -19,7 +19,7 @@ interface IFilterPricesProps {
 }
 
 const FilterPrices = ({ minPrice, maxPrice, currencyUnit = '$', onFilterByPrices }: IFilterPricesProps) => {
-  console.log('re-render in filter prices')
+  ('re-render in filter prices')
 
   return (
     <Stack p={4} bg="backgroundBlurGray">

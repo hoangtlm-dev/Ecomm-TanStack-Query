@@ -9,8 +9,6 @@ interface IBannerProps {
 }
 
 const Banner = ({ background, image, heading, description }: IBannerProps) => {
-  console.log('re-render in banner')
-
   return (
     <Flex
       flexDirection={{ base: 'column-reverse', lg: 'row' }}

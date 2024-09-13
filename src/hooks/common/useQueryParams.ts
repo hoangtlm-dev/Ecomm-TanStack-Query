@@ -11,7 +11,7 @@ import { useSearchParams } from 'react-router-dom'
  *
  * Example usage:
  * const queryParams = useQueryParams()
- * console.log(queryParams) // { param1: 'value1', param2: 'value2' }
+ * (queryParams) // { param1: 'value1', param2: 'value2' }
  * ```
  *
  * @note If there are no query parameters in the URL, it will return an empty object.
