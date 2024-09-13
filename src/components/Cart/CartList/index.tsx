@@ -57,7 +57,7 @@ const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: I
 
     return cart.map((cartItem, index) => (
       <Fragment key={cartItem.id}>
-        <CartItem cart={cartItem} onRemoveItemFromCart={onRemoveItemFromCart} onUpdateQuantity={onUpdateQuantity} />
+        <CartItem cartItem={cartItem} onRemoveItemFromCart={onRemoveItemFromCart} onUpdateQuantity={onUpdateQuantity} />
         {index < cart.length - 1 && <Divider orientation="horizontal" />}
       </Fragment>
     ))

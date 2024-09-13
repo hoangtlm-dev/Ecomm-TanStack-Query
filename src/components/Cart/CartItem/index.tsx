@@ -10,12 +10,12 @@ import { CloseIcon, QuantityController } from '@app/components'
 import { calculateProductPrice } from '@app/utils'
 
 interface ICartItemProps {
-  cart: CartItemType
-  onRemoveItemFromCart: (cartId: number) => void
-  onUpdateQuantity: (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
+  cartItem: CartItemType
+  onRemoveItemFromCart: (cartItemId: number) => void
+  onUpdateQuantity: (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
 }
 
-const CartItem = ({ cart, onRemoveItemFromCart, onUpdateQuantity }: ICartItemProps) => {
+const CartItem = ({ cartItem, onRemoveItemFromCart, onUpdateQuantity }: ICartItemProps) => {
   const {
     id,
     productName,
@@ -25,7 +25,7 @@ const CartItem = ({ cart, onRemoveItemFromCart, onUpdateQuantity }: ICartItemPro
     productCurrencyUnit,
     productDiscount,
     quantity
-  } = cart
+  } = cartItem
 
   return (
     <Flex gap={4} display={{ base: 'flex', lg: 'none' }}>

@@ -38,29 +38,35 @@ const Cart = () => {
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
-  const { isCartListLoading, cartList } = useGetCart()
+  const { isCartLoading, cart } = useGetCart()
   const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
   const { updateItemInCart } = useUpdateItemInCart()
 
   const handleUpdateQuantityInCart = useCallback(
-    async (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
-      const cartItemFound = cartList.find((cart) => cart.id === cartId)
+    async (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
+      const cartItemFound = cart.find((cartItem) => cartItem.id === cartItemId)
 
       if (!cartItemFound) return
 
       switch (action) {
         case 'decrease':
-          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 } })
+          await updateItemInCart({
+            cartItemId,
+            cartItemData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 }
+          })
           break
         case 'increase':
-          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 } })
+          await updateItemInCart({
+            cartItemId,
+            cartItemData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 }
+          })
           break
         case 'change':
-          await updateItemInCart({ cartId, cartData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
+          await updateItemInCart({ cartItemId, cartItemData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
           break
       }
     },
-    [cartList, updateItemInCart]
+    [cart, updateItemInCart]
   )
 
   const handleRemoveItemFromCart = useCallback(
@@ -95,13 +101,13 @@ const Cart = () => {
 
   const subTotal = useMemo(
     () =>
-      cartList.reduce((acc, cartItem) => {
+      cart.reduce((acc, cartItem) => {
         const { productPrice, productDiscount, quantity } = cartItem
 
         const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
         return parseFloat((acc + totalPriceItemInCart).toFixed(2))
       }, 0),
-    [cartList]
+    [cart]
   )
 
   const handleCheckOut = useCallback(() => {
@@ -120,8 +126,8 @@ const Cart = () => {
   return (
     <Container>
       <CartList
-        isLoading={isCartListLoading}
-        cart={cartList}
+        isLoading={isCartLoading}
+        cart={cart}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onUpdateQuantity={handleUpdateQuantityInCart}
       />

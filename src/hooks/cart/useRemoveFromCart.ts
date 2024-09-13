@@ -20,7 +20,7 @@ export const useRemoveFromCart = () => {
   }
 
   const { isPending, mutateAsync } = useMutation({
-    mutationFn: (cartId: number) => removeFromCartService(cartId),
+    mutationFn: (cartItemId: number) => removeFromCartService(cartItemId),
 
     onMutate: (cartItemId: number) => {
       return { cartItemId }
