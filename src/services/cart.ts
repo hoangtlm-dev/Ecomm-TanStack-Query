@@ -58,8 +58,8 @@ export const getCartService = async (
  * @returns - A promise that resolves when the cart item is successfully deleted.
  *
  */
-export const removeFromCartService = async (cartId: number): Promise<void> =>
-  await httpRequest(`${cartApiUrl}/${cartId}`, 'DELETE')
+export const removeFromCartService = async (cartItemId: number): Promise<void> =>
+  await httpRequest(`${cartApiUrl}/${cartItemId}`, 'DELETE')
 
 /**
  * Updates an existing cart item in the backend.
@@ -71,5 +71,5 @@ export const removeFromCartService = async (cartId: number): Promise<void> =>
  * @returns - A promise that resolves to the updated cart object returned by the server.
  *
  */
-export const updateItemInCartService = async (cartId: number, cartData: CartItem): Promise<CartItem> =>
-  await httpRequest<CartItem, CartItem>(`${cartApiUrl}/${cartId}`, 'PUT', cartData)
+export const updateItemInCartService = async (cartItemId: number, cartItemData: CartItem): Promise<CartItem> =>
+  await httpRequest<CartItem, CartItem>(`${cartApiUrl}/${cartItemId}`, 'PUT', cartItemData)

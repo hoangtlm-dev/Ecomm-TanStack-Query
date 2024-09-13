@@ -20,7 +20,7 @@ export const useRemoveFromCart = () => {
   }
 
   const { isPending, mutateAsync } = useMutation({
-    mutationFn: (cartId: number) => removeFromCartService(cartId),
+    mutationFn: (cartItemId: number) => removeFromCartService(cartItemId),
 
     onMutate: (cartItemId: number) => {
       return { cartItemId }
@@ -31,15 +31,15 @@ export const useRemoveFromCart = () => {
       queryClient.setQueryData(
         [QUERY_KEYS.CART, { ...defaultParams }],
         (oldData: InfiniteData<PaginationResponse<CartItem>>) => {
-          const cartListInCache = oldData?.pages.flatMap((page) => page.data)
-          const updatedCartList = cartListInCache.filter((cartItem) => cartItem.id !== removeCartItemId)
+          const cartInCache = oldData?.pages.flatMap((page) => page.data)
+          const updatedCart = cartInCache.filter((cartItem) => cartItem.id !== removeCartItemId)
 
           return {
             ...oldData,
             pages: oldData.pages.map((page) => ({
               ...page,
-              data: updatedCartList,
-              totalItems: updatedCartList.length
+              data: updatedCart,
+              totalItems: updatedCart.length
             }))
           }
         }

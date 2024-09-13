@@ -25,16 +25,16 @@ export const useAddToCart = () => {
       queryClient.setQueryData(
         [QUERY_KEYS.CART, { ...defaultParams }],
         (oldData: InfiniteData<PaginationResponse<CartItem>>) => {
-          const cartListInCache = oldData?.pages.flatMap((page) => page.data)
-          const isProductExisted = cartListInCache.find((cartItem) => cartItem.productId === newCartItem.productId)
+          const cartInCache = oldData?.pages.flatMap((page) => page.data)
+          const isProductExisted = cartInCache.find((cartItem) => cartItem.productId === newCartItem.productId)
 
-          const updatedCartList = isProductExisted
-            ? cartListInCache.map((cartItem) =>
+          const updatedCart = isProductExisted
+            ? cartInCache.map((cartItem) =>
                 cartItem.productId === newCartItem.productId
                   ? { ...cartItem, quantity: cartItem.quantity + newCartItem.quantity }
                   : cartItem
               )
-            : [newCartItem, ...cartListInCache]
+            : [newCartItem, ...cartInCache]
 
           return {
             ...oldData,
@@ -42,8 +42,8 @@ export const useAddToCart = () => {
               if (index === 0) {
                 return {
                   ...page,
-                  data: updatedCartList,
-                  totalItems: updatedCartList.length
+                  data: updatedCart,
+                  totalItems: updatedCart.length
                 }
               }
               return page

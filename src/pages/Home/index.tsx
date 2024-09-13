@@ -59,7 +59,7 @@ const Home = () => {
   const { isProductListLoading, productList, totalItems, itemsPerPage, currentPage } = useGetProducts()
   const { categories } = useGetCategories()
   const { isAddToCartLoading, addToCart } = useAddToCart()
-  const { cartList } = useGetCart()
+  const { cart } = useGetCart()
   const { listType, setListType } = useListTypeStore()
 
   const handleListTypeChange = useCallback(
@@ -113,7 +113,7 @@ const Home = () => {
     (product: Product) => {
       const { id, name, price, currencyUnit, quantity, discount, image } = product
 
-      const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
+      const cartItemFound = cart.find((cartItem) => cartItem.productId === id)
 
       const cartData = {
         // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
@@ -148,7 +148,7 @@ const Home = () => {
 
       onCloseLoadingModal()
     },
-    [addToCart, cartList, onCloseLoadingModal, toast]
+    [addToCart, cart, onCloseLoadingModal, toast]
   )
 
   return (
