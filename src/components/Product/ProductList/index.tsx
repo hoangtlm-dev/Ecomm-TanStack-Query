@@ -28,7 +28,7 @@ const ProductList = ({
   skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE,
   onAddToCart
 }: IProductListProps) => {
-  console.log('re-render in product list')
+  ('re-render in product list')
 
   const defaultGridTemplateColumns =
     listType === 'grid'

@@ -56,11 +56,20 @@ export const getCartService = async (
  * @param cartId - The ID of the cart item that needs to be removed.
  *
  * @returns - A promise that resolves when the cart item is successfully deleted.
- * The promise resolves to `void` since no data is expected to be returned by the server after the deletion.
  *
  */
 export const removeFromCartService = async (cartId: number): Promise<void> =>
   await httpRequest(`${cartApiUrl}/${cartId}`, 'DELETE')
 
+/**
+ * Updates an existing cart item in the backend.
+ *
+ * @param cartId - The ID of the cart item that needs to be updated.
+ * @param cartData - The updated cart object that contains the new values for the cart item.
+ * The cart object should include any updated fields such as quantity, product details, etc.
+ *
+ * @returns - A promise that resolves to the updated cart object returned by the server.
+ *
+ */
 export const updateItemInCartService = async (cartId: number, cartData: CartItem): Promise<CartItem> =>
   await httpRequest<CartItem, CartItem>(`${cartApiUrl}/${cartId}`, 'PUT', cartData)

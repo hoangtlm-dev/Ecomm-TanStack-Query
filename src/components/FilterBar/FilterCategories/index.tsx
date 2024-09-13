@@ -21,7 +21,6 @@ interface IFilterCategoriesProps {
 }
 
 const FilterCategories = ({ categories, currentPath = ROUTES.ROOT }: IFilterCategoriesProps) => {
-  console.log('re-render in filter categories')
   const queryParams = useQueryParams()
 
   return (

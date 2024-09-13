@@ -17,8 +17,6 @@ interface IFilterColorsProps {
 }
 
 const FilterColors = ({ colors, currentPath = ROUTES.ROOT }: IFilterColorsProps) => {
-  console.log('re-render in filter colors')
-
   const queryParams = useQueryParams()
 
   return (

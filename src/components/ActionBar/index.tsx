@@ -24,8 +24,6 @@ const ActionBar = ({
   onSortByField,
   onShowListByItemsPerPage
 }: IActionBarProps) => {
-  console.log('re-render in action bar')
-
   return (
     <HStack
       px={4}
