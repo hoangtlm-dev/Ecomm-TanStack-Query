@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import {
   Center,
@@ -49,7 +49,6 @@ const Home = () => {
     'filterPink.500',
     'filterBlurPink.500'
   ]
-  const [priceRange, setPriceRange] = useState([0, 1000])
 
   const navigate = useNavigate()
   const { onClose: onCloseLoadingModal } = useDisclosure()
@@ -71,8 +70,7 @@ const Home = () => {
   )
 
   const handleFilterByPrices = useCallback(
-    (priceRange: number[]) => {
-      setPriceRange(priceRange)
+    async (priceRange: number[]) => {
       navigate({
         pathname: ROUTES.ROOT,
         search: createSearchParams({
@@ -82,7 +80,7 @@ const Home = () => {
         }).toString()
       })
     },
-    [setPriceRange, navigate, queryParams]
+    [navigate, queryParams]
   )
 
   const handleSortByField = useCallback(
@@ -95,7 +93,7 @@ const Home = () => {
         }).toString()
       })
     },
-    [queryParams, navigate]
+    [navigate, queryParams]
   )
 
   const handleShowListByItemsPerPage = useCallback(
@@ -108,11 +106,11 @@ const Home = () => {
         }).toString()
       })
     },
-    [queryParams, navigate]
+    [navigate, queryParams]
   )
 
   const handleAddProductToCart = useCallback(
-    async (product: Product) => {
+    (product: Product) => {
       const { id, name, price, currencyUnit, quantity, discount, image } = product
 
       const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
@@ -131,7 +129,7 @@ const Home = () => {
         quantity: cartItemFound ? cartItemFound.quantity + 1 : 1
       }
 
-      await addToCart(cartData, {
+      addToCart(cartData, {
         onSuccess: () => {
           toast({
             title: 'Success',
@@ -159,8 +157,8 @@ const Home = () => {
         <Stack gap={8}>
           <FilterCategories categories={categories} />
           <FilterPrices
-            minPrice={queryParams.min_price ? Number(queryParams.min_price) : priceRange[0]}
-            maxPrice={queryParams.max_price ? Number(queryParams.max_price) : priceRange[1]}
+            minPrice={queryParams.min_price ? Number(queryParams.min_price) : 0}
+            maxPrice={queryParams.max_price ? Number(queryParams.max_price) : 1000}
             onFilterByPrices={handleFilterByPrices}
           />
           <FilterColors colors={filteredColors} />

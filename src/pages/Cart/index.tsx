@@ -44,7 +44,7 @@ const Cart = () => {
 
   const handleUpdateQuantityInCart = useCallback(
     async (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
-      const cartItemFound = cartList.find((cart) => (cart.id = cartId))
+      const cartItemFound = cartList.find((cart) => cart.id === cartId)
 
       if (!cartItemFound) return
 
@@ -68,7 +68,7 @@ const Cart = () => {
       setSelectedCartId(cartId)
       onConfirmDeleteOpen()
     },
-    [setSelectedCartId, onConfirmDeleteOpen]
+    [onConfirmDeleteOpen]
   )
 
   const handleConfirmRemoveItemFromCart = async () => {
