@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Center,
@@ -29,10 +29,6 @@ import { useAddToCart, useGetCart, useGetCurrentProduct, useGetProducts, useProd
 import { getIdFromSlug } from '@app/utils'
 
 const ProductDetails = () => {
-  const gridTemplateColumns = useMemo(
-    () => ({ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }),
-    []
-  )
   const { productSlug } = useParams()
 
   const { onClose: onCloseLoadingModal } = useDisclosure()
@@ -51,6 +47,7 @@ const ProductDetails = () => {
       const cartItemFound = cartList.find((cartItem) => cartItem.productId === id)
 
       const cartData = {
+        // If the item  already exists in the cart, use its id to update the data. Otherwise, use 0 to create a new item in the cart
         id: cartItemFound ? cartItemFound.id : 0,
         productId: id,
         productName: name,
@@ -59,6 +56,7 @@ const ProductDetails = () => {
         productCurrencyUnit: currencyUnit,
         productDiscount: discount,
         productImage: image,
+        // If the item already exists in the cart, increase its quantity by the new quantity. Otherwise, set the quantity to the initial quantity.
         quantity: cartItemFound ? cartItemFound.quantity + cartQuantity : cartQuantity
       }
 
@@ -119,7 +117,7 @@ const ProductDetails = () => {
           products={productList}
           listType="grid"
           onAddToCart={handleAddProductToCartInList}
-          gridTemplateColumns={gridTemplateColumns}
+          gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }}
           skeletonTemplateColumns={4}
         />
       </VStack>
