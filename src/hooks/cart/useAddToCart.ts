@@ -12,7 +12,7 @@ import { addToCartService } from '@app/services'
 export const useAddToCart = () => {
   const queryClient = useQueryClient()
 
-  const defaultParams: ExtendedQueryParams<Partial<CartItem>> = {
+  const defaultParams: Partial<ExtendedQueryParams<CartItem>> = {
     page: 1,
     _sort: 'id',
     _order: 'desc',
