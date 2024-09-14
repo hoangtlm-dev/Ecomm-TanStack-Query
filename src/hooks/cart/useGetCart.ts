@@ -10,8 +10,8 @@ import { CartItem, ExtendedQueryParams } from '@app/types'
 // Services
 import { getCartService } from '@app/services'
 
-export const useGetCart = (params?: ExtendedQueryParams<Partial<CartItem>>) => {
-  const defaultParams: ExtendedQueryParams<Partial<CartItem>> = {
+export const useGetCart = (params?: Partial<ExtendedQueryParams<CartItem>>) => {
+  const defaultParams: Partial<ExtendedQueryParams<CartItem>> = {
     page: 1,
     _sort: 'id',
     _order: 'desc',

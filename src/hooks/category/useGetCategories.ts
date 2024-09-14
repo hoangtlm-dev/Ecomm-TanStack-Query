@@ -9,9 +9,9 @@ import { Category, ExtendedQueryParams } from '@app/types'
 // Services
 import { getCategoriesService } from '@app/services'
 
-export const useGetCategories = (params?: ExtendedQueryParams<Partial<Category>>) => {
+export const useGetCategories = (params?: Partial<ExtendedQueryParams<Category>>) => {
   // Define default parameters
-  const defaultParams: ExtendedQueryParams<Partial<Category>> = {
+  const defaultParams: Partial<ExtendedQueryParams<Category>> = {
     page: 1,
     _sort: 'id',
     _order: 'asc',

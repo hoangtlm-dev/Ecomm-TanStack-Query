@@ -12,7 +12,7 @@ import { removeFromCartService } from '@app/services'
 export const useRemoveFromCart = () => {
   const queryClient = useQueryClient()
 
-  const defaultParams: ExtendedQueryParams<Partial<CartItem>> = {
+  const defaultParams: Partial<ExtendedQueryParams<CartItem>> = {
     page: 1,
     _sort: 'id',
     _order: 'desc',
@@ -48,7 +48,7 @@ export const useRemoveFromCart = () => {
   })
 
   return {
-    isRemoveFromCartPending: isPending,
+    isRemoveFromCartLoading: isPending,
     removeFromCart: mutateAsync
   }
 }

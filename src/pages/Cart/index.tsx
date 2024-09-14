@@ -36,17 +36,24 @@ const Cart = () => {
   const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
   const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
+
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
   const { isCartLoading, cart } = useGetCart()
-  const { isRemoveFromCartPending, removeFromCart } = useRemoveFromCart()
-  const { updateItemInCart } = useUpdateItemInCart()
+  const { isRemoveFromCartLoading, removeFromCart } = useRemoveFromCart()
+  const { isUpdateItemInCartLoading, updateItemInCart } = useUpdateItemInCart()
 
   const handleUpdateQuantityInCart = useCallback(
     async (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
       const cartItemFound = cart.find((cartItem) => cartItem.id === cartItemId)
 
       if (!cartItemFound) return
+
+      if (action === 'decrease' && cartItemFound.quantity === 1) {
+        setSelectedCartId(cartItemId)
+        onConfirmDeleteOpen()
+        return
+      }
 
       switch (action) {
         case 'decrease':
@@ -66,7 +73,7 @@ const Cart = () => {
           break
       }
     },
-    [cart, updateItemInCart]
+    [cart, updateItemInCart, onConfirmDeleteOpen]
   )
 
   const handleRemoveItemFromCart = useCallback(
@@ -153,15 +160,20 @@ const Cart = () => {
             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={onConfirmDeleteClose} ref={cancelConfirmDeleteRef} disabled={isRemoveFromCartPending}>
+              <Button
+                onClick={onConfirmDeleteClose}
+                ref={cancelConfirmDeleteRef}
+                disabled={isRemoveFromCartLoading}
+                isLoading={isUpdateItemInCartLoading}
+              >
                 Cancel
               </Button>
               <Button
                 colorScheme="red"
                 onClick={handleConfirmRemoveItemFromCart}
                 ml={3}
-                disabled={isRemoveFromCartPending}
-                isLoading={isRemoveFromCartPending}
+                disabled={isRemoveFromCartLoading}
+                isLoading={isRemoveFromCartLoading}
               >
                 Delete
               </Button>
