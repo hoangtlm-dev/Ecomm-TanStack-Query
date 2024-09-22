@@ -1,11 +1,14 @@
 import { Flex, Skeleton, SkeletonText, Stack, StackDivider, VStack } from '@chakra-ui/react'
 
+// Types
+import { ListView } from '@app/types'
+
 interface ISkeletonProductItemProps {
-  listType: 'grid' | 'list'
+  listView: ListView
 }
 
-const SkeletonProductItem = ({ listType }: ISkeletonProductItemProps) => {
-  return listType === 'grid' ? (
+const SkeletonProductItem = ({ listView }: ISkeletonProductItemProps) => {
+  return listView === 'grid' ? (
     <VStack h="390px" pb={4} gap={4} borderWidth="3px" borderColor="backgroundBlurGray">
       <Skeleton w="full" h="full" />
       <VStack px={4} gap={4}>

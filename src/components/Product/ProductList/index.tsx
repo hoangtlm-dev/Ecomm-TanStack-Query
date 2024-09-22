@@ -6,7 +6,7 @@ import isEqual from 'react-fast-compare'
 import { PAGINATION } from '@app/constants'
 
 // Types
-import { Product } from '@app/types'
+import { ListView, Product } from '@app/types'
 
 // Components
 import { SkeletonProductItem, ProductItem, ProductListEmpty } from '@app/components'
@@ -14,7 +14,7 @@ import { SkeletonProductItem, ProductItem, ProductListEmpty } from '@app/compone
 interface IProductListProps {
   isLoading: boolean
   products: Product[]
-  listType?: 'grid' | 'list'
+  listView?: ListView
   gridTemplateColumns?: { [key: string]: string }
   skeletonTemplateColumns?: number
   onAddToCart: (product: Product) => void
@@ -23,15 +23,13 @@ interface IProductListProps {
 const ProductList = ({
   isLoading,
   products,
-  listType = 'grid',
+  listView = 'grid',
   gridTemplateColumns,
   skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE,
   onAddToCart
 }: IProductListProps) => {
-  ('re-render in product list')
-
   const defaultGridTemplateColumns =
-    listType === 'grid'
+    listView === 'grid'
       ? {
           base: 'repeat(1, 1fr)',
           sm: 'repeat(2, 1fr)',
@@ -50,8 +48,8 @@ const ProductList = ({
       >
         {Array.from({ length: skeletonTemplateColumns }).map((_, index) => (
           <Box as="li" key={index}>
-            <SkeletonProductItem listType={listType} />
-            {listType === 'list' && index < skeletonTemplateColumns - 1 && <Divider orientation="horizontal" />}
+            <SkeletonProductItem listView={listView} />
+            {listView === 'list' && index < skeletonTemplateColumns - 1 && <Divider orientation="horizontal" />}
           </Box>
         ))}
       </Grid>
@@ -76,8 +74,8 @@ const ProductList = ({
     >
       {products.map((product, index) => (
         <Box as="li" key={product.id}>
-          <ProductItem product={product} listType={listType} onAddToCart={onAddToCart} />
-          {listType === 'list' && index < products.length - 1 && <Divider orientation="horizontal" />}
+          <ProductItem product={product} listView={listView} onAddToCart={onAddToCart} />
+          {listView === 'list' && index < products.length - 1 && <Divider orientation="horizontal" />}
         </Box>
       ))}
     </Grid>

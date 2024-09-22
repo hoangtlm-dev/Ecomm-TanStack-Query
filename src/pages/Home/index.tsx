@@ -17,7 +17,7 @@ import {
 import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
 
 // Types
-import { Product } from '@app/types'
+import { ListView, Product } from '@app/types'
 
 // Components
 import {
@@ -31,14 +31,10 @@ import {
 } from '@app/components'
 
 // Hooks
-import {
-  useAddToCart,
-  useGetCart,
-  useGetCategories,
-  useGetProducts,
-  useListTypeStore,
-  useQueryParams
-} from '@app/hooks'
+import { useAddToCart, useGetCart, useGetCategories, useGetProducts, useQueryParams } from '@app/hooks'
+
+// Stores
+import { useListViewStore } from '@app/stores'
 
 const Home = () => {
   const filteredColors = [
@@ -60,13 +56,13 @@ const Home = () => {
   const { categories } = useGetCategories()
   const { isAddToCartLoading, addToCart } = useAddToCart()
   const { cart } = useGetCart()
-  const { listType, setListType } = useListTypeStore()
+  const { listView, setListView } = useListViewStore()
 
-  const handleListTypeChange = useCallback(
-    (listType: 'grid' | 'list') => {
-      setListType(listType)
+  const handleListViewChange = useCallback(
+    (listView: ListView) => {
+      setListView(listView)
     },
-    [setListType]
+    [setListView]
   )
 
   const handleFilterByPrices = useCallback(
@@ -174,15 +170,15 @@ const Home = () => {
             totalItems={totalItems}
             sortOptions={['Id', 'Name', 'Price']}
             showOptions={[6, 9, 12]}
-            listType={listType}
-            onListTypeChange={handleListTypeChange}
+            listView={listView}
+            onlistViewChange={handleListViewChange}
             onSortByField={handleSortByField}
             onShowListByItemsPerPage={handleShowListByItemsPerPage}
           />
           <ProductList
             isLoading={isProductListLoading}
             products={productList}
-            listType={listType}
+            listView={listView}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination

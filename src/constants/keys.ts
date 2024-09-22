@@ -4,3 +4,7 @@ export const QUERY_KEYS = {
   CATEGORIES: 'categories',
   CART: 'cart'
 }
+
+export const STORAGE_KEYS = {
+  LIST_VIEW: 'list_view'
+}

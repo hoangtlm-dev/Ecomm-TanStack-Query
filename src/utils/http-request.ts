@@ -2,7 +2,7 @@
 import { MESSAGES } from '@app/constants'
 
 // Types
-import { RequestOptions } from '@app/types'
+import { HttpRequestMethods, HttpRequestOptions } from '@app/types'
 
 /**
  * Sends an HTTP request with the specified options and returns the response data.
@@ -16,13 +16,13 @@ import { RequestOptions } from '@app/types'
  */
 export const httpRequest = async <T, U>(
   url: string,
-  method: string,
+  method: HttpRequestMethods,
   data?: T,
   customHeaders?: Record<string, string>
 ): Promise<U> => {
   const headers = customHeaders ? { ...customHeaders } : {}
 
-  const options: RequestOptions = {
+  const options: HttpRequestOptions = {
     method: method,
     headers,
     body: null

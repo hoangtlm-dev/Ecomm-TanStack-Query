@@ -11,7 +11,7 @@ const meta: Meta<typeof ProductList> = {
   title: 'Components/Product/ProductList',
   component: ProductList,
   argTypes: {
-    listType: {
+    listView: {
       control: 'radio'
     }
   },
@@ -32,7 +32,7 @@ export const GridView: Story = {
   args: {
     isLoading: false,
     products: MOCK_PRODUCTS(),
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
@@ -40,20 +40,20 @@ export const ListView: Story = {
   args: {
     isLoading: false,
     products: MOCK_PRODUCTS(),
-    listType: 'list'
+    listView: 'list'
   }
 }
 
 export const GridFetching: Story = {
   args: {
     isLoading: true,
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
 export const ListFetching: Story = {
   args: {
     isLoading: true,
-    listType: 'list'
+    listView: 'list'
   }
 }

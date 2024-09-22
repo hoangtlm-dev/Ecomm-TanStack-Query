@@ -17,7 +17,7 @@ const meta: Meta<typeof ProductItem> = {
     product: {
       control: 'object'
     },
-    listType: {
+    listView: {
       control: { type: 'radio', options: ['grid', 'list'] }
     }
   }
@@ -32,14 +32,14 @@ const mockProduct: Product = MOCK_PRODUCT
 export const GridView: Story = {
   args: {
     product: mockProduct,
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
 export const ListView: Story = {
   args: {
     product: mockProduct,
-    listType: 'list'
+    listView: 'list'
   }
 }
 
@@ -51,7 +51,7 @@ export const NoDiscountedProduct: Story = {
       isHotDeal: false,
       price: 500
     },
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
@@ -62,7 +62,7 @@ export const DiscountedProduct: Story = {
       discount: 20,
       price: 500
     },
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
@@ -73,7 +73,7 @@ export const NoRatingProduct: Story = {
       ratingStar: 0,
       isHotDeal: false
     },
-    listType: 'list'
+    listView: 'list'
   }
 }
 
@@ -83,6 +83,6 @@ export const HotDealProduct: Story = {
       ...mockProduct,
       isHotDeal: true
     },
-    listType: 'grid'
+    listView: 'grid'
   }
 }
