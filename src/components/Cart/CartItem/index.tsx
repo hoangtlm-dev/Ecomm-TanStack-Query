@@ -11,11 +11,12 @@ import { calculateProductPrice } from '@app/utils'
 
 interface ICartItemProps {
   cartItem: CartItemType
-  onRemoveItemFromCart: (cartItemId: number) => void
-  onUpdateQuantity: (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
+  isDisabledQuantityChange?: boolean
+  onRemoveItemFromCart: (cartId: number) => void
+  onUpdateQuantity: (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
 }
 
-const CartItem = ({ cartItem, onRemoveItemFromCart, onUpdateQuantity }: ICartItemProps) => {
+const CartItem = ({ cartItem, isDisabledQuantityChange, onRemoveItemFromCart, onUpdateQuantity }: ICartItemProps) => {
   const {
     id,
     productName,
@@ -28,7 +29,7 @@ const CartItem = ({ cartItem, onRemoveItemFromCart, onUpdateQuantity }: ICartIte
   } = cartItem
 
   return (
-    <Flex gap={4} display={{ base: 'flex', lg: 'none' }}>
+    <Flex gap={4}>
       <Box boxSize="80px">
         <Image src={productImage} boxSize="full" objectFit="cover" />
       </Box>
@@ -56,6 +57,7 @@ const CartItem = ({ cartItem, onRemoveItemFromCart, onUpdateQuantity }: ICartIte
             size="xs"
             maxQuantity={productQuantity}
             currentQuantity={quantity}
+            isDisabled={isDisabledQuantityChange}
             onDecreaseQuantity={() => onUpdateQuantity(id, 'decrease')}
             onChangeQuantity={(value) => onUpdateQuantity(id, 'change', Number(value))}
             onIncreaseQuantity={() => onUpdateQuantity(id, 'increase')}

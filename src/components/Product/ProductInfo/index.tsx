@@ -19,8 +19,8 @@ import { calculateProductPrice } from '@app/utils'
 interface IProductInfoProps {
   isLoading: boolean
   product: Product
-  onAddToCart: (product: Product) => void
   currentQuantity: number
+  onAddToCart: (product: Product) => void
   onIncreaseQuantity: () => void
   onDecreaseQuantity: () => void
   onChangeQuantity: (value: number) => void
@@ -29,8 +29,8 @@ interface IProductInfoProps {
 const ProductInfo = ({
   isLoading,
   product,
-  onAddToCart,
   currentQuantity,
+  onAddToCart,
   onIncreaseQuantity,
   onDecreaseQuantity,
   onChangeQuantity

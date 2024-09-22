@@ -102,8 +102,8 @@ const ProductDetails = () => {
       <ProductInfo
         isLoading={isCurrentProductLoading}
         product={currentProduct}
-        onAddToCart={handleAddProductToCart}
         currentQuantity={currentProductQuantity}
+        onAddToCart={handleAddProductToCart}
         onIncreaseQuantity={increaseQuantity}
         onDecreaseQuantity={decreaseQuantity}
         onChangeQuantity={setQuantity}
