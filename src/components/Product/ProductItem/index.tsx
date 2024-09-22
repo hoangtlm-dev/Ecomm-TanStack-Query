@@ -28,7 +28,7 @@ import { ListView, Product } from '@app/types'
 import { CartButtonIcon, ProductRating } from '@app/components'
 
 // Utils
-import { generateSlugByNameAndId } from '@app/utils'
+import { calculateProductPrice, generateSlugByNameAndId } from '@app/utils'
 
 interface IProductItemProps {
   product: Product
@@ -48,18 +48,12 @@ const ProductItem = ({ product, listView, isAddingToCart, onAddToCart }: IProduc
       borderWidth="3px"
       borderColor="backgroundBlurGray"
       borderRadius={4}
+      onMouseOver={onOpen}
+      onMouseLeave={onClose}
       _hover={{ borderColor: 'backgroundPrimary', transition: 'all .2s linear' }}
     >
       {/* Product Image */}
-      <Box
-        w="full"
-        h="270px"
-        bg="backgroundBlurGray"
-        position="relative"
-        zIndex={1}
-        onMouseOver={onOpen}
-        onMouseLeave={onClose}
-      >
+      <Box w="full" h="270px" bg="backgroundBlurGray" position="relative">
         <Center boxSize="full">
           <Image boxSize="full" objectFit="cover" src={image} alt={name} />
         </Center>
@@ -102,7 +96,7 @@ const ProductItem = ({ product, listView, isAddingToCart, onAddToCart }: IProduc
         <HStack>
           <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
             {currencyUnit}
-            {parseFloat((price - (price * discount) / 100).toFixed(2))}
+            {calculateProductPrice(price, discount)}
           </Text>
           {discount && (
             <>
@@ -178,7 +172,7 @@ const ProductItem = ({ product, listView, isAddingToCart, onAddToCart }: IProduc
             <HStack alignSelf="flex-start">
               <Text fontSize="textMedium" fontWeight="bold" color="textBlue">
                 {currencyUnit}
-                {parseFloat((price - (price * discount) / 100).toFixed(2))}
+                {calculateProductPrice(price, discount)}
               </Text>
               {discount && (
                 <>
