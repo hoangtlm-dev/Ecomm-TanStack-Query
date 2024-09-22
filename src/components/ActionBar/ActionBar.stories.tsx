@@ -23,7 +23,7 @@ const meta: Meta<typeof ActionBar> = {
         defaultValue: { summary: '[]' }
       }
     },
-    listType: {
+    listView: {
       control: 'radio',
       options: ['grid', 'list']
     }
@@ -46,6 +46,6 @@ export const Default: Story = {
     totalItems: 13,
     sortOptions: ['name', 'price'],
     showOptions: [12, 14, 16, 18, 20],
-    listType: 'grid'
+    listView: 'grid'
   }
 }

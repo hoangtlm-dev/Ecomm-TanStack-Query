@@ -15,7 +15,7 @@ const meta: Meta<typeof SkeletonProductItem> = {
     )
   ],
   argTypes: {
-    listType: {
+    listView: {
       control: 'radio'
     }
   }
@@ -27,12 +27,12 @@ type Story = StoryObj<typeof SkeletonProductItem>
 
 export const Grid: Story = {
   args: {
-    listType: 'grid'
+    listView: 'grid'
   }
 }
 
 export const List: Story = {
   args: {
-    listType: 'list'
+    listView: 'list'
   }
 }

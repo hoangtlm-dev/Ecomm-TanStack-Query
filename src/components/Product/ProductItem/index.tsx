@@ -22,7 +22,7 @@ import isEqual from 'react-fast-compare'
 import { ROUTES } from '@app/constants'
 
 // Types
-import { Product } from '@app/types'
+import { ListView, Product } from '@app/types'
 
 // Components
 import { CartButtonIcon, ProductRating } from '@app/components'
@@ -32,16 +32,16 @@ import { generateSlugByNameAndId } from '@app/utils'
 
 interface IProductItemProps {
   product: Product
-  listType: 'grid' | 'list'
+  listView: ListView
   onAddToCart: (product: Product) => void
 }
 
-const ProductItem = ({ product, listType, onAddToCart }: IProductItemProps) => {
+const ProductItem = ({ product, listView, onAddToCart }: IProductItemProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { id, name, description, price, currencyUnit, discount, image, ratingStar, reviewNumber, isHotDeal } = product
 
-  return listType === 'grid' ? (
+  return listView === 'grid' ? (
     <LinkBox
       gap={4}
       borderWidth="3px"

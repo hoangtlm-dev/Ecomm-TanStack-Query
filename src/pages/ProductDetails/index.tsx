@@ -23,7 +23,10 @@ import { ProductInfo, ProductList } from '@app/components'
 import { Product } from '@app/types'
 
 // Hooks
-import { useAddToCart, useGetCart, useGetCurrentProduct, useGetProducts, useProductQuantityStore } from '@app/hooks'
+import { useAddToCart, useGetCart, useGetCurrentProduct, useGetProducts } from '@app/hooks'
+
+// Stores
+import { useProductQuantityStore } from '@app/stores'
 
 // Utils
 import { getIdFromSlug } from '@app/utils'
@@ -115,10 +118,9 @@ const ProductDetails = () => {
         <ProductList
           isLoading={isProductListLoading}
           products={productList}
-          listType="grid"
-          onAddToCart={handleAddProductToCartInList}
           gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }}
           skeletonTemplateColumns={4}
+          onAddToCart={handleAddProductToCartInList}
         />
       </VStack>
 

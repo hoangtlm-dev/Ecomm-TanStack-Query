@@ -2,6 +2,9 @@ import { memo } from 'react'
 import { HStack, IconButton, Select, Text } from '@chakra-ui/react'
 import isEqual from 'react-fast-compare'
 
+// Types
+import { ListView } from '@app/types'
+
 // Components
 import { ArrowDownIcon, GridIcon, HamburgerIcon } from '@app/components'
 
@@ -9,8 +12,8 @@ interface IActionBarProps {
   totalItems: number
   sortOptions: string[]
   showOptions: number[]
-  listType?: 'grid' | 'list'
-  onListTypeChange: (type: 'grid' | 'list') => void
+  listView?: ListView
+  onlistViewChange: (type: ListView) => void
   onSortByField: (fieldName: string) => void
   onShowListByItemsPerPage: (itemsPerPage: number) => void
 }
@@ -19,8 +22,8 @@ const ActionBar = ({
   totalItems,
   sortOptions,
   showOptions,
-  listType = 'grid',
-  onListTypeChange,
+  listView = 'grid',
+  onlistViewChange,
   onSortByField,
   onShowListByItemsPerPage
 }: IActionBarProps) => {
@@ -68,24 +71,24 @@ const ActionBar = ({
         <IconButton
           variant="ghost"
           aria-label="Product grid"
-          backgroundColor={listType === 'grid' ? '#f1f3f4' : ''}
+          backgroundColor={listView === 'grid' ? '#f1f3f4' : ''}
           borderRadius={0}
           h="full"
           px={5}
           py={{ base: 5, md: 'auto' }}
-          icon={<GridIcon boxSize={5} color={listType === 'grid' ? 'iconActive' : 'iconGray'} />}
-          onClick={() => onListTypeChange('grid')}
+          icon={<GridIcon boxSize={5} color={listView === 'grid' ? 'iconActive' : 'iconGray'} />}
+          onClick={() => onlistViewChange('grid')}
         />
         <IconButton
           variant="ghost"
           aria-label="Product list"
-          backgroundColor={listType === 'list' ? '#f1f3f4' : ''}
+          backgroundColor={listView === 'list' ? '#f1f3f4' : ''}
           borderRadius={0}
           h="full"
           px={5}
           py={{ base: 5, md: 'auto' }}
-          icon={<HamburgerIcon boxSize={5} color={listType === 'list' ? 'iconActive' : 'iconGray'} />}
-          onClick={() => onListTypeChange('list')}
+          icon={<HamburgerIcon boxSize={5} color={listView === 'list' ? 'iconActive' : 'iconGray'} />}
+          onClick={() => onlistViewChange('list')}
         />
       </HStack>
     </HStack>
