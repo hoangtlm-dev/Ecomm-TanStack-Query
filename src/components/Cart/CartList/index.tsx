@@ -34,11 +34,18 @@ import { calculateProductPrice } from '@app/utils'
 interface ICartListProps {
   isLoading: boolean
   cart: CartItemType[]
+  isDisabledQuantityChange?: boolean
   onRemoveItemFromCart: (cartId: number) => void
   onUpdateQuantity: (cartId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => void
 }
 
-const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: ICartListProps) => {
+const CartList = ({
+  isLoading,
+  cart,
+  isDisabledQuantityChange,
+  onRemoveItemFromCart,
+  onUpdateQuantity
+}: ICartListProps) => {
   const tableHeadings = ['', 'Product', 'Unit Price', 'Qty', 'Price']
 
   const renderCartContent = () => {
@@ -57,7 +64,12 @@ const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: I
 
     return cart.map((cartItem, index) => (
       <Fragment key={cartItem.id}>
-        <CartItem cartItem={cartItem} onRemoveItemFromCart={onRemoveItemFromCart} onUpdateQuantity={onUpdateQuantity} />
+        <CartItem
+          cartItem={cartItem}
+          isDisabledQuantityChange={isDisabledQuantityChange}
+          onRemoveItemFromCart={onRemoveItemFromCart}
+          onUpdateQuantity={onUpdateQuantity}
+        />
         {index < cart.length - 1 && <Divider orientation="horizontal" />}
       </Fragment>
     ))
@@ -162,10 +174,11 @@ const CartList = ({ isLoading, cart, onRemoveItemFromCart, onUpdateQuantity }: I
                       <QuantityController
                         maxQuantity={productQuantity}
                         currentQuantity={quantity}
+                        size="md"
+                        isDisabled={isDisabledQuantityChange}
                         onDecreaseQuantity={() => onUpdateQuantity(id, 'decrease')}
                         onChangeQuantity={(value) => onUpdateQuantity(id, 'change', Number(value))}
                         onIncreaseQuantity={() => onUpdateQuantity(id, 'increase')}
-                        size="md"
                       />
                     </Td>
                     <Td>

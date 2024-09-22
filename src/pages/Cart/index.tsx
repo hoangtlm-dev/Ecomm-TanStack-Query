@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AlertDialog,
   AlertDialogBody,
@@ -24,8 +24,11 @@ import { MESSAGES } from '@app/constants'
 // Components
 import { CartList, CheckoutDialog, Invoice } from '@app/components'
 
+// Stores
+import { useCartQuantityStore } from '@app/stores'
+
 // Hooks
-import { useGetCart, useRemoveFromCart, useUpdateItemInCart } from '@app/hooks'
+import { useDebounce, useGetCart, useRemoveFromCart, useUpdateItemInCart } from '@app/hooks'
 
 // Utils
 import { calculateProductPrice } from '@app/utils'
@@ -35,58 +38,84 @@ const Cart = () => {
   const { isOpen: isConfirmDeleteOpen, onOpen: onConfirmDeleteOpen, onClose: onConfirmDeleteClose } = useDisclosure()
   const { isOpen: isCheckOutOpen, onOpen: onCheckOutOpen, onClose: onCheckOutClose } = useDisclosure()
 
-  const [selectedCartId, setSelectedCartId] = useState<number | null>(null)
-
+  const [selectedCartItemId, setSelectedCartItemId] = useState<number | null>(null)
   const cancelConfirmDeleteRef = useRef<HTMLButtonElement | null>(null)
 
   const { isCartLoading, cart } = useGetCart()
   const { isRemoveFromCartLoading, removeFromCart } = useRemoveFromCart()
   const { isUpdateItemInCartLoading, updateItemInCart } = useUpdateItemInCart()
 
+  const { cartInStore, setCartInStore, updateCartInStore } = useCartQuantityStore()
+
+  const debouncedCart = useDebounce(cartInStore)
+
+  // Sync cart in store with cart in cache
+  useEffect(() => {
+    setCartInStore(cart)
+  }, [cart, setCartInStore])
+
+  useEffect(() => {
+    const updatedCartItems = debouncedCart.filter((item) => {
+      // Find the item need to updated
+      const originalItem = cart.find((cartItem) => cartItem.id === item.id)
+
+      // Ensure item exists in the original cart and has a quantity greater than 0
+      return originalItem && item.quantity > 0 && item.quantity !== originalItem.quantity
+    })
+
+    updatedCartItems.forEach(async (cartItem) => {
+      await updateItemInCart({
+        cartItemId: cartItem.id,
+        cartItemData: cartItem
+      })
+    })
+  }, [debouncedCart, cart, updateItemInCart])
+
   const handleUpdateQuantityInCart = useCallback(
-    async (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
-      const cartItemFound = cart.find((cartItem) => cartItem.id === cartItemId)
+    (cartItemId: number, action: 'increase' | 'decrease' | 'change', newQuantity?: number) => {
+      const cartItemFound = cartInStore.find((item) => item.id === cartItemId)
 
-      if (!cartItemFound) return
+      if (cartItemFound) {
+        let updatedQuantity = cartItemFound.quantity
 
-      if (action === 'decrease' && cartItemFound.quantity === 1) {
-        setSelectedCartId(cartItemId)
-        onConfirmDeleteOpen()
-        return
-      }
+        switch (action) {
+          case 'change':
+            if (newQuantity !== undefined) {
+              updatedQuantity = newQuantity
+            }
+            break
+          case 'increase':
+            updatedQuantity = cartItemFound.quantity + 1
+            break
+          case 'decrease':
+            updatedQuantity = cartItemFound.quantity - 1
+            break
+          default:
+            break
+        }
 
-      switch (action) {
-        case 'decrease':
-          await updateItemInCart({
-            cartItemId,
-            cartItemData: { ...cartItemFound, quantity: cartItemFound.quantity - 1 }
-          })
-          break
-        case 'increase':
-          await updateItemInCart({
-            cartItemId,
-            cartItemData: { ...cartItemFound, quantity: cartItemFound.quantity + 1 }
-          })
-          break
-        case 'change':
-          await updateItemInCart({ cartItemId, cartItemData: { ...cartItemFound, quantity: newQuantity ?? 0 } })
-          break
+        if (updatedQuantity <= 0) {
+          setSelectedCartItemId(cartItemId)
+          onConfirmDeleteOpen()
+        } else {
+          updateCartInStore(cartItemId, action, newQuantity)
+        }
       }
     },
-    [cart, updateItemInCart, onConfirmDeleteOpen]
+    [cartInStore, onConfirmDeleteOpen, updateCartInStore]
   )
 
   const handleRemoveItemFromCart = useCallback(
-    (cartId: number) => {
-      setSelectedCartId(cartId)
+    (cartItemId: number) => {
+      setSelectedCartItemId(cartItemId)
       onConfirmDeleteOpen()
     },
     [onConfirmDeleteOpen]
   )
 
   const handleConfirmRemoveItemFromCart = async () => {
-    if (selectedCartId) {
-      await removeFromCart(selectedCartId, {
+    if (selectedCartItemId) {
+      await removeFromCart(selectedCartItemId, {
         onSuccess: () => {
           toast({
             title: 'Success',
@@ -108,13 +137,13 @@ const Cart = () => {
 
   const subTotal = useMemo(
     () =>
-      cart.reduce((acc, cartItem) => {
+      cartInStore.reduce((acc, cartItem) => {
         const { productPrice, productDiscount, quantity } = cartItem
 
         const totalPriceItemInCart = calculateProductPrice(productPrice, productDiscount, quantity)
         return parseFloat((acc + totalPriceItemInCart).toFixed(2))
       }, 0),
-    [cart]
+    [cartInStore]
   )
 
   const handleCheckOut = useCallback(() => {
@@ -134,7 +163,8 @@ const Cart = () => {
     <Container>
       <CartList
         isLoading={isCartLoading}
-        cart={cart}
+        cart={cartInStore}
+        isDisabledQuantityChange={isUpdateItemInCartLoading}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onUpdateQuantity={handleUpdateQuantityInCart}
       />
@@ -160,12 +190,7 @@ const Cart = () => {
             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button
-                onClick={onConfirmDeleteClose}
-                ref={cancelConfirmDeleteRef}
-                disabled={isRemoveFromCartLoading}
-                isLoading={isUpdateItemInCartLoading}
-              >
+              <Button onClick={onConfirmDeleteClose} ref={cancelConfirmDeleteRef} disabled={isRemoveFromCartLoading}>
                 Cancel
               </Button>
               <Button

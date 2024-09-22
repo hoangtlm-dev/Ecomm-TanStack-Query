@@ -4,10 +4,11 @@ export interface IQuantityControllerProps {
   minQuantity?: number
   maxQuantity: number
   currentQuantity: number
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  isDisabled?: boolean
   onIncreaseQuantity: () => void
   onDecreaseQuantity: () => void
   onChangeQuantity: (value: number) => void
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
 const sizeMap = {
@@ -22,10 +23,11 @@ const QuantityController = ({
   minQuantity = 1,
   maxQuantity,
   currentQuantity,
+  size = 'md',
+  isDisabled = false,
   onIncreaseQuantity,
   onDecreaseQuantity,
-  onChangeQuantity,
-  size = 'md'
+  onChangeQuantity
 }: IQuantityControllerProps) => {
   const buttonSize = sizeMap[size]
 
@@ -40,6 +42,7 @@ const QuantityController = ({
         backgroundColor="backgroundBlurGray"
         borderTopRightRadius={0}
         borderBottomRightRadius={0}
+        isDisabled={isDisabled}
       >
         -
       </Button>
@@ -51,6 +54,7 @@ const QuantityController = ({
         zIndex={1}
         textAlign="center"
         backgroundColor="backgroundBlurGray"
+        data-testid="number-input"
       >
         <NumberInputField
           boxSize={buttonSize}
@@ -59,6 +63,7 @@ const QuantityController = ({
           border="none"
           borderRadius={0}
           backgroundColor="backgroundBlurGray"
+          disabled={isDisabled}
         />
       </NumberInput>
       <Button
@@ -70,6 +75,7 @@ const QuantityController = ({
         backgroundColor="backgroundBlurGray"
         borderTopLeftRadius={0}
         borderBottomLeftRadius={0}
+        isDisabled={isDisabled}
       >
         +
       </Button>
