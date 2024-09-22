@@ -1,17 +1,6 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import {
-  Center,
-  Container,
-  Flex,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spinner,
-  Stack,
-  useDisclosure,
-  useToast
-} from '@chakra-ui/react'
+import { Container, Flex, Stack, useToast } from '@chakra-ui/react'
 
 // Constants
 import { banner, MESSAGES, PAGINATION, ROUTES } from '@app/constants'
@@ -45,9 +34,9 @@ const Home = () => {
     'filterPink.500',
     'filterBlurPink.500'
   ]
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const navigate = useNavigate()
-  const { onClose: onCloseLoadingModal } = useDisclosure()
   const toast = useToast()
 
   const queryParams = useQueryParams()
@@ -105,8 +94,20 @@ const Home = () => {
     [navigate, queryParams]
   )
 
+  const handleLoadingAddToCart = useCallback(
+    (productId: number) => {
+      if (selectedProduct?.id === productId && isAddToCartLoading) {
+        return true
+      }
+      return false
+    },
+    [isAddToCartLoading, selectedProduct?.id]
+  )
+
   const handleAddProductToCart = useCallback(
     (product: Product) => {
+      setSelectedProduct(product)
+
       const { id, name, price, currencyUnit, quantity, discount, image } = product
 
       const cartItemFound = cart.find((cartItem) => cartItem.productId === id)
@@ -141,10 +142,8 @@ const Home = () => {
           })
         }
       })
-
-      onCloseLoadingModal()
     },
-    [addToCart, cart, onCloseLoadingModal, toast]
+    [addToCart, cart, toast]
   )
 
   return (
@@ -179,6 +178,7 @@ const Home = () => {
             isLoading={isProductListLoading}
             products={productList}
             listView={listView}
+            isAddingToCart={handleLoadingAddToCart}
             onAddToCart={handleAddProductToCart}
           />
           <Pagination
@@ -188,22 +188,6 @@ const Home = () => {
           />
         </Stack>
       </Flex>
-
-      {/* Modal for loading indicator */}
-      <Modal
-        isCentered
-        isOpen={isAddToCartLoading}
-        onClose={onCloseLoadingModal}
-        closeOnEsc={false}
-        closeOnOverlayClick={false}
-      >
-        <ModalOverlay />
-        <ModalContent backgroundColor="transparent" boxShadow="none">
-          <Center>
-            <Spinner size="lg" speed="0.8s" color="brand.600" />
-          </Center>
-        </ModalContent>
-      </Modal>
     </Container>
   )
 }

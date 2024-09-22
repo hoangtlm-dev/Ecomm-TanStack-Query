@@ -33,10 +33,11 @@ import { generateSlugByNameAndId } from '@app/utils'
 interface IProductItemProps {
   product: Product
   listView: ListView
+  isAddingToCart: (productId: number) => boolean
   onAddToCart: (product: Product) => void
 }
 
-const ProductItem = ({ product, listView, onAddToCart }: IProductItemProps) => {
+const ProductItem = ({ product, listView, isAddingToCart, onAddToCart }: IProductItemProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { id, name, description, price, currencyUnit, discount, image, ratingStar, reviewNumber, isHotDeal } = product
@@ -69,22 +70,24 @@ const ProductItem = ({ product, listView, onAddToCart }: IProductItemProps) => {
             w="90%"
             h="90%"
             position="absolute"
-            backgroundColor="backgroundWhite"
             top={3.5}
             left={3.5}
+            backgroundColor="backgroundWhite"
             opacity="0.9"
-            cursor="pointer"
-          >
-            <Center h="full">
-              <IconButton
-                variant="outline"
-                isRound
-                aria-label="Cart icon"
-                icon={<CartButtonIcon />}
-                onClick={() => onAddToCart(product)}
-              />
-            </Center>
-          </Box>
+          ></Box>
+          <IconButton
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            zIndex={2}
+            variant="outline"
+            isRound
+            aria-label="Cart icon"
+            icon={<CartButtonIcon />}
+            isLoading={isAddingToCart(id)}
+            onClick={() => onAddToCart(product)}
+          />
         </Fade>
       </Box>
 
@@ -193,10 +196,12 @@ const ProductItem = ({ product, listView, onAddToCart }: IProductItemProps) => {
               {description}
             </Text>
             <Button
+              data-testid="add-to-cart"
               alignSelf="flex-start"
               gap={3}
               bg="brand.50"
               _hover={{ opacity: 0.6 }}
+              isLoading={isAddingToCart(id)}
               onClick={() => onAddToCart(product)}
             >
               <CartButtonIcon color="textBlue" />

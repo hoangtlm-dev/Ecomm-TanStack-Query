@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Heading, HStack, Image, Stack, StackDivider, Text } from '@chakra-ui/react'
+import { Box, Button, Center, Flex, Heading, HStack, Image, Spinner, Stack, StackDivider, Text } from '@chakra-ui/react'
 
 // Types
 import { Product } from '@app/types'
@@ -20,6 +20,7 @@ interface IProductInfoProps {
   isLoading: boolean
   product: Product
   currentQuantity: number
+  isAddingToCart: (productId: number) => boolean
   onAddToCart: (product: Product) => void
   onIncreaseQuantity: () => void
   onDecreaseQuantity: () => void
@@ -30,13 +31,25 @@ const ProductInfo = ({
   isLoading,
   product,
   currentQuantity,
+  isAddingToCart,
   onAddToCart,
   onIncreaseQuantity,
   onDecreaseQuantity,
   onChangeQuantity
 }: IProductInfoProps) => {
-  const { name, description, image, price, currencyUnit, quantity, discount, reviewNumber, ratingStar, categoryName } =
-    product
+  const {
+    id,
+    name,
+    description,
+    image,
+    price,
+    currencyUnit,
+    quantity,
+    discount,
+    reviewNumber,
+    ratingStar,
+    categoryName
+  } = product
 
   if (isLoading) {
     return <SkeletonProductInfo />
@@ -120,7 +133,16 @@ const ProductInfo = ({
                 onChangeQuantity={onChangeQuantity}
               />
             </HStack>
-            <Button h={14} gap={4} bg="brand.50" _hover={{ opacity: 0.6 }} onClick={() => onAddToCart(product)}>
+            <Button
+              h={14}
+              gap={4}
+              bg="brand.50"
+              minW="168px"
+              _hover={{ opacity: 0.6 }}
+              spinner={<Spinner color="brand.500" />}
+              isLoading={isAddingToCart(id)}
+              onClick={() => onAddToCart(product)}
+            >
               <CartButtonIcon color="textBlue" />
               <Text color="textBlue">Add to Cart</Text>
             </Button>

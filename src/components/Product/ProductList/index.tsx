@@ -17,6 +17,7 @@ interface IProductListProps {
   listView?: ListView
   gridTemplateColumns?: { [key: string]: string }
   skeletonTemplateColumns?: number
+  isAddingToCart: (productId: number) => boolean
   onAddToCart: (product: Product) => void
 }
 
@@ -26,6 +27,7 @@ const ProductList = ({
   listView = 'grid',
   gridTemplateColumns,
   skeletonTemplateColumns = PAGINATION.DEFAULT_ITEMS_PER_PAGE,
+  isAddingToCart,
   onAddToCart
 }: IProductListProps) => {
   const defaultGridTemplateColumns =
@@ -74,7 +76,12 @@ const ProductList = ({
     >
       {products.map((product, index) => (
         <Box as="li" key={product.id}>
-          <ProductItem product={product} listView={listView} onAddToCart={onAddToCart} />
+          <ProductItem
+            product={product}
+            listView={listView}
+            isAddingToCart={isAddingToCart}
+            onAddToCart={onAddToCart}
+          />
           {listView === 'list' && index < products.length - 1 && <Divider orientation="horizontal" />}
         </Box>
       ))}
