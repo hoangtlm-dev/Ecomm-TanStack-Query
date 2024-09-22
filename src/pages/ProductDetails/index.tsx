@@ -1,17 +1,6 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Center,
-  Container,
-  Heading,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spinner,
-  useDisclosure,
-  useToast,
-  VStack
-} from '@chakra-ui/react'
+import { Container, Heading, useDisclosure, useToast, VStack } from '@chakra-ui/react'
 
 // Constants
 import { MESSAGES } from '@app/constants'
@@ -33,6 +22,7 @@ import { getIdFromSlug } from '@app/utils'
 
 const ProductDetails = () => {
   const { productSlug } = useParams()
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const { onClose: onCloseLoadingModal } = useDisclosure()
   const toast = useToast()
@@ -85,8 +75,20 @@ const ProductDetails = () => {
     [addToCart, cart, onCloseLoadingModal, toast]
   )
 
+  const handleLoadingAddToCart = useCallback(
+    (productId: number) => {
+      if (selectedProduct?.id === productId && isAddToCartLoading) {
+        return true
+      }
+      return false
+    },
+    [isAddToCartLoading, selectedProduct?.id]
+  )
+
   const handleAddProductToCart = useCallback(() => {
     if (currentProduct) {
+      setSelectedProduct(currentProduct)
+
       const cartQuantity = currentProductQuantity
       addProductToCart(currentProduct, cartQuantity)
     }
@@ -94,6 +96,8 @@ const ProductDetails = () => {
 
   const handleAddProductToCartInList = useCallback(
     (product: Product) => {
+      setSelectedProduct(product)
+
       const cartQuantity = 1
       addProductToCart(product, cartQuantity)
     },
@@ -106,6 +110,7 @@ const ProductDetails = () => {
         isLoading={isCurrentProductLoading}
         product={currentProduct}
         currentQuantity={currentProductQuantity}
+        isAddingToCart={handleLoadingAddToCart}
         onAddToCart={handleAddProductToCart}
         onIncreaseQuantity={increaseQuantity}
         onDecreaseQuantity={decreaseQuantity}
@@ -120,25 +125,10 @@ const ProductDetails = () => {
           products={productList}
           gridTemplateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }}
           skeletonTemplateColumns={4}
+          isAddingToCart={handleLoadingAddToCart}
           onAddToCart={handleAddProductToCartInList}
         />
       </VStack>
-
-      {/* Modal for loading indicator */}
-      <Modal
-        isCentered
-        isOpen={isAddToCartLoading}
-        onClose={onCloseLoadingModal}
-        closeOnEsc={false}
-        closeOnOverlayClick={false}
-      >
-        <ModalOverlay />
-        <ModalContent backgroundColor="transparent" boxShadow="none">
-          <Center>
-            <Spinner size="lg" speed="0.8s" color="brand.600" />
-          </Center>
-        </ModalContent>
-      </Modal>
     </Container>
   )
 }
