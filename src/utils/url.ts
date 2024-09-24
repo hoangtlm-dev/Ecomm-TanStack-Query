@@ -31,3 +31,19 @@ export const getIdFromSlug = (slug: string) => {
   const arr = slug.split('-i-')
   return arr[arr.length - 1]
 }
+
+/**
+ * Extracts the product name from a slug.
+ * Assumes the slug is in the format of "cleaned-name-i-id" and returns the cleaned name part.
+ *
+ * @param slug - The slug from which the name needs to be extracted.
+ * @returns - The extracted name with special characters restored.
+ */
+export const getNameFromSlug = (slug: string) => {
+  const arr = slug.split('-i-')
+  if (arr.length < 2) return null
+
+  const cleanedName = arr[0].replace(/-/g, ' ')
+
+  return cleanedName
+}
