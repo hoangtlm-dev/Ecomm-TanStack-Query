@@ -18,7 +18,8 @@ import { useAddToCart, useGetCart, useGetCurrentProduct, useGetProducts } from '
 import { useProductQuantityStore } from '@app/stores'
 
 // Utils
-import { getIdFromSlug } from '@app/utils'
+import { getIdFromSlug, getNameFromSlug } from '@app/utils'
+import NotFound from '@app/pages/NotFound'
 
 const ProductDetails = () => {
   const { productSlug } = useParams()
@@ -28,6 +29,7 @@ const ProductDetails = () => {
   const toast = useToast()
 
   const productId = Number(productSlug && getIdFromSlug(productSlug))
+  const productNameFromSlug = productSlug && getNameFromSlug(productSlug)
   const { currentProductQuantity, increaseQuantity, decreaseQuantity, setQuantity } = useProductQuantityStore()
   const { isCurrentProductLoading, currentProduct } = useGetCurrentProduct(productId)
   const { isProductListLoading, productList } = useGetProducts({ page: 1, limit: 4, id_ne: productId })
@@ -103,6 +105,8 @@ const ProductDetails = () => {
     },
     [addProductToCart]
   )
+
+  if (productNameFromSlug !== currentProduct.name) return <NotFound />
 
   return (
     <Container>
