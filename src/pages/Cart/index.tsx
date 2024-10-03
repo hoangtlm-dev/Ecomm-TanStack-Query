@@ -43,7 +43,7 @@ const Cart = () => {
 
   const { isCartLoading, cart } = useGetCart()
   const { isRemoveFromCartLoading, removeFromCart } = useRemoveFromCart()
-  const { isUpdateItemInCartLoading, updateItemInCart } = useUpdateItemInCart()
+  const { updateItemInCart, isUpdatingItemInCart } = useUpdateItemInCart()
 
   const { cartInStore, setCartInStore, updateCartInStore } = useCartQuantityStore()
 
@@ -164,10 +164,11 @@ const Cart = () => {
       <CartList
         isLoading={isCartLoading}
         cart={cartInStore}
-        isDisabledQuantityChange={isUpdateItemInCartLoading}
+        isDisabledQuantityChange={isUpdatingItemInCart}
         onRemoveItemFromCart={handleRemoveItemFromCart}
         onUpdateQuantity={handleUpdateQuantityInCart}
       />
+
       <Flex justifyContent="flex-end" mt={12}>
         <Invoice subTotal={subTotal} onCheckOut={handleCheckOut} />
       </Flex>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Constants
@@ -10,6 +11,7 @@ import { CartItem, ExtendedQueryParams, PaginationResponse } from '@app/types'
 import { updateItemInCartService } from '@app/services'
 
 export const useUpdateItemInCart = () => {
+  const [pendingItemIds, setPendingItemIds] = useState<number[]>([])
   const queryClient = useQueryClient()
 
   const defaultParams: Partial<ExtendedQueryParams<CartItem>> = {
@@ -19,9 +21,12 @@ export const useUpdateItemInCart = () => {
     limit: PAGINATION.DEFAULT_ITEMS_PER_PAGE
   }
 
-  const { isPending, mutateAsync } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: ({ cartItemId, cartItemData }: { cartItemId: number; cartItemData: CartItem }) =>
       updateItemInCartService(cartItemId, cartItemData),
+    onMutate: async ({ cartItemId }) => {
+      setPendingItemIds((prev) => [...prev, cartItemId])
+    },
     onSuccess: (newCartItem: CartItem) => {
       queryClient.setQueryData(
         [QUERY_KEYS.CART, { ...defaultParams }],
@@ -39,11 +44,16 @@ export const useUpdateItemInCart = () => {
           }
         }
       )
+    },
+    onSettled: (_, __, { cartItemId }) => {
+      setPendingItemIds((prev) => prev.filter((id) => id !== cartItemId))
     }
   })
 
+  const isUpdatingItemInCart = (cartItemId: number) => pendingItemIds.includes(cartItemId)
+
   return {
-    isUpdateItemInCartLoading: isPending,
-    updateItemInCart: mutateAsync
+    updateItemInCart: mutateAsync,
+    isUpdatingItemInCart
   }
 }

@@ -46,24 +46,43 @@ const App = () => {
       toastOptions={{ defaultOptions: { position: 'bottom-right', isClosable: true, duration: 3000 } }}
     >
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallback={<Fallback />}>
-          <BrowserRouter>
-            <Routes>
-              <Route element={<MainLayout />}>
-                <Route path={ROUTES.ROOT} element={<Home />} />
-                <Route path={ROUTES.PRODUCT_DETAILS} element={<ProductDetails />} />
-                <Route path={ROUTES.CART} element={<Cart />} />
-                <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route
+                path={ROUTES.ROOT}
+                element={
+                  <ErrorBoundary fallback={<Fallback />}>
+                    <Home />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path={ROUTES.PRODUCT_DETAILS}
+                element={
+                  <ErrorBoundary fallback={<Fallback />}>
+                    <ProductDetails />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path={ROUTES.CART}
+                element={
+                  <ErrorBoundary fallback={<Fallback />}>
+                    <Cart />
+                  </ErrorBoundary>
+                }
+              />
+              <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
 
-                {/* Menus */}
-                <Route path={ROUTES.BAGS} element={<PlaceholderPage pageName="Bags" />} />
-                <Route path={ROUTES.SNEAKERS} element={<PlaceholderPage pageName="Sneakers" />} />
-                <Route path={ROUTES.BELT} element={<PlaceholderPage pageName="Belt" />} />
-                <Route path={ROUTES.CONTACT} element={<PlaceholderPage pageName="Contact" />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </ErrorBoundary>
+              {/* Menus */}
+              <Route path={ROUTES.BAGS} element={<PlaceholderPage pageName="Bags" />} />
+              <Route path={ROUTES.SNEAKERS} element={<PlaceholderPage pageName="Sneakers" />} />
+              <Route path={ROUTES.BELT} element={<PlaceholderPage pageName="Belt" />} />
+              <Route path={ROUTES.CONTACT} element={<PlaceholderPage pageName="Contact" />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </QueryClientProvider>
     </ChakraProvider>
   )
