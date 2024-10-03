@@ -21,7 +21,6 @@ export const useRemoveFromCart = () => {
 
   const { isPending, mutateAsync } = useMutation({
     mutationFn: (cartItemId: number) => removeFromCartService(cartItemId),
-
     onMutate: (cartItemId: number) => {
       return { cartItemId }
     },
